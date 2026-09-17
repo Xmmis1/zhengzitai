@@ -45,7 +45,6 @@ body{
 }
 input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 
-/* ============ NAV ============ */
 .nav{
   position:sticky;top:0;z-index:20;
   background:var(--nav);backdrop-filter:saturate(180%) blur(20px);
@@ -88,13 +87,11 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 }
 .mlabel:active{background:var(--sep);}
 
-/* ============ LIST ============ */
 .list{
   padding:6px 16px calc(48px + env(safe-area-inset-bottom));
   min-height:60vh;
 }
 
-/* ============ CARD ============ */
 .card{
   position:relative;background:var(--card);border-radius:20px;
   padding:14px 16px 16px;margin-bottom:11px;
@@ -109,7 +106,6 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 .card.dimmed .card-head,.card.dimmed .zrows{opacity:.26;}
 .card-head,.zrows{transition:opacity .34s;}
 .card.open{box-shadow:var(--shadow);}
-.card.ghost-src{opacity:.35;}
 
 .card-head{display:flex;align-items:flex-start;gap:10px;}
 .dot{
@@ -140,11 +136,9 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
   flex:none;letter-spacing:.3px;
 }
 
-/* expand */
 .expand{height:0;overflow:hidden;transition:height .42s cubic-bezier(.32,.72,0,1);}
 .expand-inner{overflow:hidden;}
 
-/* calendar */
 .cal-head{
   display:flex;align-items:center;justify-content:space-between;
   margin-top:16px;margin-bottom:8px;
@@ -166,12 +160,12 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 .cell{
   aspect-ratio:1;border-radius:10px;background:var(--cell);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  position:relative;transition:background .2s,transform .14s,opacity .2s;
+  position:relative;transition:background .18s,transform .14s;
   cursor:pointer;overflow:hidden;
 }
 .cell:active{transform:scale(.9);}
 .cell.blank{background:transparent;pointer-events:none;}
-.cell .d{font-size7:14.5px;line-height:1;color:var(--text2);font-weight:400;font-variant-numeric:tabular-nums;}
+.cell .d{font-size:14.5px;line-height:1;color:var(--text2);font-weight:400;font-variant-numeric:tabular-nums;}
 .cell .l{font-size:8px;line-height:1;margin-top:2px;color:var(--text3);transform:scale(.92);}
 .cell .l.hol{color:var(--danger);}
 .cell.today{box-shadow:inset 0 0 0 1.6px var(--c);}
@@ -200,7 +194,6 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 }
 .cal-foot b{font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;}
 
-/* add card */
 .add-card{
   width:100%;border:none;background:transparent;color:var(--text3);
   border-radius:20px;padding:18px;font-size:14.5px;letter-spacing:.4px;
@@ -209,14 +202,12 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 }
 .add-card:active{transform:scale(.985);color:var(--accent);border-color:var(--accent);}
 
-/* empty */
 .empty{
   text-align:center;padding:60px 20px;color:var(--text2);
 }
 .empty .big{font-size:38px;margin-bottom:14px;color:var(--text3);font-weight:300;}
 .empty p{font-size:14px;line-height:1.7;margin:0;}
 
-/* hint pill */
 .hint{
   position:fixed;left:50%;bottom:calc(30px + env(safe-area-inset-bottom));
   transform:translate(-50%,14px);opacity:0;pointer-events:none;
@@ -227,7 +218,6 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 }
 .hint.show{opacity:1;transform:translate(-50%,0);}
 
-/* ============ SHEET ============ */
 .sheet-mask{
   position:fixed;inset:0;background:rgba(0,0,0,.28);z-index:100;
   opacity:0;transition:opacity .34s;backdrop-filter:blur(2px);
@@ -249,14 +239,11 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 .sheet-date{font-size:20px;font-weight:700;letter-spacing:.3px;}
 .sheet-sub{font-size:12.5px;color:var(--text2);margin-top:3px;letter-spacing:.2px;}
 .sheet-chips{
-  display:flex;gap:7px;overflow-x:auto;padding:16px 0 4px;margin:0 -18px;
-  padding-left:18px;padding-right:18px;-webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
+  display:flex;flex-wrap:wrap;gap:7px;padding:16px 0 4px;
 }
-.sheet-chips::-webkit-scrollbar{display:none;}
 .chip{
-  flex:none;padding:7px 13px;border-radius:16px;background:var(--cell);
-  color:var(--text2);font-size:13px;letter-spacing:.2px;white-space:nowrap;
+  padding:7px 13px;border-radius:16px;background:var(--cell);
+  color:var(--text2);font-size:13px;letter-spacing:.2px;
   cursor:grab;touch-action:none;transition:transform .16s,background .16s,opacity .2s;
   border:none;font-family:inherit;
 }
@@ -274,7 +261,7 @@ textarea.note{
 }
 textarea.note::placeholder{color:var(--text3);}
 textarea.note:focus{border-color:var(--accent);background:var(--card);}
-textarea.note.drop-target{border-color:var(--accent);background:color-mix(in srgb,var(--accent) %,var(--card));}
+textarea.note.drop-target{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--card));}
 .sheet-actions{display:flex;gap:10px;margin-top:14px;}
 .btn{
   flex:1;padding:14px;border-radius:14px;border:none;font-size:15.5px;font-weight:500;
@@ -285,7 +272,6 @@ textarea.note.drop-target{border-color:var(--accent);background:color-mix(in srg
 .btn.ghost{background:var(--cell);color:var(--text);}
 .btn.danger{background:transparent;color:var(--danger);}
 
-/* ============ PAGE ============ */
 .page{
   position:fixed;inset:0;z-index:60;background:var(--bg);
   transform:translateX(100%);transition:transform .38s cubic-bezier(.32,.72,0,1);
@@ -351,11 +337,8 @@ textarea.note.drop-target{border-color:var(--accent);background:color-mix(in srg
 .seg button.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:500;}
 .page .seg button.on{background:var(--card2);}
 
-/* stats */
 .stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:18px;}
-.stat-card{
-  background:var(--card);border-radius:16px;padding:16px;
-}
+.stat-card{background:var(--card);border-radius:16px;padding:16px;}
 .stat-num{
   font-size:28px;font-weight:700;letter-spacing:-.5px;font-variant-numeric:tabular-nums;
   line-height:1.1;
@@ -363,9 +346,7 @@ textarea.note.drop-target{border-color:var(--accent);background:color-mix(in srg
 .stat-lbl{font-size:12px;color:var(--text2);margin-top:5px;letter-spacing:.4px;}
 .proj-row{display:flex;align-items:center;gap:11px;padding:13px 16px;}
 .proj-row+.proj-row{border-top:.5px solid var(--sep);}
-.bar{
-  flex:1;height:5px;border-radius:3px;background:var(--cell);overflow:hidden;
-}
+.bar{flex:1;height:5px;border-radius:3px;background:var(--cell);overflow:hidden;}
 .bar i{display:block;height:100%;border-radius:3px;background:var(--c);transition:width .5s cubic-bezier(.32,.72,0,1);}
 .share-btn{
   border:none;background:var(--cell);color:var(--text2);font-size:12px;
@@ -376,12 +357,10 @@ textarea.note.drop-target{border-color:var(--accent);background:color-mix(in srg
 .share-btn.on:active{transform:scale(.94);}
 .share-btn:disabled{opacity:.45;}
 
-/* color picker */
 .swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;padding:16px;}
 .sw{
   aspect-ratio:1;border-radius:50%;border:2.5px solid transparent;
-  cursor:pointer;position:relative;transition:transform .18s;
-  padding:0;
+  cursor:pointer;position:relative;transition:transform .18s;padding:0;
 }
 .sw:active{transform:scale(.9);}
 .sw.on{border-color:var(--text);}
@@ -400,9 +379,7 @@ textarea.note.drop-target{border-color:var(--accent);background:color-mix(in srg
 .toast.show{opacity:1;transform:translate(-50%,0);}
 </style>
 </head>
-<body>
-
-<header class="nav" id="nav">
+<body><header class="nav" id="nav">
   <div class="nav-row">
     <button class="app-title" id="appTitle">正字台</button>
     <div class="nav-actions">
@@ -462,13 +439,14 @@ const LUNAR_INFO=[0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a
 0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,0x0a570,0x054e4,0x0d160,
 0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,0x0a2d0,0x0d150,0x0f252,0x0d520];
 
-/* 正字笔画 (viewBox 100x100) */
+/* 正字：五笔标准写法（viewBox 100x100）
+   1 顶横  2 中竖  3 中短横  4 左竖  5 底横 */
 const STROKES=[
-  [13,26, 87,26],
-  [57,26, 57,80],
-  [27,50, 57,50],
-  [27,50, 27,80],
-  [27,80, 88,80]
+  [13,24, 87,24],
+  [58,24, 58,80],
+  [26,50, 58,50],
+  [26,50, 26,80],
+  [13,80, 87,80]
 ];
 
 /* ==================== 工具 ==================== */
@@ -482,7 +460,6 @@ const uid=()=>Math.random().toString(36).slice(2,10)+Date.now().toString(36).sli
 const clone=o=>JSON.parse(JSON.stringify(o));
 
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
-
 function luminance(hex){
   const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
   return (0.299*r+0.587*g+0.114*b)/255;
@@ -515,10 +492,7 @@ function solar2lunar(y,m,d){
   if(offset<0){offset+=temp;--i;}
   return {y:ly,m:i,d:offset+1,leap:isLeap};
 }
-function qingmingDay(y){
-  const yy=y%100;
-  return Math.floor(yy*0.2422+4.81)-Math.floor((yy-1)/4);
-}
+function qingmingDay(y){const yy=y%100;return Math.floor(yy*0.2422+4.81)-Math.floor((yy-1)/4);}
 function getHoliday(y,m,d){
   if(m===0&&d===1)return '元旦';
   if(m===4&&d===1)return '劳动节';
@@ -551,7 +525,6 @@ const DEFAULT={
   trash:[]
 };
 let S=loadState();
-
 function loadState(){
   try{
     const raw=localStorage.getItem(KEY);
@@ -569,14 +542,8 @@ function loadState(){
 }
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
 
-/* ==================== 视图状态 ==================== */
 const now=new Date();
-let V={
-  y:now.getFullYear(),
-  m:now.getMonth(),
-  openId:null,
-  sheet:null
-};
+let V={y:now.getFullYear(),m:now.getMonth(),openId:null,sheet:null};
 
 /* ==================== 正字渲染 ==================== */
 function buildGlyph(count,seed){
@@ -584,22 +551,22 @@ function buildGlyph(count,seed){
   const svg=document.createElementNS(NS,'svg');
   svg.setAttribute('viewBox','0 0 100 100');
   const rnd=mulberry32(seed*7919+13);
-  const rot=(rnd()-0.5)*1.6;
+  const rot=(rnd()-0.5)*1.4;
   svg.style.transform=`rotate(${rot}deg)`;
   for(let i=0;i<count;i++){
     const [x1,y1,x2,y2]=STROKES[i];
-    const jx1=x1+(rnd()-0.5)*1.6, jy1=y1+(rnd()-0.5)*1.6;
-    const jx2=x2+(rnd()-0.5)*1.6, jy2=y2+(rnd()-0.5)*1.6;
+    const jx1=x1+(rnd()-0.5)*1.4, jy1=y1+(rnd()-0.5)*1.4;
+    const jx2=x2+(rnd()-0.5)*1.4, jy2=y2+(rnd()-0.5)*1.4;
     const mx=(jx1+jx2)/2, my=(jy1+jy2)/2;
     const dx=jx2-jx1, dy=jy2-jy1;
     const len=Math.hypot(dx,dy)||1;
-    const bow=(rnd()-0.5)*2.2;
+    const bow=(rnd()-0.5)*1.8;
     const cx=mx-dy/len*bow, cy=my+dx/len*bow;
     const p=document.createElementNS(NS,'path');
     p.setAttribute('d',`M${jx1.toFixed(1)} ${jy1.toFixed(1)} Q${cx.toFixed(1)} ${cy.toFixed(1)} ${jx2.toFixed(1)} ${jy2.toFixed(1)}`);
     p.setAttribute('fill','none');
     p.setAttribute('stroke','var(--ink)');
-    p.setAttribute('stroke-width', i===0||i===4 ? 6.4 : (i===2?6.8:7.2));
+    p.setAttribute('stroke-width', i===0||i===4 ? 6.4 : (i===1?7.2:7.0));
     p.setAttribute('stroke-linecap','round');
     p.setAttribute('stroke-linejoin','round');
     p.setAttribute('opacity','0.94');
@@ -608,7 +575,7 @@ function buildGlyph(count,seed){
   return svg;
 }
 const MAX_GLYPH=12;
-function renderZheng(el,n,animate){
+function renderZheng(el,n){
   el.innerHTML='';
   const full=Math.floor(n/5), part=n%5;
   const showFull=Math.min(full,MAX_GLYPH);
@@ -617,36 +584,14 @@ function renderZheng(el,n,animate){
   if(part&&showFull<MAX_GLYPH)frag.appendChild(buildGlyph(part,showFull));
   if(full>MAX_GLYPH){
     const sp=document.createElement('span');
-    sp.className='zmore';
-    sp.textContent='…';
-    frag.appendChild(sp);
+    sp.className='zmore';sp.textContent='…';frag.appendChild(sp);
   }
   if(n===0){
     const sp=document.createElement('span');
-    sp.className='zmore';
-    sp.textContent='还没开始';
-    sp.style.fontSize='11.5px';
+    sp.className='zmore';sp.textContent='还没开始';sp.style.fontSize='11.5px';
     frag.appendChild(sp);
   }
   el.appendChild(frag);
-  if(animate){
-    const svgs=el.querySelectorAll('svg');
-    const last=svgs[svgs.length-1];
-    if(last){
-      const ps=last.querySelectorAll('path');
-      const p=ps[ps.length-1];
-      if(p){
-        try{
-          const L=p.getTotalLength();
-          p.style.strokeDasharray=L;
-          p.style.strokeDashoffset=L;
-          p.getBoundingClientRect();
-          p.style.transition='stroke-dashoffset .36s cubic-bezier(.32,.72,0,1)';
-          p.style.strokeDashoffset=0;
-        }catch(e){}
-      }
-    }
-  }
 }
 
 /* ==================== 计算 ==================== */
@@ -661,7 +606,6 @@ function streakOf(p){
   let n=0;
   const t=new Date();
   let cur=new Date(t.getFullYear(),t.getMonth(),t.getDate());
-  // 若今天没打，从昨天开始算
   const tk=dkey(cur.getFullYear(),cur.getMonth(),cur.getDate());
   if(!p.records[tk])cur.setDate(cur.getDate()-1);
   while(true){
@@ -686,7 +630,7 @@ function longestStreak(p){
   return best;
 }
 
-/* ==================== 卡片构建 ==================== */
+/* ==================== 卡片 ==================== */
 const list=$('#list');
 
 function buildCard(p){
@@ -724,29 +668,25 @@ function buildCard(p){
   el.appendChild(expand);
 
   el._refs={head,zrows,r1,r2,expand,inner};
-  refreshCard(p,el);
+  refreshCardStats(p,el);
   return el;
 }
 
-function refreshCard(p,el){
+function refreshCardStats(p,el){
   if(!el)el=list.querySelector(`.card[data-id="${p.id}"]`);
   if(!el)return;
   const R=el._refs;
   const st=streakOf(p);
   R.head.querySelector('.meta').textContent=st>0?`连续 ${st} 天`:'开始第一天吧';
   const tc=totalCount(p);
-  const mc=monthCount(p,p===null?0:V.y,V.m);
-  // 未展开时，本月固定显示“当前月”
   const t=new Date();
   const showM = V.openId===p.id ? V.m : t.getMonth();
   const showY = V.openId===p.id ? V.y : t.getFullYear();
   const mcc=monthCount(p,showY,showM);
-  renderZheng(R.r1.querySelector('.zglyphs'),tc,false);
-  renderZheng(R.r2.querySelector('.zglyphs'),mcc,false);
+  renderZheng(R.r1.querySelector('.zglyphs'),tc);
+  renderZheng(R.r2.querySelector('.zglyphs'),mcc);
   R.r1.querySelector('.znum').textContent=tc;
   R.r2.querySelector('.znum').textContent=mcc;
-  R.el=el;
-  if(V.openId===p.id)renderCalendarInto(p,el);
 }
 
 function renderCalendarInto(p,el){
@@ -813,24 +753,22 @@ function buildMonthGrid(p,y,m){
     if(isFuture)cell.classList.add('future');
     if(rec){
       cell.classList.add('on');
-      cell.style.background=isFuture?rgba(p.color,0.28):p.color;
-      const tc=isFuture?p.color:textOn(p.color);
-      if(!isFuture&&luminance(p.color)>0.62)cell.classList.add('dark');
-      if(isFuture){cell.classList.add('dark');}
+      if(isFuture){
+        cell.style.background=rgba(p.color,0.28);
+        cell.classList.add('dark');
+      }else{
+        cell.style.background=p.color;
+        if(luminance(p.color)>0.62)cell.classList.add('dark');
+      }
       if(rec.note&&rec.note.trim()){
         const nd=document.createElement('span');
         nd.className='nd';
-        nd.style.background=tc;
         cell.appendChild(nd);
-      }
-      if(isFuture){
-        cell.querySelectorAll&&null;
       }
     }
     const dEl=document.createElement('span');
     dEl.className='d';
     dEl.textContent=d;
-    if(rec&&isFuture)dEl.style.color=p.color;
     cell.appendChild(dEl);
 
     let sub=null,isHol=false;
@@ -853,7 +791,7 @@ function buildMonthGrid(p,y,m){
   return grid;
 }
 
-/* ==================== 列表渲染 ==================== */
+/* ==================== 列表 ==================== */
 function renderList(){
   list.innerHTML='';
   if(!S.projects.length){
@@ -863,8 +801,7 @@ function renderList(){
     list.appendChild(e);
   }else{
     S.projects.forEach(p=>{
-      const c=buildCard(p);
-      list.appendChild(c);
+      list.appendChild(buildCard(p));
     });
   }
   const add=document.createElement('button');
@@ -913,13 +850,15 @@ function openCard(id){
     if(pe){pe.classList.remove('open');pe._refs.expand.style.height='0px';}
   }
   el.classList.add('open');
-  el._refs.expand.style.height=el._refs.inner.scrollHeight+'px';
+  const p=S.projects.find(x=>x.id===id);
+  if(p)renderCalendarInto(p,el);
+  requestAnimationFrame(()=>{
+    el._refs.expand.style.height=el._refs.inner.scrollHeight+'px';
+  });
   $$('.card',list).forEach(c=>c.classList.toggle('dimmed',c.dataset.id!==id));
   $('#btnPrev').classList.remove('hide');
   $('#btnNext').classList.remove('hide');
   updateMonthLabel();
-  const p=S.projects.find(x=>x.id===id);
-  if(p)renderCalendarInto(p,el);
   setTimeout(()=>{
     const r=el.getBoundingClientRect();
     if(r.top<90||r.bottom>window.innerHeight){
@@ -927,7 +866,7 @@ function openCard(id){
     }
   },60);
   if(!S.settings.hintSeen){
-    showHint('← 左右滑动切换月份 · 轻点格子打卡 →');
+    showHint('左右滑动切换月份 · 双指捏合收起');
     S.settings.hintSeen=true;save();
   }
 }
@@ -947,7 +886,7 @@ function closeCard(){
   $('#btnPrev').classList.add('hide');
   $('#btnNext').classList.add('hide');
   updateMonthLabel();
-  S.projects.forEach(p=>refreshCard(p));
+  S.projects.forEach(p=>refreshCardStats(p));
 }
 
 /* ==================== 月份切换 ==================== */
@@ -964,9 +903,9 @@ function changeMonth(delta){
   updateMonthLabel();
 
   const vp=el._refs.inner.querySelector('.cal-viewport');
-  if(!vp){renderCalendarInto(p,el);return;}
+  if(!vp){renderCalendarInto(p,el);refreshCardStats(p,el);return;}
   const oldLayer=vp.querySelector('.cal-grid');
-  if(!oldLayer){renderCalendarInto(p,el);return;}
+  if(!oldLayer){renderCalendarInto(p,el);refreshCardStats(p,el);return;}
 
   const h=vp.offsetHeight;
   vp.style.height=h+'px';
@@ -991,38 +930,50 @@ function changeMonth(delta){
     newLayer.style.transform='';
     vp.style.height=newLayer.offsetHeight+'px';
     updateFoot(p,el);
+    refreshCardStats(p,el);
   },380);
   updateFoot(p,el);
-  setTimeout(()=>updateFoot(p,el),390);
-}
+  refreshCardStats(p,el);
+  setTimeout(()=>{updateFoot(p,el);refreshCardStats(p,el);},390);
+}/* ==================== 手势 ==================== */
+let g={sx:0,sy:0,active:false,axis:null,lp:null,longFired:false};
+let suppressClick=false;
+let pinchTime=0;
 
-/* ==================== 滑动 / 长按 手势 ==================== */
-let g={sx:0,sy:0,active:false,axis:null,lp:null,longFired:false,target:null};
 list.addEventListener('touchstart',e=>{
+  if(e.touches.length===2){
+    if(V.openId&&Date.now()-pinchTime>500){
+      pinchTime=Date.now();
+      closeCard();
+    }
+    return;
+  }
   if(e.touches.length!==1)return;
   const t=e.touches[0];
   g.sx=t.clientX;g.sy=t.clientY;g.active=true;g.axis=null;g.longFired=false;
   const cell=e.target.closest('.cell:not(.blank)');
   const pname=e.target.closest('.pname');
   const card=e.target.closest('.card');
-  g.target={cell,pname,card};
-  if(cell&&V.openId){
+  if(cell&&V.openId&&card&&card.dataset.id===V.openId){
     g.lp=setTimeout(()=>{
-      g.lp=null;g.longFired=true;
+      g.lp=null;g.longFired=true;suppressClick=true;
       if(navigator.vibrate)navigator.vibrate(8);
       openDaySheet(V.openId,cell.dataset.k);
-    },420);
-  }else if(card&&!V.openId){
+      setTimeout(()=>{suppressClick=false;},700);
+    },430);
+  }else if(card){
     if(pname){
       g.lp=setTimeout(()=>{
-        g.lp=null;g.longFired=true;
+        g.lp=null;g.longFired=true;suppressClick=true;
         if(navigator.vibrate)navigator.vibrate(8);
         openProjectSheet(card.dataset.id);
+        setTimeout(()=>{suppressClick=false;},700);
       },480);
-    }else{
+    }else if(V.openId!==card.dataset.id){
       g.lp=setTimeout(()=>{
-        g.lp=null;g.longFired=true;
+        g.lp=null;g.longFired=true;suppressClick=true;
         startDrag(card);
+        setTimeout(()=>{suppressClick=false;},700);
       },480);
     }
   }
@@ -1030,13 +981,14 @@ list.addEventListener('touchstart',e=>{
 
 list.addEventListener('touchmove',e=>{
   if(!g.active)return;
+  if(e.touches.length>1){if(g.lp){clearTimeout(g.lp);g.lp=null;}return;}
   const t=e.touches[0];
   const dx=t.clientX-g.sx, dy=t.clientY-g.sy;
-  if(!g.axis&&(Math.abs(dx)>9||Math.abs(dy)>9)){
+  if(!g.axis&&(Math.abs(dx)>8||Math.abs(dy)>8)){
     g.axis=Math.abs(dx)>Math.abs(dy)?'h':'v';
     if(g.lp){clearTimeout(g.lp);g.lp=null;}
   }
-  if(g.axis==='v'&&g.lp){clearTimeout(g.lp);g.lp=null;}
+  if(g.axis==='h')suppressClick=true;
 },{passive:true});
 
 list.addEventListener('touchend',e=>{
@@ -1049,65 +1001,81 @@ list.addEventListener('touchend',e=>{
   if(dragState)return;
   if(g.axis==='h'&&Math.abs(dx)>48&&Math.abs(dy)<70){
     if(V.openId)changeMonth(dx<0?1:-1);
+    setTimeout(()=>{suppressClick=false;},80);
     return;
-  }
-  if(Math.abs(dx)>9||Math.abs(dy)>9)return;
-  // tap
-  const tgt=g.target;
-  if(!tgt)return;
-  if(tgt.cell&&V.openId){
-    toggleDay(V.openId,tgt.cell.dataset.k,tgt.cell);
-    return;
-  }
-  if(tgt.card&&!V.openId&&!tgt.pname){
-    openCard(tgt.card.dataset.id);
   }
 });
+
 list.addEventListener('touchcancel',()=>{
   g.active=false;
   if(g.lp){clearTimeout(g.lp);g.lp=null;}
 });
 
-/* 桌面点击兜底 */
 list.addEventListener('click',e=>{
-  if('ontouchstart' in window)return;
+  if(suppressClick){suppressClick=false;return;}
+  if(dragState)return;
   const cell=e.target.closest('.cell:not(.blank)');
-  if(cell&&V.openId){toggleDay(V.openId,cell.dataset.k,cell);return;}
   const card=e.target.closest('.card');
-  if(card&&!V.openId&&!e.target.closest('.pname'))openCard(card.dataset.id);
+  if(!card)return;
+  const cardId=card.dataset.id;
+  if(cell&&V.openId===cardId){
+    toggleDay(cardId,cell.dataset.k,cell);
+    return;
+  }
+  if(V.openId===cardId){
+    closeCard();
+  }else{
+    openCard(cardId);
+  }
 });
 
-/* ==================== 打卡 / 取消 ==================== */
+/* ==================== 打卡 / 取消（只更新单格） ==================== */
 function toggleDay(pid,k,cellEl){
   const p=S.projects.find(x=>x.id===pid);
   if(!p)return;
   const el=list.querySelector(`.card[data-id="${pid}"]`);
-  if(p.records[k]){
-    delete p.records[k];
-  }else{
+  const turningOn=!p.records[k];
+  if(turningOn){
     p.records[k]={t:Date.now(),note:''};
+  }else{
+    delete p.records[k];
   }
   save();
-  refreshCard(p,el);
-  // 重绘日历
-  if(V.openId===pid){
-    const vp=el._refs.inner.querySelector('.cal-viewport');
-    if(vp){
-      const old=vp.querySelector('.cal-grid');
-      const neu=buildMonthGrid(p,V.y,V.m);
-      if(old)old.replaceWith(neu);
-      else vp.appendChild(neu);
-    }
-    updateFoot(p,el);
-    el._refs.expand.style.height=el._refs.inner.scrollHeight+'px';
+  if(cellEl&&cellEl.isConnected){
+    applyCellStyle(cellEl,p,k);
   }
-  // 动画最后一笔
-  if(p.records[k]){
-    const anim = k.startsWith(`${V.y}-${pad2(V.m+1)}-`) && V.openId===pid;
-    if(anim){
-      const r2=el._refs.r2.querySelector('.zglyphs');
-      renderZheng(r2,monthCount(p,V.y,V.m),true);
+  if(el){
+    refreshCardStats(p,el);
+    updateFoot(p,el);
+  }
+}
+
+function applyCellStyle(cell,p,k){
+  const rec=p.records[k];
+  const tk=todayKey();
+  const isFuture=k>tk;
+  cell.classList.remove('on','dark');
+  cell.style.background='';
+  if(rec){
+    cell.classList.add('on');
+    if(isFuture){
+      cell.style.background=rgba(p.color,0.28);
+      cell.classList.add('dark');
+    }else{
+      cell.style.background=p.color;
+      if(luminance(p.color)>0.62)cell.classList.add('dark');
     }
+  }
+  const dEl=cell.querySelector('.d');
+  if(dEl)dEl.style.color='';
+  let nd=cell.querySelector('.nd');
+  const hasNote=rec&&rec.note&&rec.note.trim();
+  if(hasNote&&!nd){
+    nd=document.createElement('span');
+    nd.className='nd';
+    cell.appendChild(nd);
+  }else if(!hasNote&&nd){
+    nd.remove();
   }
 }
 
@@ -1158,13 +1126,16 @@ function openDaySheet(pid,k){
       if(!p.records[k])return;
       p.records[k].note=ta.value;
       save();
-      const el=list.querySelector(`.card[data-id="${pid}"]`);
-      if(el&&V.openId===pid){
-        const vp=el._refs.inner.querySelector('.cal-viewport');
-        if(vp){
-          const old=vp.querySelector('.cal-grid');
-          const neu=buildMonthGrid(p,V.y,V.m);
-          if(old)old.replaceWith(neu);else vp.appendChild(neu);
+      const cell=list.querySelector(`.card[data-id="${pid}"] .cell[data-k="${k}"]`);
+      if(cell){
+        const hasNote=ta.value.trim();
+        let nd=cell.querySelector('.nd');
+        if(hasNote&&!nd){
+          nd=document.createElement('span');
+          nd.className='nd';
+          cell.appendChild(nd);
+        }else if(!hasNote&&nd){
+          nd.remove();
         }
       }
     },350);
@@ -1322,10 +1293,7 @@ function openProjectSheet(id){
     close();
     setTimeout(()=>{
       renderList();
-      if(V.openId===p.id){
-        const el=list.querySelector(`.card[data-id="${p.id}"]`);
-        if(el){el.style.setProperty('--c',p.color);}
-        renderList();
+      if(!isNew&&V.openId===p.id){
         openCard(p.id);
       }
     },80);
@@ -1372,7 +1340,7 @@ function startDrag(card){
 
   document.body.style.overflow='hidden';
 
-  dragState={card,ph,startY:rect.top,fingerY:0,curTop:rect.top,lastClientY:0};
+  dragState={card,ph,startY:rect.top,curTop:rect.top,lastClientY:0};
   if(navigator.vibrate)navigator.vibrate(6);
   showHint('拖动调整顺序');
 
@@ -1382,7 +1350,6 @@ function startDrag(card){
     const y=t.clientY;
     dragState.lastClientY=y;
     const dy=y-dragState.startY;
-    dragState.curTop=dragState.startY-dragState.startY+dy;
     card.style.transform=`translateY(${dy}px) scale(1.02)`;
     const mid=rect.top+dy+rect.height/2;
     const cards=[...list.children].filter(c=>c!==dragState.card&&c!==dragState.ph&&c.classList.contains('card'));
@@ -1392,10 +1359,10 @@ function startDrag(card){
       if(mid<r.top+r.height/2){target=c;break;}
     }
     const ref=target||list.querySelector('.add-card');
-    if(ref&&dragState.ph.nextElementSibling!==ref||(!target&&dragState.ph.nextElementSibling!==list.querySelector('.add-card'))){
+    if(ref&&dragState.ph.nextElementSibling!==ref){
       movePlaceholder(dragState.ph,ref);
     }
-    e.preventDefault();
+    if(e.cancelable)e.preventDefault();
   };
   const up=()=>{
     if(!dragState)return;
@@ -1512,9 +1479,7 @@ function openStats(){
     if(can){
       btn.onclick=()=>shareProject(p,t.getFullYear(),t.getMonth());
     }else{
-      const need=p.goal>0?Math.max(0,p.goal-mc):(10-(mc%10||10)+ (mc%10===0?0:0));
       const next=Math.ceil((mc+1)/10)*10;
-      btn.title=`再打 ${next-mc} 次可分享`;
       btn.onclick=()=>toast(`再打 ${next-mc} 次即可解锁分享`);
     }
     pg.appendChild(row);
@@ -1538,11 +1503,9 @@ function shareProject(p,y,m){
   const ctx=cv.getContext('2d');
   ctx.scale(dpr,dpr);
 
-  // 背景
   ctx.fillStyle='#FAF9F6';
   ctx.fillRect(0,0,W,H);
 
-  // 标题
   ctx.fillStyle='#1B1B1D';
   ctx.font='600 40px -apple-system,"PingFang SC",sans-serif';
   ctx.textBaseline='top';
@@ -1553,12 +1516,10 @@ function shareProject(p,y,m){
   const sub=`${y}年${m+1}月`;
   ctx.fillText(sub,W/2-ctx.measureText(sub).width/2,128);
 
-  // 分隔线
   ctx.strokeStyle='rgba(0,0,0,.08)';
   ctx.lineWidth=1;
   ctx.beginPath();ctx.moveTo(80,180);ctx.lineTo(W-80,180);ctx.stroke();
 
-  // 日历
   const gx=80,gy=220,gw=W-160,cell=gw/7,gap=6;
   const first=new Date(y,m,1);
   const startDow=(first.getDay()+6)%7;
@@ -1601,7 +1562,6 @@ function shareProject(p,y,m){
   }
   ctx.textAlign='left';ctx.textBaseline='top';
 
-  // 正字
   const mc=monthCount(p,y,m);
   const zy=gy2+6*(cs+gap)+40;
   ctx.fillStyle='#8A8A8E';
@@ -1634,7 +1594,6 @@ function shareProject(p,y,m){
   ctx.font='400 22px -apple-system,"PingFang SC",sans-serif';
   ctx.fillText(`共 ${mc} 次`,zx+14,zy+6);
 
-  // 底部
   ctx.fillStyle='#C4C4C8';
   ctx.font='400 18px -apple-system,"PingFang SC",sans-serif';
   const foot=`${S.name} · ${y}.${pad2(m+1)}`;
