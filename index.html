@@ -68,7 +68,6 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 }
 .icon-btn:active{background:var(--sep);}
 
-/* 顶部日期卡片 */
 .top-wrap{padding:2px 16px 4px;}
 .top-card{
   background:var(--card2);border-radius:16px;
@@ -112,6 +111,13 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
   font-size:17px;font-weight:600;letter-spacing:.2px;margin:0;line-height:1.3;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
+.head-edit{
+  display:none;border:none;background:none;color:var(--text3);
+  font-size:12.5px;letter-spacing:.2px;font-family:inherit;
+  padding:4px 0 0;cursor:pointer;flex:none;
+}
+.head-edit:active{opacity:.5;}
+.card.open .head-edit{display:block;}
 
 .zrows{margin-top:12px;}
 .zrow{display:flex;align-items:center;gap:9px;min-height:22px;}
@@ -136,25 +142,25 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 }
 .card-toggle button.on{color:var(--text);font-weight:600;}
 .card-toggle button:active{opacity:.6;}
-.card-toggle .edit-btn{margin-left:auto;color:var(--text3);font-weight:400;font-size:12.5px;}
 
 .expand{height:0;overflow:hidden;transition:height .35s cubic-bezier(.32,.72,0,1);}
 .expand-inner{overflow:hidden;}
 
 .cal-wrap{padding-top:14px;}
 .cal-head{
-  display:flex;align-items:center;gap:8px;
-  margin-bottom:10px;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  margin-bottom:10px;position:relative;
 }
-.cal-head .cal-stat{margin-left:auto;}
-.cal-month{font-size:13px;font-weight:500;color:var(--text2);letter-spacing:.4px;min-width:100px;text-align:center;}
-.cal-stat{font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums;}
+.cal-month{font-size:13px;font-weight:500;color:var(--text2);letter-spacing:.4px;min-width:96px;text-align:center;}
+.cal-stat{
+  font-size:12px;color:var(--text3);font-variant-numeric:tabular-nums;
+  position:absolute;right:0;
+}
 .cal-nav{
-  width:44px;height:44px;border-radius:22px;border:none;
-  background:transparent;color:var(--accent);font-size:22px;
+  width:36px;height:36px;border-radius:18px;border:none;
+  background:transparent;color:var(--accent);font-size:20px;
   line-height:1;cursor:pointer;padding:0;
   display:flex;align-items:center;justify-content:center;
-  margin:-8px 0;
 }
 .cal-nav:active{background:var(--sep);}
 .weekdays{
@@ -786,8 +792,22 @@ function buildCard(p){
 
   const head = document.createElement('div');
   head.className = 'card-head';
-  head.innerHTML = `<span class="dot"></span><div class="names"><h3 class="pname">${esc(p.name)}</h3></div>`;
+  head.innerHTML = `
+    <span class="dot"></span>
+    <div class="names"><h3 class="pname">${esc(p.name)}</h3></div>
+    <button class="head-edit" data-edit>编辑</button>
+  `;
   el.appendChild(head);
+
+  /* 整卡片点击 = 展开/收起，但点「编辑」时不展开 */
+  head.addEventListener('click', (e) => {
+    if(e.target.closest('[data-edit]')) return;
+    toggleCard(p.id);
+  });
+  head.querySelector('[data-edit]').addEventListener('click', (e) => {
+    e.stopPropagation();
+    openProjectModal(p.id);
+  });
 
   const zrows = document.createElement('div');
   zrows.className = 'zrows';
@@ -799,6 +819,9 @@ function buildCard(p){
   el._refs = { zrows };
   fillCardGlyphs(el, p);
 
+  /* 正字行也可点展开（除了编辑按钮） */
+  zrows.addEventListener('click', () => { toggleCard(p.id); });
+
   const expand = document.createElement('div');
   expand.className = 'expand';
   const inner = document.createElement('div');
@@ -808,7 +831,6 @@ function buildCard(p){
   el._refs.expand = expand;
   el._refs.inner = inner;
 
-  head.addEventListener('click', () => { toggleCard(p.id); });
   return el;
 }
 
@@ -871,7 +893,6 @@ function renderCardExpand(card, p){
   toggle.innerHTML = `
     <button data-tab="cal" class="${tab==='cal'?'on':''}">月历</button>
     <button data-tab="tian" class="${tab==='tian'?'on':''}">正字田</button>
-    <button class="edit-btn" data-edit="1">编辑</button>
   `;
   toggle.querySelectorAll('[data-tab]').forEach(b => {
     b.onclick = (e) => {
@@ -880,10 +901,6 @@ function renderCardExpand(card, p){
       renderCardExpand(card, p);
     };
   });
-  toggle.querySelector('[data-edit]').onclick = (e) => {
-    e.stopPropagation();
-    openProjectModal(p.id);
-  };
   inner.appendChild(toggle);
 
   if(tab === 'cal') inner.appendChild(buildCalendar(p));
@@ -1002,8 +1019,16 @@ function buildMonthGrid(p, y, m){
   return grid;
 }
 
+/* 点格子：
+   - 空格子 → 打卡（一步）
+   - 已打勾的格子 → 弹面板（取消/编辑） */
 function onCellClick(p, key, cellEl){
-  toggleRecord(p, key);
+  const had = hasRecord(p, key);
+  if(had){
+    openRecordModal(p.id, key);
+    return;
+  }
+  setRecord(p, key);
   applyCellStyle(cellEl, p, key);
   const card = listEl.querySelector(`.card[data-id="${p.id}"]`);
   if(card) fillCardGlyphs(card, p);
@@ -1193,35 +1218,44 @@ function openPickProject(dateKeyStr){
 }
 
 /* ============================================================
-   记录编辑弹窗
+   记录编辑弹窗（打卡 + 详情 + 取消）
    ============================================================ */
 function openRecordModal(projectId, dateKeyStr){
   const p = findProject(projectId);
   if(!p) return;
-  const rec = getRecord(p, dateKeyStr);
-  if(!rec){ toast('还没打卡'); return; }
+  let rec = getRecord(p, dateKeyStr);
 
   const [yy, mm, dd] = dateKeyStr.split('-').map(Number);
   const d = new Date(yy, mm-1, dd);
   const week = '日一二三四五六'[d.getDay()];
-  const time = new Date(rec.t);
   const isFuture = dateKeyStr > todayKey();
+  const isChecked = !!rec;
 
   openModal(modal => {
+    let sub = '';
+    if(rec){
+      const time = new Date(rec.t);
+      sub = `已打卡 · ${pad2(time.getHours())}:${pad2(time.getMinutes())}${isFuture ? ' · 预打卡' : ''}`;
+    }else{
+      sub = isFuture ? '还没到 · 预打卡' : '尚未打卡';
+    }
+
     modal.innerHTML = `
       <h3 class="modal-title">${mm}月${dd}日 周${week}</h3>
-      <div class="modal-sub">已打卡 · ${pad2(time.getHours())}:${pad2(time.getMinutes())}${isFuture ? ' · 预打卡' : ''}</div>
+      <div class="modal-sub">${sub}</div>
       <textarea class="form-input" id="noteInput" placeholder="写点什么…"></textarea>
       <div class="chips" id="chipRow"></div>
       <div class="modal-actions">
-        <button class="btn danger" id="btnRemove">取消打卡</button>
-        <button class="btn primary" id="btnDone">完成</button>
+        <button class="btn danger" id="btnRemove" style="${isChecked ? '' : 'display:none'}">取消打卡</button>
+        <button class="btn primary" id="btnCheck">${isChecked ? '完成' : '打卡'}</button>
       </div>
     `;
+
     const ta = modal.querySelector('#noteInput');
-    ta.value = rec.note || '';
+    ta.value = rec ? (rec.note || '') : '';
     let saveTimer = null;
     ta.addEventListener('input', () => {
+      if(!rec) return;
       clearTimeout(saveTimer);
       saveTimer = setTimeout(() => { setNote(p, dateKeyStr, ta.value); renderMain(); }, 350);
     });
@@ -1235,14 +1269,19 @@ function openRecordModal(projectId, dateKeyStr){
       chipRow.appendChild(chip);
     });
 
-    modal.querySelector('#btnDone').addEventListener('click', () => {
+    modal.querySelector('#btnCheck').addEventListener('click', () => {
+      if(!rec){
+        setRecord(p, dateKeyStr);
+        rec = getRecord(p, dateKeyStr);
+      }
       setNote(p, dateKeyStr, ta.value);
       closeModal();
       renderMain();
     });
+
     modal.querySelector('#btnRemove').addEventListener('click', () => {
-      if(rec.note && rec.note.trim()){
-        if(!confirm('这个记录有备注，取消打卡会一起删掉。确定吗？')) return;
+      if(rec && rec.note && rec.note.trim()){
+        if(!confirm('这条记录有备注，取消打卡会一起删掉。确定吗？')) return;
       }
       removeRecord(p, dateKeyStr);
       closeModal();
@@ -1445,11 +1484,11 @@ function openSettings(){
       </div>
       <div class="group-title">日历显示</div>
       <div class="group">
-        <div class="row" id="rowLunar">
+        <div class="row">
           <div><div class="row-label">农历</div><div class="row-sub">在格子下方显示农历</div></div>
           <button class="switch" id="swLunar"></button>
         </div>
-        <div class="row" id="rowHoliday">
+        <div class="row">
           <div><div class="row-label">节假日</div><div class="row-sub">显示节日名称</div></div>
           <button class="switch" id="swHoliday"></button>
         </div>
@@ -1565,7 +1604,6 @@ function openTrash(onCount){
     state.trash.forEach((p, i) => {
       const row = document.createElement('div');
       row.className = 'row';
-      row.style.cursor = 'default';
       row.innerHTML = `
         <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
           <span class="dot" style="background:${p.color};margin:0"></span>
