@@ -57,8 +57,10 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 .nav-row{display:flex;align-items:center;justify-content:space-between;height:40px;}
 .app-title{
   font-size:20px;font-weight:700;letter-spacing:.5px;margin:0;
-  color:var(--text);padding:0;
+  color:var(--text);padding:0;border:none;background:none;
+  cursor:pointer;font-family:inherit;
 }
+.app-title:active{opacity:.5;}
 .nav-actions{display:flex;gap:4px;}
 .icon-btn{
   height:36px;padding:0 10px;border-radius:18px;border:none;background:transparent;
@@ -435,9 +437,8 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 
 <header class="nav" id="nav">
   <div class="nav-row">
-    <h1 class="app-title">正字台</h1>
+    <button class="app-title" id="btnField">正字台</button>
     <div class="nav-actions">
-      <button class="icon-btn" id="btnField">正字田</button>
       <button class="icon-btn" id="btnSettings">设置</button>
     </div>
   </div>
@@ -540,10 +541,7 @@ function restoreFromTrash(index){
   state.trash.splice(index, 1);
   saveState();
 }
-function purgeTrash(index){
-  state.trash.splice(index, 1);
-  saveState();
-}
+function purgeTrash(index){ state.trash.splice(index, 1); saveState(); }
 
 function getRecord(project, key){ return project.records[key] || null; }
 function hasRecord(project, key){ return !!project.records[key]; }
@@ -553,7 +551,6 @@ function setRecord(project, key){
   saveState();
 }
 function removeRecord(project, key){ if(!project.records[key]) return; delete project.records[key]; saveState(); }
-function toggleRecord(project, key){ if(project.records[key]) removeRecord(project, key); else setRecord(project, key); }
 function setNote(project, key, note){ if(!project.records[key]) return; project.records[key].note = note; saveState(); }
 
 function countMonth(project, year, month){
@@ -563,19 +560,6 @@ function countMonth(project, year, month){
   return n;
 }
 function countTotal(project){ return Object.keys(project.records).length; }
-function streakOf(project){
-  let n = 0;
-  const t = new Date();
-  const cur = new Date(t.getFullYear(), t.getMonth(), t.getDate());
-  if(!project.records[dateKey(cur.getFullYear(), cur.getMonth(), cur.getDate())]) cur.setDate(cur.getDate() - 1);
-  while(true){
-    const k = dateKey(cur.getFullYear(), cur.getMonth(), cur.getDate());
-    if(project.records[k]){ n++; cur.setDate(cur.getDate() - 1); }
-    else break;
-    if(n > 3650) break;
-  }
-  return n;
-}
 
 const STROKES = [
   [15,20, 85,20],
@@ -799,7 +783,6 @@ function buildCard(p){
   `;
   el.appendChild(head);
 
-  /* 整卡片点击 = 展开/收起，但点「编辑」时不展开 */
   head.addEventListener('click', (e) => {
     if(e.target.closest('[data-edit]')) return;
     toggleCard(p.id);
@@ -819,7 +802,6 @@ function buildCard(p){
   el._refs = { zrows };
   fillCardGlyphs(el, p);
 
-  /* 正字行也可点展开（除了编辑按钮） */
   zrows.addEventListener('click', () => { toggleCard(p.id); });
 
   const expand = document.createElement('div');
@@ -1019,9 +1001,6 @@ function buildMonthGrid(p, y, m){
   return grid;
 }
 
-/* 点格子：
-   - 空格子 → 打卡（一步）
-   - 已打勾的格子 → 弹面板（取消/编辑） */
 function onCellClick(p, key, cellEl){
   const had = hasRecord(p, key);
   if(had){
