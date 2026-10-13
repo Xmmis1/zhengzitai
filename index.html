@@ -1,3 +1,10 @@
+好，完整重发。**3 条。** 全部发完，你全选替换 GitHub。
+
+---
+
+## 第 1 条 · HTML + CSS
+
+```html
 <!DOCTYPE html>
 <html lang="zh-CN" data-theme="auto">
 <head>
@@ -156,7 +163,6 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 .card-btn.done{background:var(--cell);color:var(--text3);font-weight:400;}
 .card.open .card-btn{display:none;}
 
-/* 打卡反馈动画 */
 @keyframes btnPop{
   0%{transform:scale(1);}
   45%{transform:scale(1.14);}
@@ -622,7 +628,10 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 <div class="toast" id="toast"></div>
 <div class="coach" id="coach"></div>
 
-<script>/* ============================================================
+<script>
+```
+
+**第 1 条结束。回复「继续」发第 2 条。**/* ============================================================
    数据层
    ============================================================ */
 const STORAGE_KEY = 'zhengzitai.v1';
@@ -1103,7 +1112,6 @@ function buildCard(p){
     const sel = view.selDate;
     if(hasRecord(p, sel)) return;
     setRecord(p, sel);
-    /* 按钮短暂动一下 */
     btn.classList.add('pop');
     setTimeout(() => btn.classList.remove('pop'), 420);
     if(!state.settings.hintRecorded){
@@ -1111,7 +1119,6 @@ function buildCard(p){
       saveState();
       setTimeout(() => coach('已记 · 再点一下格子，可以写备注和标签'), 500);
     }
-    /* 延迟一点重渲染，让动画能看到 */
     setTimeout(() => renderMain(), 380);
   });
   head.querySelector('.names').addEventListener('click', () => { toggleCard(p.id); });
@@ -2344,20 +2351,34 @@ function renderBigCalendar(wrap){
 }
 
 /* ============================================================
-   二维码生成（纯代码，不联网）
-   简化版 QR —— 固定内容 + 纠错等级 L 足够展示
+   二维码：从在线 API 拉图，画到 canvas
    ============================================================ */
-/* 微型 QR：支持文本 "https://xmmis1.github.io/zhengzitai/"，版本 3，纠错 L。
-   为简化，这里用一个「假二维码」 —— 实际是把文本哈希成方格图案。
-   肉眼看起来就是二维码，扫不出来。但为了避免误导，我们用一个真的简单实现。 */
-/* 为了不误导用户，分享图上不放二维码，改放网址。 */
-/* 但用户在讨论里要求「二维码」，所以这里用一个真实的 QR 实现。 */
-/* 完整 QR 实现太长，此处用精简版：仅支持固定字符串，编码后展开。 */
-/* 下面这个函数仅在分享图使用，画出来的图案可以扫。 */
+function drawQRCodeAsync(ctx, text, x, y, size, callback){
+  const url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(text);
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(x, y, size, size);
+    ctx.drawImage(img, x, y, size, size);
+    if(callback) callback();
+  };
+  img.onerror = () => {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(x, y, size, size);
+    ctx.strokeStyle = '#C4BFB5';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, size, size);
+    ctx.fillStyle = '#8A857C';
+    ctx.font = '12px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('二维码', x + size/2, y + size/2);
+    if(callback) callback();
+  };
+  img.src = url;
+}
 
-/* 说明：为了保持代码可读性，这里实现一个「固定字符串」的 QR 生成。
-   用户输入固定网址，生成的就是那个网址的二维码。 */
- 
 /* ============================================================
    分享 · 选项 → 生成图
    ============================================================ */
@@ -2389,22 +2410,6 @@ function openShareOptions(defaultY, defaultM){
 
 function shareMonth(y, m, range){
   range = range || 'month';
-  const W = 760, H = 1100;
-  const dpr = 2;
-  const cv = document.createElement('canvas');
-  cv.width = W * dpr;
-  cv.height = H * dpr;
-  const ctx = cv.getContext('2d');
-  ctx.scale(dpr, dpr);
-
-  /* 分享图固定米白底 + 墨色字（不跟深浅模式） */
-  const bg = '#FAF8F3';
-  const fg = '#2A2622';
-  const fg2 = '#8A857C';
-  const fg3 = '#C4BFB5';
-
-  ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, W, H);
 
   /* 计算范围 */
   let fromY = y, fromM = m, toY = y, toM = m;
@@ -2438,12 +2443,6 @@ function shareMonth(y, m, range){
     return ym >= fromY * 12 + (fromM+1) && ym <= toY * 12 + (toM+1);
   };
 
-  /* 标题 */
-  ctx.fillStyle = fg;
-  ctx.font = '600 38px -apple-system,"PingFang SC",sans-serif';
-  ctx.textBaseline = 'top';
-  ctx.fillText(label, W/2 - ctx.measureText(label).width/2, 70);
-
   /* 统计 */
   const daySet = new Set();
   let totalCount = 0;
@@ -2454,15 +2453,78 @@ function shareMonth(y, m, range){
   }
   const days = daySet.size;
 
+  const projStats = [];
+  state.projects.forEach(p => {
+    let c = 0;
+    for(const k in p.records) if(inRange(k)) c++;
+    if(c > 0) projStats.push({ name: p.name, color: p.color, count: c });
+  });
+
+  /* 计算总高度 */
+  const W = 760;
+  const TOP_PAD = 40;
+
+  let cursor = TOP_PAD;
+  cursor += 40 + 30;   /* 标题 + 间距 */
+  cursor += 28 + 4 + 26 + 40;  /* 两行数字 + 间距 */
+  cursor += 40 + 40;   /* 正字 + 间距 */
+  cursor += projStats.length * 32 + 40;  /* 各项目 + 间距 */
+
+  const calStartY = cursor;
+  const calCols = 7;
+  const calGap = 6;
+  const calCell = 60;
+  const calW = calCols * calCell + (calCols - 1) * calGap;
+  const calLeft = (W - calW) / 2;
+  const calRows = 6;
+  let calHeight = 0;
+  if(range === 'month'){
+    calHeight = 30 + calRows * calCell + (calRows - 1) * calGap;
+  }
+  cursor += calHeight;
+  if(calHeight) cursor += 60;  /* 月历和底部的间距 */
+
+  const footY = cursor;
+  cursor += 90;  /* 底部二维码高度 */
+  cursor += 60;  /* 底边 */
+
+  const H = cursor;
+
+  /* 画布 */
+  const dpr = 2;
+  const cv = document.createElement('canvas');
+  cv.width = W * dpr;
+  cv.height = H * dpr;
+  const ctx = cv.getContext('2d');
+  ctx.scale(dpr, dpr);
+
+  const bg = '#FAF8F3';
+  const fg = '#2A2622';
+  const fg2 = '#8A857C';
+  const fg3 = '#C4BFB5';
+
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  let cy = TOP_PAD;
+
+  /* 标题 */
+  ctx.fillStyle = fg;
+  ctx.font = '600 38px -apple-system,"PingFang SC",sans-serif';
+  ctx.textBaseline = 'top';
+  ctx.textAlign = 'center';
+  ctx.fillText(label, W/2, cy);
+  cy += 40 + 30;
+
+  /* 数字 */
   ctx.font = '500 24px -apple-system,"PingFang SC",sans-serif';
   ctx.fillStyle = fg;
-  const l1 = `坚持 ${days} 天`;
-  ctx.fillText(l1, W/2 - ctx.measureText(l1).width/2, 140);
-  const l2 = `写下 ${totalCount} 笔`;
-  ctx.fillText(l2, W/2 - ctx.measureText(l2).width/2, 178);
+  ctx.fillText(`坚持 ${days} 天`, W/2, cy);
+  cy += 28 + 4;
+  ctx.fillText(`写下 ${totalCount} 笔`, W/2, cy);
+  cy += 26 + 40;
 
   /* 正字 */
-  const zy = 240;
   const full = Math.floor(totalCount / 5);
   const part = totalCount % 5;
   const size = 32, gap = 2;
@@ -2473,7 +2535,7 @@ function shareMonth(y, m, range){
 
   const drawGlyph = (cnt, color) => {
     ctx.save();
-    ctx.translate(zx, zy);
+    ctx.translate(zx, cy);
     ctx.strokeStyle = color;
     ctx.lineWidth = size / 100 * 7;
     ctx.lineCap = 'round';
@@ -2492,74 +2554,68 @@ function shareMonth(y, m, range){
   if(full > 12){
     ctx.fillStyle = fg2;
     ctx.font = '400 24px -apple-system,"PingFang SC",sans-serif';
-    ctx.fillText('…', zx, zy + 4);
+    ctx.textAlign = 'left';
+    ctx.fillText('…', zx, cy + 4);
+    ctx.textAlign = 'center';
   }
+  cy += 40 + 40;
 
-  /* 各项目 · 项目名用项目色，次数用墨色 */
-  let py = zy + size + 40;
+  /* 各项目 */
   ctx.font = '400 18px -apple-system,"PingFang SC",sans-serif';
-  state.projects.forEach(p => {
-    let c = 0;
-    for(const k in p.records) if(inRange(k)) c++;
-    if(c === 0) return;
+  projStats.forEach(p => {
     ctx.fillStyle = p.color;
     ctx.textAlign = 'left';
-    ctx.fillText(p.name, 100, py);
+    ctx.fillText(p.name, 100, cy);
     ctx.textAlign = 'right';
     ctx.fillStyle = fg2;
-    ctx.fillText(c + ' 次', W - 100, py);
-    py += 32;
+    ctx.fillText(p.count + ' 次', W - 100, cy);
+    cy += 32;
   });
-  ctx.textAlign = 'left';
+  cy += 40;
 
-  /* 月历（仅"本月"时画） */
+  /* 月历 */
   if(range === 'month'){
     const mode = state.settings.calMode || 'stripe';
-    const calY = Math.max(py + 20, 560);
-    const gx = 70, gw = W - 140;
-    const cellW = gw / 7;
-    const gap2 = 5;
-    const cellH = cellW - gap2;
-
-    ctx.fillStyle = fg3;
-    ctx.font = '400 16px -apple-system,"PingFang SC",sans-serif';
-    ctx.textAlign = 'center';
-    WEEK.forEach((w, i) => {
-      ctx.fillText(w, gx + i*cellW + cellW/2, calY);
-    });
-
-    const gridY = calY + 30;
     const first = new Date(y, m, 1);
     const startDow = (first.getDay() + 6) % 7;
     const dim = new Date(y, m+1, 0).getDate();
 
+    ctx.fillStyle = fg3;
+    ctx.font = '400 16px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    WEEK.forEach((w, i) => {
+      ctx.fillText(w, calLeft + i*(calCell+calGap) + calCell/2, cy);
+    });
+
+    const gridY = cy + 30;
     for(let i = 0; i < 42; i++){
       const d = i - startDow + 1;
       const col = i % 7, row = Math.floor(i / 7);
-      const x = gx + col*cellW + gap2/2;
-      const yy = gridY + row*(cellH + gap2);
+      const x = calLeft + col*(calCell+calGap);
+      const yy = gridY + row*(calCell+calGap);
       if(d < 1 || d > dim) continue;
 
       const key = dateKey(y, m, d);
       const onProjects = projectsOnDate(key);
-      const r = 10;
 
       ctx.fillStyle = '#F0EBE1';
       ctx.beginPath();
-      if(ctx.roundRect) ctx.roundRect(x, yy, cellH, cellH, r);
-      else ctx.rect(x, yy, cellH, cellH);
+      if(ctx.roundRect) ctx.roundRect(x, yy, calCell, calCell, 12);
+      else ctx.rect(x, yy, calCell, calCell);
       ctx.fill();
 
       ctx.fillStyle = fg3;
-      ctx.font = '400 13px -apple-system,"PingFang SC",sans-serif';
+      ctx.font = '400 14px -apple-system,"PingFang SC",sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(d, x + cellH/2, yy + 14);
+      ctx.textBaseline = 'top';
+      ctx.fillText(d, x + calCell/2, yy + 6);
 
       if(mode === 'tian' && onProjects.length > 0){
         const cnt = Math.min(onProjects.length, 5);
-        const gs = cellH * 0.55;
-        const gx2 = x + cellH/2 - gs/2;
-        const gy2 = yy + cellH*0.32;
+        const gs = calCell * 0.6;
+        const gx2 = x + calCell/2 - gs/2;
+        const gy2 = yy + calCell*0.32;
         ctx.save();
         ctx.translate(gx2, gy2);
         ctx.strokeStyle = fg;
@@ -2577,50 +2633,55 @@ function shareMonth(y, m, range){
       }
       if(mode === 'stripe' && onProjects.length > 0){
         const maxShow = 3;
-        const sh = 8;
-        const sy = yy + cellH*0.35;
+        const sh = 10;
+        const sy = yy + calCell*0.38;
         onProjects.slice(0, maxShow).forEach((p, idx) => {
           const ry = sy + idx*(sh + 2);
-          if(ry + sh > yy + cellH - 3) return;
+          if(ry + sh > yy + calCell - 4) return;
           ctx.fillStyle = p.color;
           ctx.beginPath();
-          if(ctx.roundRect) ctx.roundRect(x + 3, ry, cellH - 6, sh, 3);
-          else ctx.rect(x + 3, ry, cellH - 6, sh);
+          if(ctx.roundRect) ctx.roundRect(x + 4, ry, calCell - 8, sh, 3);
+          else ctx.rect(x + 4, ry, calCell - 8, sh);
           ctx.fill();
         });
         if(onProjects.length > maxShow){
           ctx.fillStyle = fg2;
           ctx.font = '400 10px -apple-system,"PingFang SC",sans-serif';
           ctx.textAlign = 'right';
-          ctx.fillText('+' + (onProjects.length - maxShow), x + cellH - 4, yy + cellH - 4);
+          ctx.textBaseline = 'bottom';
+          ctx.fillText('+' + (onProjects.length - maxShow), x + calCell - 5, yy + calCell - 4);
         }
       }
     }
-    ctx.textAlign = 'left';
+    cy += calHeight + 60;
   }
 
-  /* 底部：左侧一行小字 · 右侧二维码 */
+  /* 底部：二维码 + 文字并排 */
+  const qrSize = 90;
+  const qrX = 60;
+  const qrY = cy;
+
   ctx.fillStyle = fg3;
-  ctx.font = '400 16px -apple-system,"PingFang SC",sans-serif';
-  ctx.fillText('正字台 · 一笔一画，把日子写端正', 60, H - 70);
+  ctx.font = '400 15px -apple-system,"PingFang SC",sans-serif';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('正字台', qrX + qrSize + 16, qrY + qrSize/2 - 12);
+  ctx.font = '400 13px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillText('一笔一画，把日子写端正', qrX + qrSize + 16, qrY + qrSize/2 + 12);
 
-  /* 二维码（右下角） */
-  const qrSize = 100;
-  const qrX = W - 60 - qrSize;
-  const qrY = H - 60 - qrSize;
-   drawQRCode(ctx, 'https://xmmis1.github.io/zhengzitai/', qrX, qrY, qrSize);
-
-  cv.toBlob(async blob => {
-    if(!blob) return;
-    const file = new File([blob], `正字台-${y}${pad2(m+1)}.png`, { type: 'image/png' });
-    if(navigator.canShare && navigator.canShare({ files: [file] })){
-      try { await navigator.share({ files: [file], title: label }); return; } catch(e){}
-    }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = file.name; a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
-  }, 'image/png');
+  drawQRCodeAsync(ctx, 'https://xmmis1.github.io/zhengzitai/', qrX, qrY, qrSize, () => {
+    cv.toBlob(async blob => {
+      if(!blob) return;
+      const file = new File([blob], `正字台-${y}${pad2(m+1)}.png`, { type: 'image/png' });
+      if(navigator.canShare && navigator.canShare({ files: [file] })){
+        try { await navigator.share({ files: [file], title: label }); return; } catch(e){}
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = file.name; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+    }, 'image/png');
+  });
 }
 
 /* ============================================================
@@ -2809,7 +2870,27 @@ function openTianPage(){
 }
 
 function shareTian(stats){
-  const W = 760, H = 1100;
+  const W = 760;
+  const TOP_PAD = 40;
+
+  const gs = 26;
+  const gap = 0;
+  const perRow = Math.floor((W - 120) / (gs + gap));
+  const full = Math.floor(stats.count / 5);
+  const part = stats.count % 5;
+  const totalGlyphs = full + (part ? 1 : 0);
+  const rows = Math.max(1, Math.ceil(totalGlyphs / perRow));
+  const tianHeight = rows * gs;
+
+  let cursor = TOP_PAD;
+  cursor += 40 + 40;   /* 标题 + 间距 */
+  cursor += tianHeight;
+  cursor += 60;
+  cursor += 30 + 4 + 26 + 60;
+  cursor += 90 + 60;
+
+  const H = cursor;
+
   const dpr = 2;
   const cv = document.createElement('canvas');
   cv.width = W * dpr;
@@ -2817,33 +2898,29 @@ function shareTian(stats){
   const ctx = cv.getContext('2d');
   ctx.scale(dpr, dpr);
 
-  /* 固定米白底 + 墨色字 */
   const bg = '#FAF8F3';
   const fg = '#2A2622';
+  const fg2 = '#8A857C';
   const fg3 = '#C4BFB5';
 
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, W, H);
 
+  let cy = TOP_PAD;
+
   ctx.fillStyle = fg;
   ctx.font = '600 32px -apple-system,"PingFang SC",sans-serif';
   ctx.textBaseline = 'top';
-  const t = '我写下的正字';
-  ctx.fillText(t, W/2 - ctx.measureText(t).width/2, 60);
+  ctx.textAlign = 'center';
+  ctx.fillText('我写下的正字', W/2, cy);
+  cy += 40 + 40;
 
-  const full = Math.floor(stats.count / 5);
-  const part = stats.count % 5;
-  const gs = 26;
-  const gap = 0;
-  const perRow = Math.floor((W - 120) / (gs + gap));
-  const maxRows = 18;
-  const maxGlyphs = perRow * maxRows;
-  const showFull = Math.min(full, Math.floor((maxGlyphs - (part ? 1 : 0))));
-
-  let gx = 60, gy = 130;
+  /* 正字田 */
+  let gx = 60;
+  let count = 0;
   const drawG = (cnt) => {
     ctx.save();
-    ctx.translate(gx, gy);
+    ctx.translate(gx, cy);
     ctx.strokeStyle = fg;
     ctx.lineWidth = gs / 100 * 7;
     ctx.lineCap = 'round';
@@ -2858,49 +2935,56 @@ function shareTian(stats){
     ctx.restore();
   };
 
-  let count = 0;
-  for(let i = 0; i < showFull; i++){
+  for(let i = 0; i < full; i++){
     drawG(5);
     gx += gs + gap;
     count++;
-    if(count % perRow === 0){ gx = 60; gy += gs + gap; }
+    if(count % perRow === 0){ gx = 60; cy += gs + gap; }
   }
-  if(part && count < maxGlyphs){
+  if(part){
     drawG(part);
+    gx += gs + gap;
+    count++;
   }
+  cy += gs + 60;
 
   ctx.fillStyle = fg;
-  ctx.font = '600 30px -apple-system,"PingFang SC",sans-serif';
+  ctx.font = '600 26px -apple-system,"PingFang SC",sans-serif';
   ctx.textAlign = 'center';
-  const line1 = `坚持 ${stats.days} 天`;
-  ctx.fillText(line1, W/2, H - 180);
+  ctx.textBaseline = 'top';
+  ctx.fillText(`坚持 ${stats.days} 天`, W/2, cy);
+  cy += 30 + 4;
   ctx.fillStyle = fg3;
-  ctx.font = '400 20px -apple-system,"PingFang SC",sans-serif';
-  const line2 = `写下了 ${full} 个正字${part > 0 ? ' + ' + part + ' 笔' : ''}`;
-  ctx.fillText(line2, W/2, H - 140);
+  ctx.font = '400 18px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillText(`写下了 ${full} 个正字${part > 0 ? ' + ' + part + ' 笔' : ''}`, W/2, cy);
+  cy += 26 + 60;
+
+  /* 底部 */
+  const qrSize = 90;
+  const qrX = 60;
+  const qrY = cy;
+
+  ctx.fillStyle = fg3;
+  ctx.font = '400 15px -apple-system,"PingFang SC",sans-serif';
   ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('正字台', qrX + qrSize + 16, qrY + qrSize/2 - 12);
+  ctx.font = '400 13px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillText('一笔一画，把日子写端正', qrX + qrSize + 16, qrY + qrSize/2 + 12);
 
-  /* 底部：左字 · 右二维码 */
-  ctx.fillStyle = fg3;
-  ctx.font = '400 16px -apple-system,"PingFang SC",sans-serif';
-  ctx.fillText('正字台 · 一笔一画，把日子写端正', 60, H - 70);
-
-  const qrSize = 100;
-  const qrX = W - 60 - qrSize;
-  const qrY = H - 60 - qrSize;
-   drawQRCode(ctx, 'https://xmmis1.github.io/zhengzitai/', qrX, qrY, qrSize);
-
-  cv.toBlob(async blob => {
-    if(!blob) return;
-    const file = new File([blob], '我写下的正字.png', { type: 'image/png' });
-    if(navigator.canShare && navigator.canShare({ files: [file] })){
-      try { await navigator.share({ files: [file], title: '我写下的正字' }); return; } catch(e){}
-    }
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = file.name; a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 3000);
-  }, 'image/png');
+  drawQRCodeAsync(ctx, 'https://xmmis1.github.io/zhengzitai/', qrX, qrY, qrSize, () => {
+    cv.toBlob(async blob => {
+      if(!blob) return;
+      const file = new File([blob], '我写下的正字.png', { type: 'image/png' });
+      if(navigator.canShare && navigator.canShare({ files: [file] })){
+        try { await navigator.share({ files: [file], title: '我写下的正字' }); return; } catch(e){}
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = file.name; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+    }, 'image/png');
+  });
 }
 
 /* ============================================================
@@ -3070,316 +3154,7 @@ function init(){
     setTimeout(() => coach('点右下角「记一笔」，开始写第一笔'), 600);
   }
 }
-/* ============================================================
-   二维码生成器（纯代码，能扫）
-   用法：QR.make(text, version) → 返回 boolean 二维数组
-   ============================================================ */
-const QR = (function(){
-  /* 简化版 QR：byte 模式，版本 1-10，纠错 L */
-  const RS_BLOCK_TABLE = [
-    [1,26,19],   /* v1 */
-    [1,44,34],   /* v2 */
-    [1,70,55],   /* v3 */
-    [1,100,80],  /* v4 */
-    [1,134,108], /* v5 */
-    [2,86,68],   /* v6 */
-    [2,98,78],   /* v7 */
-    [2,121,97],  /* v8 */
-    [2,146,116], /* v9 */
-    [2,86,68, 2,87,69] /* v10 —— 示例只到 v9，v10 用近似 */
-  ];
-  const ALIGN_POS = [
-    [], [6,18], [6,22], [6,26], [6,30], [6,34],
-    [6,22,38], [6,24,42], [6,26,46], [6,28,50]
-  ];
-  const EC_CODEWORDS = [7,10,15,20,26,18,20,24,30,18];
-  const EC_BLOCKS = [1,1,1,1,1,2,2,2,2,4];
 
-  /* ---------- Galois 域 ---------- */
-  const EXP = new Array(256);
-  const LOG = new Array(256);
-  (function(){
-    let x = 1;
-    for(let i = 0; i < 256; i++){
-      EXP[i] = x;
-      LOG[x] = i;
-      x <<= 1;
-      if(x & 0x100) x ^= 0x11d;
-    }
-  })();
-  function gfMul(a, b){
-    if(a === 0 || b === 0) return 0;
-    return EXP[(LOG[a] + LOG[b]) % 255];
-  }
-
-  /* ---------- Reed-Solomon ---------- */
-  function rsGenPoly(degree){
-    let poly = [1];
-    for(let i = 0; i < degree; i++){
-      const next = new Array(poly.length + 1).fill(0);
-      for(let j = 0; j < poly.length; j++){
-        next[j] ^= gfMul(poly[j], 1);
-        next[j+1] ^= gfMul(poly[j], EXP[i]);
-      }
-      poly = next;
-    }
-    return poly;
-  }
-  function rsEncode(data, ecLen){
-    const gen = rsGenPoly(ecLen);
-    const res = new Array(data.length + ecLen).fill(0);
-    for(let i = 0; i < data.length; i++) res[i] = data[i];
-    for(let i = 0; i < data.length; i++){
-      const coef = res[i];
-      if(coef !== 0){
-        for(let j = 0; j < gen.length; j++){
-          res[i + j] ^= gfMul(gen[j], coef);
-        }
-      }
-    }
-    return res.slice(data.length);
-  }
-
-  /* ---------- 编码 ---------- */
-  function textToBytes(text){
-    const arr = [];
-    for(let i = 0; i < text.length; i++){
-      const c = text.charCodeAt(i);
-      if(c < 128) arr.push(c);
-      else if(c < 2048){ arr.push(0xc0 | (c >> 6), 0x80 | (c & 0x3f)); }
-      else { arr.push(0xe0 | (c >> 12), 0x80 | ((c >> 6) & 0x3f), 0x80 | (c & 0x3f)); }
-    }
-    return arr;
-  }
-
-  function pickVersion(len){
-    for(let v = 1; v <= 9; v++){
-      const info = RS_BLOCK_TABLE[v-1];
-      const dataCw = info[2];
-      const totalBits = 4 + 8 + len * 8; /* mode + length(8) + data */
-      if(totalBits <= dataCw * 8) return v;
-    }
-    return 9;
-  }
-
-  /* ---------- 生成 ---------- */
-  function make(text){
-    const bytes = textToBytes(text);
-    const version = pickVersion(bytes.length);
-    const info = RS_BLOCK_TABLE[version-1];
-    const dataCw = info[2];
-    const ecCw = info[1] - info[2];
-    const size = 17 + version * 4;
-
-    /* 数据位 */
-    const bits = [];
-    const pushBits = (val, n) => { for(let i = n-1; i >= 0; i--) bits.push((val >> i) & 1); };
-    pushBits(0b0100, 4);         /* byte mode */
-    pushBits(bytes.length, 8);   /* 长度（v1-9 是 8 位） */
-    bytes.forEach(b => pushBits(b, 8));
-    /* 补齐到 dataCw 字节 */
-    const cap = dataCw * 8;
-    while(bits.length < cap){
-      if(cap - bits.length >= 8){
-        pushBits(0, 4);
-        if(cap - bits.length < 8) break;
-        pushBits(0, 4);
-      }else break;
-    }
-    /* 填充字节：交替 0xEC 0x11 */
-    let padBits = [];
-    let toggle = 0;
-    while(bits.length + padBits.length < cap){
-      const byte = (toggle++ % 2 === 0) ? 0xEC : 0x11;
-      for(let i = 7; i >= 0; i--) padBits.push((byte >> i) & 1);
-    }
-    const dataBits = bits.concat(padBits).slice(0, cap);
-    /* 按 8 位分组 */
-    const dataBytes = [];
-    for(let i = 0; i < dataBits.length; i += 8){
-      let b = 0;
-      for(let j = 0; j < 8; j++) b = (b << 1) | dataBits[i+j];
-      dataBytes.push(b);
-    }
-
-    /* 纠错 */
-    const ecBytes = rsEncode(dataBytes, ecCw);
-
-    /* 交错（简化版：单块情况） */
-    const finalBytes = dataBytes.concat(ecBytes);
-
-    /* ---------- 画矩阵 ---------- */
-    const mod = Array.from({length: size}, () => new Array(size).fill(null));
-
-    /* finder patterns */
-    const putFinder = (ox, oy) => {
-      for(let y = -1; y <= 7; y++){
-        for(let x = -1; x <= 7; x++){
-          const gx = ox + x, gy = oy + y;
-          if(gx < 0 || gy < 0 || gx >= size || gy >= size) continue;
-          const inside = (x >= 0 && x <= 6 && y >= 0 && y <= 6);
-          if(!inside){ mod[gy][gx] = 0; continue; }
-          const isBorder = (x === 0 || x === 6 || y === 0 || y === 6);
-          const isCenter = (x >= 2 && x <= 4 && y >= 2 && y <= 4);
-          mod[gy][gx] = (isBorder || isCenter) ? 1 : 0;
-        }
-      }
-    };
-    putFinder(0, 0);
-    putFinder(size - 7, 0);
-    putFinder(0, size - 7);
-
-    /* timing patterns */
-    for(let i = 8; i < size - 8; i++){
-      mod[6][i] = (i % 2 === 0) ? 1 : 0;
-      mod[i][6] = (i % 2 === 0) ? 1 : 0;
-    }
-
-    /* alignment pattern（v2+） */
-    if(version >= 2){
-      const pos = ALIGN_POS[version];
-      if(pos){
-        for(const py of pos){
-          for(const px of pos){
-            if(mod[py][px] !== null) continue;
-            for(let y = -2; y <= 2; y++){
-              for(let x = -2; x <= 2; x++){
-                const gx = px + x, gy = py + y;
-                if(gx < 0 || gy < 0 || gx >= size || gy >= size) continue;
-                const inside = (Math.abs(x) === 2 || Math.abs(y) === 2);
-                const center = (x === 0 && y === 0);
-                mod[gy][gx] = (inside || center) ? 1 : 0;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    /* 保留格式信息区（先占位 0） */
-    const formatCoords = [];
-    for(let i = 0; i <= 8; i++){
-      if(mod[8][i] === null){ mod[8][i] = 0; formatCoords.push([i, 8]); }
-      if(mod[i][8] === null){ mod[i][8] = 0; formatCoords.push([8, i]); }
-    }
-    for(let i = 0; i < 8; i++){
-      if(mod[size-1-i][8] === null) mod[size-1-i][8] = 0;
-      if(mod[8][size-1-i] === null) mod[8][size-1-i] = 0;
-    }
-    mod[size-8][8] = 1; /* dark module */
-
-    /* 数据填充：zigzag */
-    let bitIdx = 0;
-    const allBits = [];
-    finalBytes.forEach(b => { for(let i = 7; i >= 0; i--) allBits.push((b >> i) & 1); });
-
-    let col = size - 1;
-    let upward = true;
-    while(col > 0){
-      if(col === 6) col--; /* 跳过 timing */
-      for(let i = 0; i < size; i++){
-        const row = upward ? (size - 1 - i) : i;
-        for(let dx = 0; dx < 2; dx++){
-          const x = col - dx;
-          if(mod[row][x] !== null) continue;
-          const bit = bitIdx < allBits.length ? allBits[bitIdx++] : 0;
-          mod[row][x] = bit;
-        }
-      }
-      col -= 2;
-      upward = !upward;
-    }
-
-    /* 掩码：固定用掩码 0（(x+y) % 2 === 0），格式信息也要相应 */
-    for(let y = 0; y < size; y++){
-      for(let x = 0; x < size; x++){
-        if(mod[y][x] !== null && !isFunctionModule(x, y, size, version)){
-          if((x + y) % 2 === 0) mod[y][x] ^= 1;
-        }
-      }
-    }
-
-    /* 格式信息：纠错 L + 掩码 0 */
-    const ecLevelBits = 0b01; /* L */
-    const maskBits = 0b000;
-    const fmt = (ecLevelBits << 3) | maskBits;
-    const fmtEncoded = bchEncode(fmt);
-
-    /* 写格式信息（两处） */
-    const fmtPos = [
-      /* 左上 */
-      [8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,7],[8,8],
-      [7,8],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8],
-      /* 右上 */
-      [size-1,8],[size-2,8],[size-3,8],[size-4,8],[size-5,8],[size-6,8],[size-7,8],
-      /* 左下 */
-      [8,size-8],[8,size-7],[8,size-6],[8,size-5],[8,size-4],[8,size-3],[8,size-2],[8,size-1]
-    ];
-    for(let i = 0; i < 15; i++){
-      const bit = (fmtEncoded >> i) & 1;
-      const [x, y] = fmtPos[i];
-      if(x < size && y < size) mod[y][x] = bit;
-    }
-
-    return mod;
-  }
-
-  function isFunctionModule(x, y, size, version){
-    /* finder + separators */
-    if(x <= 8 && y <= 8) return true;
-    if(x >= size - 8 && y <= 8) return true;
-    if(x <= 8 && y >= size - 8) return true;
-    /* timing */
-    if(x === 6 || y === 6) return true;
-    /* alignment */
-    if(version >= 2){
-      const pos = ALIGN_POS[version];
-      if(pos){
-        for(const py of pos){
-          for(const px of pos){
-            if(Math.abs(x - px) <= 2 && Math.abs(y - py) <= 2){
-              if(!(x <= 8 && y <= 8) && !(x >= size - 8 && y <= 8) && !(x <= 8 && y >= size - 8)) return true;
-            }
-          }
-        }
-      }
-    }
-    /* format info area */
-    if(y === 8) return true;
-    if(x === 8) return true;
-    return false;
-  }
-
-  function bchEncode(data){
-    /* BCH(15,5) 编码 */
-    let d = data << 10;
-    for(let i = 4; i >= 0; i--){
-      if(d & (1 << (i + 10))){
-        d ^= 0x537 << i;
-      }
-    }
-    return ((data << 10) | d) ^ 0x5412;
-  }
-
-  return { make };
-})();
-
-/* ---------- 把二维码画到 canvas ---------- */
-function drawQRCode(ctx, text, x, y, size){
-  const matrix = QR.make(text);
-  const n = matrix.length;
-  const cell = size / n;
-  ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(x, y, size, size);
-  ctx.fillStyle = '#1A1815';
-  for(let r = 0; r < n; r++){
-    for(let c = 0; c < n; c++){
-      if(matrix[r][c] === 1){
-        ctx.fillRect(x + c * cell, y + r * cell, cell + 0.4, cell + 0.4);
-      }
-    }
-  }
-}
 init();
 </script>
 </body>
