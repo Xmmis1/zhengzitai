@@ -621,13 +621,7 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 <div class="toast" id="toast"></div>
 <div class="coach" id="coach"></div>
 
-<script>
-```
-
-**第 1 条结束。回复「继续」发第 2 条。**/* ============================================================
-   数据层
-   ============================================================ */
-const STORAGE_KEY = 'zhengzitai.v1';
+<script>const STORAGE_KEY = 'zhengzitai.v1';
 const COLORS = ['#6FA3A0','#7A93B8','#A98BB0','#C08A7E','#C2A46B','#85A085','#8794A8','#B8735E','#8A9A6B','#B98A94'];
 const WEEK = ['一','二','三','四','五','六','日'];
 
@@ -690,7 +684,6 @@ function loadState(){
 }
 function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
 
-/* ---------- 坚持项目 ---------- */
 function findProject(id){ return state.projects.find(p => p.id === id); }
 function addProject(name, color){
   const p = { id: uid(), name: name || '未命名', color: color || COLORS[state.projects.length % COLORS.length], records: {} };
@@ -747,7 +740,6 @@ function allTimeStats(){
   return { days: daySet.size, count };
 }
 
-/* ---------- 正字渲染 ---------- */
 const STROKES = [
   [15,20, 85,20],
   [50,20, 50,80],
@@ -825,7 +817,6 @@ function renderGlyphs(el, n, keyPrefix, cap){
   el.appendChild(frag);
 }
 
-/* ---------- 农历 ---------- */
 const LUNAR_INFO = [
 0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
 0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
@@ -911,9 +902,6 @@ function coach(msg){
   coachTimer = setTimeout(() => el.classList.remove('show'), 2600);
 }
 
-/* ============================================================
-   进度 · 数据
-   ============================================================ */
 function findProgress(id){ return state.progress.find(p => p.id === id); }
 function addProgress({name, color, unit, target, pinned}){
   const p = {
@@ -987,9 +975,6 @@ function progressMonthStats(p, year, month){
   return { sum, count, tagMap };
 }
 
-/* ============================================================
-   标签切换
-   ============================================================ */
 let currentTab = 'project';
 function setTab(tab){
   currentTab = tab;
@@ -1001,9 +986,6 @@ function setTab(tab){
   else renderProjectList();
 }
 
-/* ============================================================
-   坚持 · 渲染
-   ============================================================ */
 const now = new Date();
 const view = {
   year: now.getFullYear(),
@@ -1413,9 +1395,6 @@ function applyCellStyle(cell, p, key){
   else if(!hasNote && nd){ nd.remove(); }
 }
 
-/* ============================================================
-   进度 · 渲染
-   ============================================================ */
 const progressListEl = $('#progressList');
 
 function renderProgressList(){
@@ -1625,7 +1604,6 @@ function renderProgressExpand(el, p){
   requestAnimationFrame(() => { el._refs.expand.style.height = inner.scrollHeight + 'px'; });
 }
 
-/* 进度 · 记录操作（编辑 / 删除） */
 function openRecordActions(progressId, idx){
   const p = findProgress(progressId);
   if(!p) return;
@@ -1767,10 +1745,7 @@ function openProgressHistory(id){
     setTimeout(() => { if(page.parentNode === pageHost) page.remove(); }, 420);
   });
   requestAnimationFrame(() => page.classList.add('show'));
-}/* ============================================================
-   弹层基础
-   ============================================================ */
-const maskHost = $('#maskHost');
+}const maskHost = $('#maskHost');
 const modalHost = $('#modalHost');
 const pageHost = $('#pageHost');
 
@@ -1808,9 +1783,6 @@ function closeModal(){
   hideMask();
 }
 
-/* ============================================================
-   坚持 · 记录编辑弹窗
-   ============================================================ */
 function openRecordModal(projectId, dateKeyStr){
   const p = findProject(projectId);
   if(!p) return;
@@ -1919,9 +1891,6 @@ function checkMilestones(p){
   }
 }
 
-/* ============================================================
-   坚持 · 项目编辑弹窗
-   ============================================================ */
 function openProjectModal(id){
   const isNew = !id;
   const p = isNew
@@ -2015,9 +1984,6 @@ function openProjectModal(id){
   });
 }
 
-/* ============================================================
-   进度 · 新建 / 编辑 弹窗
-   ============================================================ */
 function openProgressModal(id){
   const isNew = !id;
   const p = isNew
@@ -2114,9 +2080,6 @@ function openProgressModal(id){
   });
 }
 
-/* ============================================================
-   进度 · 记一笔 弹窗
-   ============================================================ */
 function openProgressRecordModal(id){
   const p = findProgress(id);
   if(!p) return;
@@ -2198,9 +2161,6 @@ function openProgressRecordModal(id){
   });
 }
 
-/* ============================================================
-   月历页面
-   ============================================================ */
 function openBigCalendar(){
   pageHost.innerHTML = '';
   const page = document.createElement('div');
@@ -2343,9 +2303,6 @@ function renderBigCalendar(wrap){
   wrap.appendChild(grid);
 }
 
-/* ============================================================
-   二维码：从在线 API 拉图，画到 canvas
-   ============================================================ */
 function drawQRCodeAsync(ctx, text, x, y, size, callback){
   const url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(text);
   const img = new Image();
@@ -2372,9 +2329,6 @@ function drawQRCodeAsync(ctx, text, x, y, size, callback){
   img.src = url;
 }
 
-/* ============================================================
-   分享 · 选项 → 生成图
-   ============================================================ */
 function openShareOptions(defaultY, defaultM){
   openModal(modal => {
     modal.innerHTML = `
@@ -2404,7 +2358,6 @@ function openShareOptions(defaultY, defaultM){
 function shareMonth(y, m, range){
   range = range || 'month';
 
-  /* 计算范围 */
   let fromY = y, fromM = m, toY = y, toM = m;
   let label = `${y}年${m+1}月`;
   if(range === '3m'){
@@ -2436,7 +2389,6 @@ function shareMonth(y, m, range){
     return ym >= fromY * 12 + (fromM+1) && ym <= toY * 12 + (toM+1);
   };
 
-  /* 统计 */
   const daySet = new Set();
   let totalCount = 0;
   for(const p of state.projects){
@@ -2453,17 +2405,15 @@ function shareMonth(y, m, range){
     if(c > 0) projStats.push({ name: p.name, color: p.color, count: c });
   });
 
-  /* 计算总高度 */
   const W = 760;
   const TOP_PAD = 40;
 
   let cursor = TOP_PAD;
-  cursor += 40 + 30;   /* 标题 + 间距 */
-  cursor += 28 + 4 + 26 + 40;  /* 两行数字 + 间距 */
-  cursor += 40 + 40;   /* 正字 + 间距 */
-  cursor += projStats.length * 32 + 40;  /* 各项目 + 间距 */
+  cursor += 40 + 30;
+  cursor += 28 + 4 + 26 + 40;
+  cursor += 40 + 40;
+  cursor += projStats.length * 32 + 40;
 
-  const calStartY = cursor;
   const calCols = 7;
   const calGap = 6;
   const calCell = 60;
@@ -2475,15 +2425,12 @@ function shareMonth(y, m, range){
     calHeight = 30 + calRows * calCell + (calRows - 1) * calGap;
   }
   cursor += calHeight;
-  if(calHeight) cursor += 60;  /* 月历和底部的间距 */
-
-  const footY = cursor;
-  cursor += 90;  /* 底部二维码高度 */
-  cursor += 60;  /* 底边 */
+  if(calHeight) cursor += 60;
+  cursor += 90;
+  cursor += 60;
 
   const H = cursor;
 
-  /* 画布 */
   const dpr = 2;
   const cv = document.createElement('canvas');
   cv.width = W * dpr;
@@ -2501,7 +2448,6 @@ function shareMonth(y, m, range){
 
   let cy = TOP_PAD;
 
-  /* 标题 */
   ctx.fillStyle = fg;
   ctx.font = '600 38px -apple-system,"PingFang SC",sans-serif';
   ctx.textBaseline = 'top';
@@ -2509,7 +2455,6 @@ function shareMonth(y, m, range){
   ctx.fillText(label, W/2, cy);
   cy += 40 + 30;
 
-  /* 数字 */
   ctx.font = '500 24px -apple-system,"PingFang SC",sans-serif';
   ctx.fillStyle = fg;
   ctx.fillText(`坚持 ${days} 天`, W/2, cy);
@@ -2517,7 +2462,6 @@ function shareMonth(y, m, range){
   ctx.fillText(`写下 ${totalCount} 笔`, W/2, cy);
   cy += 26 + 40;
 
-  /* 正字 */
   const full = Math.floor(totalCount / 5);
   const part = totalCount % 5;
   const size = 32, gap = 2;
@@ -2553,7 +2497,6 @@ function shareMonth(y, m, range){
   }
   cy += 40 + 40;
 
-  /* 各项目 */
   ctx.font = '400 18px -apple-system,"PingFang SC",sans-serif';
   projStats.forEach(p => {
     ctx.fillStyle = p.color;
@@ -2566,7 +2509,6 @@ function shareMonth(y, m, range){
   });
   cy += 40;
 
-  /* 月历 */
   if(range === 'month'){
     const mode = state.settings.calMode || 'stripe';
     const first = new Date(y, m, 1);
@@ -2649,7 +2591,6 @@ function shareMonth(y, m, range){
     cy += calHeight + 60;
   }
 
-  /* 底部：二维码 + 文字并排 */
   const qrSize = 90;
   const qrX = 60;
   const qrY = cy;
@@ -2677,9 +2618,6 @@ function shareMonth(y, m, range){
   });
 }
 
-/* ============================================================
-   设置页面
-   ============================================================ */
 function openSettings(){
   pageHost.innerHTML = '';
   const page = document.createElement('div');
@@ -2803,9 +2741,6 @@ function openSettings(){
   requestAnimationFrame(() => page.classList.add('show'));
 }
 
-/* ============================================================
-   我的正字田
-   ============================================================ */
 function openTianPage(){
   pageHost.innerHTML = '';
   const page = document.createElement('div');
@@ -2876,7 +2811,7 @@ function shareTian(stats){
   const tianHeight = rows * gs;
 
   let cursor = TOP_PAD;
-  cursor += 40 + 40;   /* 标题 + 间距 */
+  cursor += 40 + 40;
   cursor += tianHeight;
   cursor += 60;
   cursor += 30 + 4 + 26 + 60;
@@ -2908,7 +2843,6 @@ function shareTian(stats){
   ctx.fillText('我写下的正字', W/2, cy);
   cy += 40 + 40;
 
-  /* 正字田 */
   let gx = 60;
   let count = 0;
   const drawG = (cnt) => {
@@ -2952,7 +2886,6 @@ function shareTian(stats){
   ctx.fillText(`写下了 ${full} 个正字${part > 0 ? ' + ' + part + ' 笔' : ''}`, W/2, cy);
   cy += 26 + 60;
 
-  /* 底部 */
   const qrSize = 90;
   const qrX = 60;
   const qrY = cy;
@@ -2980,9 +2913,6 @@ function shareTian(stats){
   });
 }
 
-/* ============================================================
-   垃圾桶
-   ============================================================ */
 function openTrash(onCount){
   pageHost.innerHTML = '';
   const page = document.createElement('div');
@@ -3063,9 +2993,6 @@ function openTrash(onCount){
   requestAnimationFrame(() => page.classList.add('show'));
 }
 
-/* ============================================================
-   导出 / 导入
-   ============================================================ */
 function exportData(){
   const data = JSON.stringify(state, null, 2);
   const blob = new Blob([data], { type: 'application/json' });
@@ -3115,9 +3042,6 @@ function importData(){
   inp.click();
 }
 
-/* ============================================================
-   初始化
-   ============================================================ */
 function init(){
   document.documentElement.setAttribute('data-theme', state.settings.theme || 'auto');
 
@@ -3152,4 +3076,3 @@ init();
 </script>
 </body>
 </html>
-
