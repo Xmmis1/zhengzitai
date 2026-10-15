@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="auto">
+<html lang="zh-CN" data-theme="auto" data-skin="default">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
@@ -44,6 +44,28 @@ html[data-theme="dark"]{
     --paper:#1A1815;
     --ink-soft:#E8E2D6;
   }
+}
+/* 护眼绿主题 */
+html[data-skin="green"]{
+  --bg:#E8F0E4; --card:#F3F8F1; --card2:#EDF4EA; --card3:#E1EBDD;
+  --text:#2A3B2A; --text2:#6B7D6B; --text3:#A3B3A3;
+  --sep:rgba(60,80,60,.1); --cell:#E1EBDD; --cell2:#D4E2D0;
+  --accent:#4E7A4E; --nav:rgba(232,240,228,.85);
+  --sheet:#F3F8F1; --ink:#2A3B2A; --danger:#B85C4A;
+  --tabbar:rgba(232,240,228,.94);
+  --paper:#F0F6ED;
+  --ink-soft:#2A3B2A;
+}
+/* 复古纸质主题 */
+html[data-skin="paper"]{
+  --bg:#F5F0E6; --card:#FBF8F2; --card2:#F7F2E9; --card3:#EDE6D8;
+  --text:#3D3630; --text2:#7D746A; --text3:#B5AC9E;
+  --sep:rgba(80,70,50,.1); --cell:#EDE6D8; --cell2:#E3DBCB;
+  --accent:#8A6D4B; --nav:rgba(245,240,230,.88);
+  --sheet:#FBF8F2; --ink:#3D3630; --danger:#B85C4A;
+  --tabbar:rgba(245,240,230,.94);
+  --paper:#FBF8F2;
+  --ink-soft:#3D3630;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{margin:0;padding:0;height:100%;}
@@ -113,9 +135,16 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
   padding:14px 16px 16px;margin-bottom:11px;
   transition:box-shadow .3s,background .25s;
   box-shadow:0 1px 2px rgba(0,0,0,.03);
+  touch-action:pan-y;
 }
 .card.open{box-shadow:var(--shadow);}
 .card.done{background:color-mix(in srgb,var(--c) 8%,var(--card));}
+.card.dragging{
+  z-index:50;
+  box-shadow:0 8px 32px rgba(0,0,0,.18);
+  transform:scale(1.02);
+  opacity:.92;
+}
 
 .card-head{display:flex;align-items:center;gap:10px;}
 .dot{
@@ -655,6 +684,7 @@ const DEFAULT_STATE = {
   name: '正字台',
   settings: {
     theme: 'auto',
+    skin: 'default',
     lunar: true,
     holiday: true,
     calMode: 'stripe',
@@ -1037,6 +1067,7 @@ function renderProjectList(){
   add.onclick = () => openProjectModal(null);
   listEl.appendChild(add);
   applyOpenState();
+  bindDragSort();
 }
 
 function buildCard(p){
@@ -2641,6 +2672,14 @@ function openSettings(){
             <button data-v="dark">深色</button>
           </div>
         </div>
+        <div class="row">
+          <span class="row-label">主题皮肤</span>
+          <div class="seg" id="segSkin">
+            <button data-v="default">默认</button>
+            <button data-v="green">护眼绿</button>
+            <button data-v="paper">复古纸质</button>
+          </div>
+        </div>
       </div>
       <div class="group-title">日历显示</div>
       <div class="group">
@@ -2686,6 +2725,18 @@ function openSettings(){
       state.settings.theme = b.dataset.v;
       document.documentElement.setAttribute('data-theme', state.settings.theme);
       seg.querySelectorAll('button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      saveState();
+    });
+  });
+
+  const segSkin = page.querySelector('#segSkin');
+  segSkin.querySelectorAll('button').forEach(b => {
+    if(b.dataset.v === (state.settings.skin || 'default')) b.classList.add('on');
+    b.addEventListener('click', () => {
+      state.settings.skin = b.dataset.v;
+      document.documentElement.setAttribute('data-skin', state.settings.skin);
+      segSkin.querySelectorAll('button').forEach(x => x.classList.remove('on'));
       b.classList.add('on');
       saveState();
     });
@@ -3011,6 +3062,7 @@ function importData(){
         if(!Array.isArray(state.progress)) state.progress = [];
         saveState();
         document.documentElement.setAttribute('data-theme', state.settings.theme || 'auto');
+        document.documentElement.setAttribute('data-skin', state.settings.skin || 'default');
         view.openProjectId = null;
         openProgressId = null;
         const t = new Date();
@@ -3027,8 +3079,156 @@ function importData(){
   inp.click();
 }
 
+/* ====== 拖拽排序（仅长按激活，不干扰滑动） ====== */
+let dragState = null;
+
+function bindDragSort(){
+  const container = listEl;
+  const cards = $$('.card', container);
+  if(cards.length < 2) return;
+
+  cards.forEach(card => {
+    card.addEventListener('touchstart', onDragTouchStart, { passive: true });
+    card.addEventListener('mousedown', onDragMouseDown);
+  });
+}
+
+function onDragTouchStart(e){
+  if(e.target.closest('button')) return;
+  const el = e.target.closest('.card');
+  if(!el) return;
+  const t = e.touches[0];
+  dragState = {
+    el,
+    startY: t.clientY,
+    startX: t.clientX,
+    active: false,
+    timer: setTimeout(() => startDrag(el, t.clientY, t.clientX), 280)
+  };
+}
+
+function onDragMouseDown(e){
+  if(e.target.closest('button')) return;
+  const el = e.target.closest('.card');
+  if(!el) return;
+  dragState = {
+    el,
+    startY: e.clientY,
+    startX: e.clientX,
+    active: false,
+    timer: setTimeout(() => startDrag(el, e.clientY, e.clientX), 280)
+  };
+}
+
+function startDrag(el, clientY, clientX){
+  if(!dragState || dragState.el !== el) return;
+  if(view.openProjectId) closeCard();
+  dragState.active = true;
+  el.classList.add('dragging');
+  document.body.style.cursor = 'grabbing';
+  document.addEventListener('touchmove', onDragMove, { passive: false });
+  document.addEventListener('touchend', onDragEnd);
+  document.addEventListener('mousemove', onDragMove);
+  document.addEventListener('mouseup', onDragEnd);
+  if(navigator.vibrate) navigator.vibrate(10);
+}
+
+function onDragMove(e){
+  if(!dragState || !dragState.active) return;
+  if(e.cancelable) e.preventDefault();
+  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+  const delta = clientY - dragState.startY;
+  dragState.el.style.transform = `translateY(${delta}px)`;
+
+  const container = listEl;
+  const siblings = $$('.card', container).filter(x => x !== dragState.el);
+  const dragRect = dragState.el.getBoundingClientRect();
+  const dragMid = dragRect.top + dragRect.height / 2;
+  let target = null;
+  for(const sib of siblings){
+    const r = sib.getBoundingClientRect();
+    const mid = r.top + r.height / 2;
+    if(dragMid < mid){ target = sib; break; }
+  }
+  const addCard = container.querySelector('.add-card');
+  if(target){
+    container.insertBefore(dragState.el, target);
+  }else if(addCard){
+    container.insertBefore(dragState.el, addCard);
+  }
+}
+
+function onDragEnd(){
+  document.removeEventListener('touchmove', onDragMove);
+  document.removeEventListener('touchend', onDragEnd);
+  document.removeEventListener('mousemove', onDragMove);
+  document.removeEventListener('mouseup', onDragEnd);
+  document.body.style.cursor = '';
+  if(!dragState){ return; }
+  clearTimeout(dragState.timer);
+  if(!dragState.active){ dragState = null; return; }
+
+  const el = dragState.el;
+  el.classList.remove('dragging');
+  el.style.transform = '';
+
+  const order = $$('.card', listEl).map(x => x.dataset.id).filter(Boolean);
+  const map = {};
+  state.projects.forEach(p => { map[p.id] = p; });
+  state.projects = order.map(id => map[id]).filter(Boolean);
+  saveState();
+  dragState = null;
+  renderProjectList();
+}
+
+/* ====== 左右滑动手势切换日期（只绑定一次） ====== */
+let swipeBound = false;
+function bindSwipeDate(){
+  if(swipeBound) return;
+  swipeBound = true;
+  const main = $('#pageProject');
+  if(!main) return;
+  let startX = 0, startY = 0, startTime = 0;
+  let tracking = false;
+
+  main.addEventListener('touchstart', (e) => {
+    if(dragState && dragState.active) return;
+    if(view.openProjectId) return;
+    if(e.target.closest('button')) return;
+    const t = e.touches[0];
+    startX = t.clientX;
+    startY = t.clientY;
+    startTime = Date.now();
+    tracking = true;
+  }, { passive: true });
+
+  main.addEventListener('touchmove', (e) => {
+    if(!tracking) return;
+    if(dragState && dragState.active){ tracking = false; return; }
+    const t = e.touches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    if(Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 12){
+      tracking = false;
+    }
+  }, { passive: true });
+
+  main.addEventListener('touchend', (e) => {
+    if(!tracking){ return; }
+    if(dragState && dragState.active){ tracking = false; return; }
+    const t = e.changedTouches[0];
+    const dx = t.clientX - startX;
+    const dt = Date.now() - startTime;
+    tracking = false;
+    if(Math.abs(dx) > 40 && dt < 500){
+      changeDate(dx > 0 ? -1 : 1);
+    }
+  }, { passive: true });
+}
+
 function init(){
   document.documentElement.setAttribute('data-theme', state.settings.theme || 'auto');
+  document.documentElement.setAttribute('data-skin', state.settings.skin || 'default');
 
   $('#btnCalendar').addEventListener('click', () => {
     view.bigCalYear = view.year;
@@ -3051,6 +3251,7 @@ function init(){
 
   renderMain();
   renderProgressList();
+  bindSwipeDate();
 
   if(!state.settings.hintRecorded){
     setTimeout(() => coach('点击卡片上的「记一笔」，写下今天的第一笔'), 800);
