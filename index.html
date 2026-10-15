@@ -7,8 +7,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#F2F2F7">
 <title>正字台</title>
-  <script data-goatcounter="https://xmmis1.goatcounter.com/count"
-          async src="//gc.zgo.at/count.js"></script>
+<script data-goatcounter="https://xmmis1.goatcounter.com/count"
+        async src="//gc.zgo.at/count.js"></script>
 <style>
 :root{
   --bg:#F2F2F7; --card:#FFFFFF; --card2:#F7F7FA; --card3:#EDEDF0;
@@ -163,7 +163,7 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
   45%{transform:scale(1.14);}
   100%{transform:scale(1);}
 }
-.card-btn.pop{animation:btnPop .38s cubic-bezier(.32,.72,0,1);}
+.card-btn.pop{animation:btnPop .42s cubic-bezier(.34,1.56,.64,1);}
 
 .zrows{margin-top:12px;cursor:pointer;}
 .zrow{display:flex;align-items:center;gap:9px;min-height:22px;}
@@ -177,7 +177,7 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
   flex:none;letter-spacing:.3px;
 }
 
-.expand{height:0;overflow:hidden;transition:height .35s cubic-bezier(.32,.72,0,1);}
+.expand{height:0;overflow:hidden;transition:height .4s cubic-bezier(.32,.72,0,1);}
 .expand-inner{overflow:hidden;}
 
 .full-tian{padding-top:14px;border-top:.5px solid var(--sep);margin-top:14px;}
@@ -293,7 +293,7 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
   max-height:82vh;overflow-y:auto;
   background:var(--sheet);border-radius:20px;
   padding:22px 20px;
-  transition:transform .28s cubic-bezier(.32,.72,0,1),opacity .28s;
+  transition:transform .32s cubic-bezier(.32,.72,0,1),opacity .32s;
   -webkit-overflow-scrolling:touch;
 }
 .modal.show{transform:translate(-50%,-50%) scale(1);opacity:1;}
@@ -372,7 +372,7 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 .page{
   position:fixed;inset:0;z-index:60;background:var(--bg);
   transform:translateX(100%);
-  transition:transform .38s cubic-bezier(.32,.72,0,1);
+  transition:transform .4s cubic-bezier(.32,.72,0,1);
   display:flex;flex-direction:column;overflow:hidden;
 }
 .page.show{transform:none;}
@@ -623,7 +623,8 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 <div class="toast" id="toast"></div>
 <div class="coach" id="coach"></div>
 
-<script>const STORAGE_KEY = 'zhengzitai.v1';
+<script>
+const STORAGE_KEY = 'zhengzitai.v1';
 const COLORS = ['#6FA3A0','#7A93B8','#A98BB0','#C08A7E','#C2A46B','#85A085','#8794A8','#B8735E','#8A9A6B','#B98A94'];
 const WEEK = ['一','二','三','四','五','六','日'];
 
@@ -658,10 +659,8 @@ const DEFAULT_STATE = {
     holiday: true,
     calMode: 'stripe',
     hintRecorded: false,
-    hintCalendar: false,
     hintTags: false,
-    hintBackup: false,
-    chips: ['今天状态不错','有点累','专注了 __ 分钟','读完 __ 页','跑了 __ 公里','心情：','明天想：']
+    hintBackup: false
   },
   projects: [],
   progress: [],
@@ -1063,7 +1062,6 @@ function buildCard(p){
   const zrows = document.createElement('div');
   zrows.className = 'zrows';
   zrows.innerHTML = `
-    <div class="zrow"><span class="zlabel">累计</span><span class="zglyphs" data-role="total"></span><span class="znum" data-role="total-num"></span></div>
     <div class="zrow"><span class="zlabel">本月</span><span class="zglyphs" data-role="month"></span><span class="znum" data-role="month-num"></span></div>
   `;
   el.appendChild(zrows);
@@ -1090,7 +1088,7 @@ function buildCard(p){
     if(hasRecord(p, sel)) return;
     setRecord(p, sel);
     btn.classList.add('pop');
-    setTimeout(() => btn.classList.remove('pop'), 420);
+    setTimeout(() => btn.classList.remove('pop'), 460);
     if(!state.settings.hintRecorded){
       state.settings.hintRecorded = true;
       saveState();
@@ -1134,11 +1132,8 @@ function refreshCardButton(cardEl, p){
 
 function fillCardGlyphs(cardEl, p){
   const R = cardEl._refs;
-  const total = countTotal(p);
   const mCount = countMonth(p, view.year, view.month);
-  renderGlyphs(R.zrows.querySelector('[data-role="total"]'), total, 'p'+p.id);
   renderGlyphs(R.zrows.querySelector('[data-role="month"]'), mCount, 'p'+p.id+'m'+view.year+view.month);
-  R.zrows.querySelector('[data-role="total-num"]').textContent = total;
   R.zrows.querySelector('[data-role="month-num"]').textContent = mCount;
 }
 
@@ -1747,7 +1742,9 @@ function openProgressHistory(id){
     setTimeout(() => { if(page.parentNode === pageHost) page.remove(); }, 420);
   });
   requestAnimationFrame(() => page.classList.add('show'));
-}const maskHost = $('#maskHost');
+}
+
+const maskHost = $('#maskHost');
 const modalHost = $('#modalHost');
 const pageHost = $('#pageHost');
 
@@ -2656,13 +2653,6 @@ function openSettings(){
           <button class="switch" id="swHoliday"></button>
         </div>
       </div>
-      <div class="group-title">快捷编辑按钮</div>
-      <div class="group">
-        <div class="row" style="flex-direction:column;align-items:stretch;gap:8px;padding:14px 16px">
-          <div class="row-sub" style="margin:0">每行一个，记录时点击插入</div>
-          <textarea class="form-input" id="chipsEdit" style="min-height:130px;font-size:14px"></textarea>
-        </div>
-      </div>
       <div class="group-title">我的正字田</div>
       <div class="group">
         <div class="row" id="rowTian" style="cursor:pointer">
@@ -2715,13 +2705,6 @@ function openSettings(){
     e.stopPropagation();
     state.settings.holiday = !state.settings.holiday;
     swH.classList.toggle('on', state.settings.holiday);
-    saveState();
-  });
-
-  const ce = page.querySelector('#chipsEdit');
-  ce.value = (state.settings.chips || []).join('\n');
-  ce.addEventListener('input', () => {
-    state.settings.chips = ce.value.split('\n').map(s => s.trim()).filter(Boolean);
     saveState();
   });
 
@@ -3069,8 +3052,8 @@ function init(){
   renderMain();
   renderProgressList();
 
-  if(!state.settings.hintCalendar){
-    setTimeout(() => coach('点右下角「记一笔」，开始写第一笔'), 600);
+  if(!state.settings.hintRecorded){
+    setTimeout(() => coach('点击卡片上的「记一笔」，写下今天的第一笔'), 800);
   }
 }
 
