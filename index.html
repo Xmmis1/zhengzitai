@@ -45,7 +45,6 @@ html[data-theme="dark"]{
     --ink-soft:#E8E2D6;
   }
 }
-/* 护眼绿主题 */
 html[data-skin="green"]{
   --bg:#E8F0E4; --card:#F3F8F1; --card2:#EDF4EA; --card3:#E1EBDD;
   --text:#2A3B2A; --text2:#6B7D6B; --text3:#A3B3A3;
@@ -56,7 +55,6 @@ html[data-skin="green"]{
   --paper:#F0F6ED;
   --ink-soft:#2A3B2A;
 }
-/* 复古纸质主题 */
 html[data-skin="paper"]{
   --bg:#F5F0E6; --card:#FBF8F2; --card2:#F7F2E9; --card3:#EDE6D8;
   --text:#3D3630; --text2:#7D746A; --text3:#B5AC9E;
@@ -138,17 +136,13 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 }
 .card.open{box-shadow:var(--shadow);}
 .card.done{background:color-mix(in srgb,var(--c) 8%,var(--card));}
-
-/* ===== 拖拽排序样式 ===== */
 .card.dragging{
   z-index:50;
   box-shadow:0 12px 36px rgba(0,0,0,.18);
   opacity:.96;
   transition:none;
 }
-.card.drag-placeholder{
-  opacity:.3;
-}
+.card.drag-placeholder{opacity:.3;}
 
 .card-head{display:flex;align-items:center;gap:10px;}
 .dot{
@@ -595,6 +589,67 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
   backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
 }
 .coach.show{opacity:1;transform:translate(-50%,0);}
+
+.tag-wall-card{
+  background:var(--card);border-radius:16px;padding:16px;margin-bottom:11px;
+  cursor:pointer;transition:transform .14s,box-shadow .2s;
+}
+.tag-wall-card:active{transform:scale(.985);}
+.tag-wall-card .tw-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;}
+.tag-wall-card .tw-name{font-size:17px;font-weight:600;letter-spacing:.2px;}
+.tag-wall-card .tw-count{font-size:13px;color:var(--accent);font-variant-numeric:tabular-nums;font-weight:500;}
+.tag-wall-card .tw-meta{font-size:12px;color:var(--text2);letter-spacing:.2px;}
+.tag-wall-card .tw-bar{
+  margin-top:10px;height:6px;border-radius:3px;background:var(--cell);overflow:hidden;
+}
+.tag-wall-card .tw-bar i{display:block;height:100%;border-radius:3px;background:var(--accent);}
+
+.tag-detail-head{padding:20px 16px 16px;text-align:center;}
+.tag-detail-head .td-name{font-size:24px;font-weight:700;letter-spacing:.5px;margin-bottom:6px;}
+.tag-detail-head .td-sub{font-size:13px;color:var(--text2);letter-spacing:.2px;}
+
+.tag-record{
+  background:var(--card);border-radius:14px;padding:13px 15px;margin-bottom:9px;
+  cursor:pointer;transition:transform .14s;
+}
+.tag-record:active{transform:scale(.985);}
+.tag-record .tr-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;}
+.tag-record .tr-date{font-size:13px;color:var(--text2);font-variant-numeric:tabular-nums;}
+.tag-record .tr-proj{font-size:12px;color:var(--accent);letter-spacing:.2px;}
+.tag-record .tr-note{font-size:13.5px;color:var(--text);line-height:1.5;word-break:break-word;}
+.tag-record .tr-note.empty{color:var(--text3);font-style:italic;}
+
+.date-picker-row{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:11px 14px;border-radius:12px;
+  border:1.5px solid var(--cell2);background:var(--card2);
+  cursor:pointer;transition:border-color .2s,background .2s;
+}
+.date-picker-row:active{background:var(--cell);}
+.date-picker-row .dp-label{font-size:12px;color:var(--text2);letter-spacing:.4px;}
+.date-picker-row .dp-value{font-size:15px;color:var(--text);font-variant-numeric:tabular-nums;}
+.date-picker-row .dp-arrow{color:var(--accent);font-size:18px;line-height:1;}
+
+.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;}
+.dp-cell{
+  aspect-ratio:1;border-radius:10px;background:var(--cell);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;color:var(--text);cursor:pointer;
+  font-variant-numeric:tabular-nums;
+  transition:background .18s,transform .14s;
+}
+.dp-cell:active{transform:scale(.92);}
+.dp-cell.on{background:var(--accent);color:#fff;font-weight:600;}
+.dp-cell.today{box-shadow:inset 0 0 0 1.6px var(--accent);}
+.dp-cell.blank{background:transparent;pointer-events:none;}
+.dp-nav{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;}
+.dp-nav button{
+  border:none;background:var(--cell);color:var(--accent);
+  width:34px;height:34px;border-radius:17px;font-size:16px;
+  cursor:pointer;font-family:inherit;
+}
+.dp-nav button:active{background:var(--cell2);}
+.dp-nav .dp-month{font-size:14px;font-weight:500;color:var(--text);min-width:110px;text-align:center;}
 </style>
 </head>
 <body>
@@ -603,6 +658,12 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
   <div class="nav-row">
     <h1 class="app-title">正字台</h1>
     <div class="nav-actions">
+      <button class="icon-btn" id="btnTagWall" aria-label="标签墙">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+          <circle cx="7" cy="7" r="1.5" fill="currentColor" stroke="none"/>
+        </svg>
+      </button>
       <button class="icon-btn" id="btnCalendar" aria-label="月历">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3.5" y="5" width="17" height="15" rx="2.5"/>
@@ -696,7 +757,8 @@ const DEFAULT_STATE = {
   },
   projects: [],
   progress: [],
-  trash: []
+  trash: [],
+  archived: []
 };
 
 let state = loadState();
@@ -710,6 +772,7 @@ function loadState(){
         settings: Object.assign(clone(DEFAULT_STATE.settings), parsed.settings || {})
       });
       if(!Array.isArray(merged.progress)) merged.progress = [];
+      if(!Array.isArray(merged.archived)) merged.archived = [];
       return merged;
     }
   }catch(e){}
@@ -727,6 +790,19 @@ function removeProject(id){
   const p = findProject(id); if(!p) return;
   state.trash.push({ kind:'project', data: clone(p), deletedAt: Date.now() });
   state.projects = state.projects.filter(x => x.id !== id);
+  saveState();
+}
+function archiveProject(id){
+  const p = findProject(id); if(!p) return;
+  state.archived.push({ kind:'project', data: clone(p), archivedAt: Date.now() });
+  state.projects = state.projects.filter(x => x.id !== id);
+  saveState();
+}
+function restoreProject(id){
+  const idx = state.archived.findIndex(a => a.data && a.data.id === id);
+  if(idx < 0) return;
+  state.projects.push(state.archived[idx].data);
+  state.archived.splice(idx, 1);
   saveState();
 }
 
@@ -761,16 +837,39 @@ function streakOf(project){
   }
   return n;
 }
+/* ====== 修复：月历视图同时展示已归档项目的历史 ====== */
+function allProjectsIncludingArchived(){
+  const list = [...state.projects];
+  state.archived.forEach(a => {
+    if(a.kind === 'project' && a.data) list.push(a.data);
+  });
+  return list;
+}
 function projectsOnDate(dateKeyStr){
-  return state.projects.filter(p => hasRecord(p, dateKeyStr));
+  return allProjectsIncludingArchived().filter(p => hasRecord(p, dateKeyStr));
 }
 function allTimeStats(){
   const daySet = new Set();
   let count = 0;
-  for(const p of state.projects){
+  for(const p of allProjectsIncludingArchived()){
     for(const k in p.records){ daySet.add(k); count++; }
   }
   return { days: daySet.size, count };
+}
+
+function collectTags(){
+  const map = {};
+  for(const p of state.projects){
+    for(const k in p.records){
+      const t = p.records[k].tag;
+      if(!t) continue;
+      if(!map[t]) map[t] = { tag: t, count: 0, lastDate: '', projects: {} };
+      map[t].count++;
+      if(!map[t].lastDate || k > map[t].lastDate) map[t].lastDate = k;
+      map[t].projects[p.name] = (map[t].projects[p.name] || 0) + 1;
+    }
+  }
+  return Object.values(map).sort((a,b) => b.count - a.count);
 }
 
 const STROKES = [
@@ -959,10 +1058,28 @@ function removeProgress(id){
   state.progress = state.progress.filter(x => x.id !== id);
   saveState();
 }
-function addProgressRecord(id, value, tag){
+function archiveProgress(id){
+  const p = findProgress(id); if(!p) return;
+  state.archived.push({ kind:'progress', data: clone(p), archivedAt: Date.now() });
+  state.progress = state.progress.filter(x => x.id !== id);
+  saveState();
+}
+function restoreProgress(id){
+  const idx = state.archived.findIndex(a => a.data && a.data.id === id && a.kind === 'progress');
+  if(idx < 0) return;
+  state.progress.push(state.archived[idx].data);
+  state.archived.splice(idx, 1);
+  saveState();
+}
+function addProgressRecord(id, value, tag, dateKeyStr){
   const p = findProgress(id); if(!p) return;
   if(value === 0) return;
-  p.records.push({ t: Date.now(), value, tag: tag || '' });
+  let t = Date.now();
+  if(dateKeyStr){
+    const [y, m, d] = dateKeyStr.split('-').map(Number);
+    t = new Date(y, m-1, d, 12, 0, 0).getTime();
+  }
+  p.records.push({ t, value, tag: tag || '' });
   p.current = p.current + value;
   saveState();
 }
@@ -1621,30 +1738,6 @@ function renderProgressExpand(el, p){
   recBtn.onclick = (e) => { e.stopPropagation(); openProgressRecordModal(p.id); };
   inner.appendChild(recBtn);
 
-  if(isProgressDone(p)){
-    const row = document.createElement('div');
-    row.style.display = 'flex';
-    row.style.gap = '10px';
-    row.style.marginTop = '10px';
-    const keepBtn = document.createElement('button');
-    keepBtn.className = 'btn ghost';
-    keepBtn.textContent = '继续记';
-    keepBtn.onclick = (e) => { e.stopPropagation(); openProgressRecordModal(p.id); };
-    const archBtn = document.createElement('button');
-    archBtn.className = 'btn ghost';
-    archBtn.textContent = '归档';
-    archBtn.onclick = (e) => {
-      e.stopPropagation();
-      if(!confirm('归档后，这个进度会移到垃圾桶，数据保留可恢复。确定吗？')) return;
-      removeProgress(p.id);
-      openProgressId = null;
-      renderProgressList();
-    };
-    row.appendChild(keepBtn);
-    row.appendChild(archBtn);
-    inner.appendChild(row);
-  }
-
   requestAnimationFrame(() => { el._refs.expand.style.height = inner.scrollHeight + 'px'; });
 }
 
@@ -1815,6 +1908,31 @@ function closeModal(){
   hideMask();
 }
 
+/* ====== 修复：记录编辑弹窗关闭时，如果标签墙/标签详情在开着，重新渲染 ====== */
+function refreshTagPagesIfOpen(){
+  const pages = $$('.page', pageHost);
+  const hasTagWall = pages.some(p => {
+    const t = p.querySelector('.page-title');
+    return t && (t.textContent === '标签墙' || (t.textContent && t.textContent.length > 0 && p.querySelector('.tag-detail-head')));
+  });
+  if(hasTagWall){
+    // 找到最后一个 page，判断是标签墙还是标签详情
+    const last = pages[pages.length - 1];
+    if(!last) return;
+    const titleEl = last.querySelector('.page-title');
+    if(!titleEl) return;
+    if(titleEl.textContent === '标签墙'){
+      openTagWall();
+    }else{
+      // 标签详情：从标题里取标签名重新打开
+      const name = titleEl.textContent;
+      if(name && name !== '标签墙'){
+        openTagDetail(name);
+      }
+    }
+  }
+}
+
 function openRecordModal(projectId, dateKeyStr){
   const p = findProject(projectId);
   if(!p) return;
@@ -1896,6 +2014,7 @@ function openRecordModal(projectId, dateKeyStr){
         refreshStreak(card, p);
       }
       checkMilestones(p);
+      refreshTagPagesIfOpen();
     });
 
     modal.querySelector('#btnRemove').addEventListener('click', () => {
@@ -1910,6 +2029,7 @@ function openRecordModal(projectId, dateKeyStr){
         refreshCardButton(card, p);
         refreshStreak(card, p);
       }
+      refreshTagPagesIfOpen();
     });
   });
 }
@@ -1942,10 +2062,6 @@ function openProjectModal(id){
   let color = p.color;
 
   openModal(modal => {
-    const idx = state.projects.findIndex(x => x.id === p.id);
-    const isFirst = idx === 0;
-    const isLast = idx === state.projects.length - 1;
-
     modal.innerHTML = `
       <h3 class="modal-title">${isNew ? '新建坚持' : '编辑坚持'}</h3>
       <div class="form-row" style="margin-top:16px">
@@ -1956,6 +2072,7 @@ function openProjectModal(id){
       <div class="swatches" id="sw"></div>
       <div class="modal-actions">
         ${isNew ? '' : '<button class="btn ghost" id="btnDel" style="color:var(--danger)">删除</button>'}
+        ${isNew ? '' : '<button class="btn ghost" id="btnArchive">归档</button>'}
         <button class="btn ghost" id="btnCancel">取消</button>
         <button class="btn primary" id="btnOk">${isNew ? '创建' : '保存'}</button>
       </div>
@@ -1993,6 +2110,14 @@ function openProjectModal(id){
         view.openProjectId = null;
         closeModal();
         setTimeout(renderProjectList, 200);
+      });
+      modal.querySelector('#btnArchive').addEventListener('click', () => {
+        if(!confirm(`把「${p.name}」归档？\n归档后从首页隐藏，历史记录保留，可在设置里恢复。`)) return;
+        archiveProject(p.id);
+        view.openProjectId = null;
+        closeModal();
+        setTimeout(renderProjectList, 200);
+        toast('已归档');
       });
     }
     if(isNew){ setTimeout(() => modal.querySelector('#pName').focus(), 320); }
@@ -2033,6 +2158,7 @@ function openProgressModal(id){
       </div>
       <div class="modal-actions">
         ${isNew ? '' : '<button class="btn ghost" id="btnDel" style="color:var(--danger)">删除</button>'}
+        ${isNew ? '' : '<button class="btn ghost" id="btnArchive">归档</button>'}
         <button class="btn ghost" id="btnCancel">取消</button>
         <button class="btn primary" id="btnOk">${isNew ? '创建' : '保存'}</button>
       </div>
@@ -2083,6 +2209,14 @@ function openProgressModal(id){
         closeModal();
         setTimeout(renderProgressList, 200);
       });
+      modal.querySelector('#btnArchive').addEventListener('click', () => {
+        if(!confirm(`把「${p.name}」归档？\n归档后从首页隐藏，历史记录保留，可在设置里恢复。`)) return;
+        archiveProgress(p.id);
+        openProgressId = null;
+        closeModal();
+        setTimeout(renderProgressList, 200);
+        toast('已归档');
+      });
     }
     if(isNew){ setTimeout(() => modal.querySelector('#pName').focus(), 320); }
   });
@@ -2091,6 +2225,8 @@ function openProgressModal(id){
 function openProgressRecordModal(id){
   const p = findProgress(id);
   if(!p) return;
+  let selectedDate = todayKey();
+  let calView = { y: view.year, m: view.month };
 
   openModal(modal => {
     modal.innerHTML = `
@@ -2102,6 +2238,26 @@ function openProgressRecordModal(id){
         <button class="sign-btn" id="signBtn">+</button>
         <input class="form-input" id="valInput" type="text" inputmode="decimal" placeholder="0" autocomplete="off">
         <span style="display:flex;align-items:center;padding:0 8px;color:var(--text2);font-size:14px">${esc(p.unit)}</span>
+      </div>
+
+      <div class="form-row" style="margin-top:14px">
+        <div class="form-label">日期</div>
+        <div class="date-picker-row" id="datePickerRow">
+          <span class="dp-label">记在</span>
+          <span class="dp-value" id="dpValue">今天</span>
+          <span class="dp-arrow">›</span>
+        </div>
+        <div id="dpPanel" style="display:none;margin-top:8px">
+          <div class="dp-nav">
+            <button id="dpPrev">‹</button>
+            <span class="dp-month" id="dpMonth"></span>
+            <button id="dpNext">›</button>
+          </div>
+          <div class="weekdays" style="margin-top:10px;margin-bottom:5px">
+            ${WEEK.map(w => `<span>${w}</span>`).join('')}
+          </div>
+          <div class="dp-grid" id="dpGrid"></div>
+        </div>
       </div>
 
       <div class="form-row" style="margin-top:14px">
@@ -2120,6 +2276,71 @@ function openProgressRecordModal(id){
     const valIn = modal.querySelector('#valInput');
     const tagIn = modal.querySelector('#tagInput');
     const signBtn = modal.querySelector('#signBtn');
+    const dpRow = modal.querySelector('#datePickerRow');
+    const dpPanel = modal.querySelector('#dpPanel');
+    const dpValue = modal.querySelector('#dpValue');
+    const dpMonth = modal.querySelector('#dpMonth');
+    const dpGrid = modal.querySelector('#dpGrid');
+
+    const updateDpValue = () => {
+      if(selectedDate === todayKey()) dpValue.textContent = '今天';
+      else {
+        const [y, m, d] = selectedDate.split('-').map(Number);
+        dpValue.textContent = `${m}月${d}日`;
+      }
+    };
+    updateDpValue();
+
+    const renderDpGrid = () => {
+      dpMonth.textContent = `${calView.y}年${calView.m+1}月`;
+      dpGrid.innerHTML = '';
+      const first = new Date(calView.y, calView.m, 1);
+      const startDow = (first.getDay() + 6) % 7;
+      const dim = new Date(calView.y, calView.m+1, 0).getDate();
+      const tk = todayKey();
+      for(let i = 0; i < 42; i++){
+        const d = i - startDow + 1;
+        const cell = document.createElement('div');
+        cell.className = 'dp-cell';
+        if(d < 1 || d > dim){ cell.classList.add('blank'); dpGrid.appendChild(cell); continue; }
+        const key = dateKey(calView.y, calView.m, d);
+        if(key === selectedDate) cell.classList.add('on');
+        if(key === tk) cell.classList.add('today');
+        if(key > tk){ cell.style.opacity = '.35'; cell.style.pointerEvents = 'none'; }
+        cell.textContent = d;
+        cell.addEventListener('click', (e) => {
+          e.stopPropagation();
+          selectedDate = key;
+          updateDpValue();
+          renderDpGrid();
+        });
+        dpGrid.appendChild(cell);
+      }
+    };
+
+    dpRow.addEventListener('click', () => {
+      const open = dpPanel.style.display !== 'none';
+      dpPanel.style.display = open ? 'none' : 'block';
+      if(!open){
+        calView = { y: view.year, m: view.month };
+        renderDpGrid();
+      }
+    });
+
+    modal.querySelector('#dpPrev').addEventListener('click', (e) => {
+      e.stopPropagation();
+      let ny = calView.y, nm = calView.m - 1;
+      if(nm < 0){ nm = 11; ny--; }
+      calView.y = ny; calView.m = nm;
+      renderDpGrid();
+    });
+    modal.querySelector('#dpNext').addEventListener('click', (e) => {
+      e.stopPropagation();
+      let ny = calView.y, nm = calView.m + 1;
+      if(nm > 11){ nm = 0; ny++; }
+      calView.y = ny; calView.m = nm;
+      renderDpGrid();
+    });
 
     let sign = 1;
     signBtn.addEventListener('click', () => {
@@ -2147,7 +2368,7 @@ function openProgressRecordModal(id){
       const raw = parseFloat(valIn.value);
       if(!raw || isNaN(raw)){ toast('请输入数量'); return; }
       const val = raw * sign;
-      addProgressRecord(p.id, val, tagIn.value.trim());
+      addProgressRecord(p.id, val, tagIn.value.trim(), selectedDate);
       closeModal();
       setTimeout(() => {
         renderProgressList();
@@ -2160,6 +2381,132 @@ function openProgressRecordModal(id){
 
     setTimeout(() => valIn.focus(), 320);
   });
+}
+
+/* ================= 标签墙 ================= */
+function openTagWall(){
+  pageHost.innerHTML = '';
+  const page = document.createElement('div');
+  page.className = 'page';
+  page.innerHTML = `
+    <div class="page-nav">
+      <button class="back-btn" id="backBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        正字台
+      </button>
+      <span class="page-title">标签墙</span>
+      <span style="width:64px"></span>
+    </div>
+    <div class="field" id="tagWallBody"></div>
+  `;
+  pageHost.appendChild(page);
+  const body = page.querySelector('#tagWallBody');
+  const tags = collectTags();
+
+  if(!tags.length){
+    body.innerHTML = '<div class="empty"><div class="big">#</div><p>还没有标签<br>在记录时加上标签，就会出现在这里</p></div>';
+  }else{
+    const totalCount = tags.reduce((s, t) => s + t.count, 0);
+    const summary = document.createElement('div');
+    summary.style.cssText = 'text-align:center;padding:8px 0 20px;color:var(--text2);font-size:13px;letter-spacing:.2px';
+    summary.textContent = `共 ${tags.length} 个标签 · 累计 ${totalCount} 次打卡`;
+    body.appendChild(summary);
+
+    const maxCount = Math.max(...tags.map(t => t.count));
+    tags.forEach(t => {
+      const card = document.createElement('div');
+      card.className = 'tag-wall-card';
+      const projNames = Object.keys(t.projects);
+      const projStr = projNames.length <= 2
+        ? projNames.join('、')
+        : projNames.slice(0, 2).join('、') + ' 等 ' + projNames.length + ' 个项目';
+      card.innerHTML = `
+        <div class="tw-head">
+          <span class="tw-name">${esc(t.tag)}</span>
+          <span class="tw-count">${t.count} 次</span>
+        </div>
+        <div class="tw-meta">${esc(projStr)} · 最近 ${t.lastDate}</div>
+        <div class="tw-bar"><i style="width:${Math.round(t.count / maxCount * 100)}%"></i></div>
+      `;
+      card.addEventListener('click', () => openTagDetail(t.tag));
+      body.appendChild(card);
+    });
+  }
+
+  page.querySelector('#backBtn').addEventListener('click', () => {
+    page.classList.remove('show');
+    setTimeout(() => { if(page.parentNode === pageHost) page.remove(); }, 420);
+  });
+  requestAnimationFrame(() => page.classList.add('show'));
+}
+
+function openTagDetail(tagName){
+  pageHost.innerHTML = '';
+  const page = document.createElement('div');
+  page.className = 'page';
+
+  const records = [];
+  for(const p of state.projects){
+    for(const k in p.records){
+      const r = p.records[k];
+      if(r.tag === tagName){
+        records.push({ dateKey: k, projectId: p.id, projectName: p.name, color: p.color, note: r.note || '' });
+      }
+    }
+  }
+  records.sort((a, b) => b.dateKey.localeCompare(a.dateKey));
+
+  page.innerHTML = `
+    <div class="page-nav">
+      <button class="back-btn" id="backBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        标签墙
+      </button>
+      <span class="page-title">${esc(tagName)}</span>
+      <span style="width:64px"></span>
+    </div>
+    <div class="field" id="tagDetailBody"></div>
+  `;
+  pageHost.appendChild(page);
+  const body = page.querySelector('#tagDetailBody');
+
+  const head = document.createElement('div');
+  head.className = 'tag-detail-head';
+  head.innerHTML = `
+    <div class="td-name">${esc(tagName)}</div>
+    <div class="td-sub">共 ${records.length} 次记录</div>
+  `;
+  body.appendChild(head);
+
+  if(!records.length){
+    const e = document.createElement('div');
+    e.className = 'empty';
+    e.innerHTML = '<div class="big">空</div><p>暂无记录</p>';
+    body.appendChild(e);
+  }else{
+    records.forEach(r => {
+      const [y, m, d] = r.dateKey.split('-').map(Number);
+      const el = document.createElement('div');
+      el.className = 'tag-record';
+      el.innerHTML = `
+        <div class="tr-top">
+          <span class="tr-date">${y}年${m}月${d}日</span>
+          <span class="tr-proj">${esc(r.projectName)}</span>
+        </div>
+        <div class="tr-note ${r.note ? '' : 'empty'}">${r.note ? esc(r.note) : '（无备注）'}</div>
+      `;
+      el.addEventListener('click', () => {
+        openRecordModal(r.projectId, r.dateKey);
+      });
+      body.appendChild(el);
+    });
+  }
+
+  page.querySelector('#backBtn').addEventListener('click', () => {
+    page.classList.remove('show');
+    setTimeout(() => { if(page.parentNode === pageHost) page.remove(); openTagWall(); }, 420);
+  });
+  requestAnimationFrame(() => page.classList.add('show'));
 }
 
 function openBigCalendar(){
@@ -2672,6 +3019,7 @@ function openSettings(){
       </div>
       <div class="group-title">数据</div>
       <div class="group">
+        <div class="row" id="rowArchived" style="cursor:pointer"><span class="row-label">已归档项目</span><span class="row-val">${state.archived.length} 项 ›</span></div>
         <div class="row" id="rowExport" style="cursor:pointer"><span class="row-label">导出备份</span><span class="row-val">›</span></div>
         <div class="row" id="rowImport" style="cursor:pointer"><span class="row-label">导入备份</span><span class="row-val">›</span></div>
         <div class="row" id="rowTrash" style="cursor:pointer"><span class="row-label">垃圾桶</span><span class="row-val">${state.trash.length} 项 ›</span></div>
@@ -2732,6 +3080,12 @@ function openSettings(){
 
   page.querySelector('#rowExport').addEventListener('click', exportData);
   page.querySelector('#rowImport').addEventListener('click', importData);
+  page.querySelector('#rowArchived').addEventListener('click', () => {
+    openArchived((count) => {
+      const el = page.querySelector('#rowArchived .row-val');
+      if(el) el.textContent = count + ' 项 ›';
+    });
+  });
   page.querySelector('#rowTrash').addEventListener('click', () => {
     openTrash((count) => {
       const el = page.querySelector('#rowTrash .row-val');
@@ -2745,6 +3099,89 @@ function openSettings(){
     setTimeout(() => { if(page.parentNode === pageHost) page.remove(); renderMain(); }, 420);
   });
 
+  requestAnimationFrame(() => page.classList.add('show'));
+}
+
+function openArchived(onCount){
+  pageHost.innerHTML = '';
+  const page = document.createElement('div');
+  page.className = 'page';
+  page.innerHTML = `
+    <div class="page-nav">
+      <button class="back-btn" id="backBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        设置
+      </button>
+      <span class="page-title">已归档项目</span>
+      <span style="width:64px"></span>
+    </div>
+    <div class="field" id="archivedBody"></div>
+  `;
+  pageHost.appendChild(page);
+  const body = page.querySelector('#archivedBody');
+
+  const render = () => {
+    body.innerHTML = '';
+    if(!state.archived.length){
+      const e = document.createElement('div');
+      e.className = 'empty';
+      e.innerHTML = '<div class="big">档</div><p>还没有归档的项目<br>在项目编辑里点“归档”就会出现在这里</p>';
+      body.appendChild(e);
+      if(onCount) onCount(0);
+      return;
+    }
+    const g = document.createElement('div');
+    g.className = 'group';
+    state.archived.forEach((item, i) => {
+      const data = item.data || {};
+      const name = data.name || '未命名';
+      const color = data.color || '#999';
+      const kindLabel = item.kind === 'progress' ? '进度' : '坚持';
+      const dateStr = new Date(item.archivedAt).toLocaleDateString('zh-CN');
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:0">
+          <span class="dot" style="background:${color};margin:0"></span>
+          <div style="min-width:0">
+            <div class="row-label" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(name)}</div>
+            <div class="row-sub">${kindLabel} · 归档于 ${dateStr}</div>
+          </div>
+        </div>
+        <button class="icon-btn" data-r="${i}" style="background:var(--cell);width:auto;padding:0 12px;font-size:13px;border-radius:14px;color:var(--accent)">恢复</button>
+        <button class="icon-btn" data-d="${i}" style="background:var(--cell);color:var(--danger);width:auto;padding:0 12px;font-size:13px;border-radius:14px">删除</button>
+      `;
+      g.appendChild(row);
+    });
+    body.appendChild(g);
+
+    body.querySelectorAll('[data-r]').forEach(b => {
+      b.addEventListener('click', () => {
+        const i = +b.dataset.r;
+        const item = state.archived[i];
+        if(item.kind === 'progress') restoreProgress(item.data.id);
+        else restoreProject(item.data.id);
+        render();
+        renderMain();
+        if(onCount) onCount(state.archived.length);
+        toast('已恢复');
+      });
+    });
+    body.querySelectorAll('[data-d]').forEach(b => {
+      b.addEventListener('click', () => {
+        if(!confirm('彻底删除后无法恢复，确定吗？')) return;
+        state.archived.splice(+b.dataset.d, 1);
+        saveState(); render();
+        if(onCount) onCount(state.archived.length);
+      });
+    });
+  };
+  render();
+
+  page.querySelector('#backBtn').addEventListener('click', () => {
+    page.classList.remove('show');
+    setTimeout(() => { if(page.parentNode === pageHost) page.remove(); openSettings(); }, 420);
+  });
   requestAnimationFrame(() => page.classList.add('show'));
 }
 
@@ -3030,6 +3467,7 @@ function importData(){
           settings: Object.assign(clone(DEFAULT_STATE.settings), o.settings || {})
         });
         if(!Array.isArray(state.progress)) state.progress = [];
+        if(!Array.isArray(state.archived)) state.archived = [];
         saveState();
         document.documentElement.setAttribute('data-theme', state.settings.theme || 'auto');
         document.documentElement.setAttribute('data-skin', state.settings.skin || 'default');
@@ -3049,7 +3487,7 @@ function importData(){
   inp.click();
 }
 
-/* ================= 拖拽排序（坚持 + 进度通用） ================= */
+/* ================= 拖拽排序 ================= */
 let dragState = null;
 
 function bindDragSort(container, kind){
@@ -3060,6 +3498,7 @@ function bindDragSort(container, kind){
     const card = e.target.closest('.card');
     if(!card) return;
     if(e.target.closest('button')) return;
+    if(dragState && dragState.active) return;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     if(dragState) return;
@@ -3079,8 +3518,7 @@ function bindDragSort(container, kind){
   };
 
   const onMove = (e) => {
-    if(!dragState || dragState.card === null) return;
-    if(!dragState.active) return;
+    if(!dragState || !dragState.active) return;
     e.preventDefault();
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     moveDrag(clientY);
@@ -3117,7 +3555,7 @@ function bindDragSort(container, kind){
     if(kind === 'progress' && openProgressId) closeProgressCard();
 
     dragState.active = true;
-    dragState.offsetY = clientY - el.getBoundingClientRect().top;
+    dragState.startY = clientY;
     dragState.placeholder = document.createElement('div');
     dragState.placeholder.className = 'drag-placeholder';
     dragState.placeholder.style.height = el.offsetHeight + 'px';
@@ -3181,13 +3619,6 @@ function bindDragSort(container, kind){
     el.style.margin = '';
     el.classList.remove('dragging');
 
-    const order = [];
-    const allCards = [];
-    container.querySelectorAll('.card').forEach(c => allCards.push(c));
-    const phIndex = allCards.indexOf(ph);
-    allCards.splice(phIndex, 1);
-    allCards.splice(phIndex, 0, el);
-
     if(ph.parentNode) ph.parentNode.insertBefore(el, ph);
     if(ph.parentNode) ph.parentNode.removeChild(ph);
 
@@ -3213,6 +3644,7 @@ function init(){
   document.documentElement.setAttribute('data-theme', state.settings.theme || 'auto');
   document.documentElement.setAttribute('data-skin', state.settings.skin || 'default');
 
+  $('#btnTagWall').addEventListener('click', openTagWall);
   $('#btnCalendar').addEventListener('click', () => {
     view.bigCalYear = view.year;
     view.bigCalMonth = view.month;
