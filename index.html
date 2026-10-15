@@ -487,7 +487,6 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 }
 .coach.show{opacity:1;transform:translate(-50%,0);}
 
-/* ===== 标签墙 ===== */
 .tag-wall-card{
   background:var(--card);border-radius:16px;padding:16px;margin-bottom:11px;
   cursor:pointer;transition:transform .14s,box-shadow .2s;
@@ -519,7 +518,6 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 .tag-record .tr-note{font-size:13.5px;color:var(--text);line-height:1.5;word-break:break-word;}
 .tag-record .tr-note.empty{color:var(--text3);font-style:italic;}
 
-/* ===== 日期选择器 ===== */
 .date-picker-row{
   display:flex;align-items:center;justify-content:space-between;
   padding:11px 14px;border-radius:12px;
@@ -551,7 +549,6 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 .dp-nav button:active{background:var(--cell2);}
 .dp-nav .dp-month{font-size:14px;font-weight:500;color:var(--text);min-width:110px;text-align:center;}
 
-/* ===== 首次引导浮层 ===== */
 .onboard-mask{
   position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:800;
   opacity:0;transition:opacity .35s;backdrop-filter:blur(4px);
@@ -570,7 +567,6 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 .onboard-box .ob-desc{font-size:14px;color:var(--text2);line-height:1.7;margin:0 0 20px;letter-spacing:.2px;}
 .onboard-box .ob-actions{display:flex;gap:10px;}
 
-/* 模板选择页 */
 .tpl-section{margin-bottom:20px;}
 .tpl-section-title{font-size:13px;color:var(--text2);letter-spacing:.8px;margin-bottom:10px;font-weight:500;}
 .tpl-card{
@@ -579,7 +575,6 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
   border:1.5px solid transparent;
 }
 .tpl-card:active{transform:scale(.985);}
-.tpl-card.selected{border-color:var(--accent);}
 .tpl-card .tpl-name{font-size:16px;font-weight:600;letter-spacing:.2px;margin-bottom:6px;}
 .tpl-card .tpl-desc{font-size:12.5px;color:var(--text2);line-height:1.6;letter-spacing:.2px;}
 .tpl-card .tpl-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
@@ -591,7 +586,7 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 .tpl-custom-item{
   background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:11px;
 }
-.tpl-custom-item .ci-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.tpl-custom-item .ci-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;cursor:pointer;}
 .tpl-custom-item .ci-name{font-size:16px;font-weight:600;letter-spacing:.2px;}
 .tpl-custom-item .ci-meaning{font-size:11.5px;color:var(--text3);margin-top:2px;letter-spacing:.2px;}
 .tpl-custom-item .ci-check{
@@ -684,7 +679,6 @@ const STORAGE_KEY = 'zhengzitai.v1';
 const COLORS = ['#6FA3A0','#7A93B8','#A98BB0','#C08A7E','#C2A46B','#85A085','#8794A8','#B8735E','#8A9A6B','#B98A94'];
 const WEEK = ['一','二','三','四','五','六','日'];
 
-// 五大模块：项目名 -> 推荐标签
 const MODULES = {
   '纳新': ['读书','看视频','听课','观察'],
   '成事': ['写作','做 App','做美食','分享'],
@@ -740,18 +734,11 @@ function recommendTags(project){
 const DEFAULT_STATE = {
   name: '正字台',
   settings: {
-    theme: 'auto',
-    skin: 'default',
-    lunar: true,
-    holiday: true,
-    calMode: 'stripe',
-    hintRecorded: false,
-    onboarded: false
+    theme: 'auto', skin: 'default',
+    lunar: true, holiday: true, calMode: 'stripe',
+    hintRecorded: false, onboarded: false
   },
-  projects: [],
-  progress: [],
-  trash: [],
-  archived: []
+  projects: [], progress: [], trash: [], archived: []
 };
 
 let state = loadState();
@@ -832,9 +819,7 @@ function streakOf(project){
 }
 function allProjectsIncludingArchived(){
   const list = [...state.projects];
-  state.archived.forEach(a => {
-    if(a.kind === 'project' && a.data) list.push(a.data);
-  });
+  state.archived.forEach(a => { if(a.kind === 'project' && a.data) list.push(a.data); });
   return list;
 }
 function projectsOnDate(dateKeyStr){
@@ -848,7 +833,6 @@ function allTimeStats(){
   }
   return { days: daySet.size, count };
 }
-
 function collectTags(){
   const map = {};
   for(const p of state.projects){
@@ -1081,8 +1065,7 @@ function updateProgressRecord(id, idx, value, tag){
   const p = findProgress(id); if(!p) return;
   const rec = p.records[idx]; if(!rec) return;
   const old = rec.value;
-  rec.value = value;
-  rec.tag = tag || '';
+  rec.value = value; rec.tag = tag || '';
   p.current = p.current - old + value;
   saveState();
 }
@@ -1344,7 +1327,6 @@ function renderCardExpand(card, p){
   inner.appendChild(buildCalendar(p));
   requestAnimationFrame(() => { card._refs.expand.style.height = inner.scrollHeight + 'px'; });
 }
-
 function tagStatsOfMonth(p, y, m){
   const pre = `${y}-${pad2(m+1)}-`;
   const map = {};
@@ -1362,7 +1344,6 @@ function buildCalendar(p){
   wrap.className = 'cal-wrap';
   if(!view.calMonth[p.id]) view.calMonth[p.id] = { y: view.year, m: view.month };
   const cm = view.calMonth[p.id];
-
   const head = document.createElement('div');
   head.className = 'cal-head';
   head.innerHTML = `
@@ -1372,7 +1353,6 @@ function buildCalendar(p){
     <span class="cal-stat"></span>
   `;
   wrap.appendChild(head);
-
   head.querySelectorAll('.cal-nav').forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -1385,13 +1365,11 @@ function buildCalendar(p){
       if(card) renderCardExpand(card, p);
     });
   });
-
   const wd = document.createElement('div');
   wd.className = 'weekdays';
   wd.innerHTML = WEEK.map(w => `<span>${w}</span>`).join('');
   wrap.appendChild(wd);
   wrap.appendChild(buildMonthGrid(p, cm.y, cm.m));
-
   const foot = document.createElement('div');
   foot.className = 'cal-foot';
   wrap.appendChild(foot);
@@ -1415,20 +1393,17 @@ function buildMonthGrid(p, y, m){
   const dim = new Date(y, m+1, 0).getDate();
   const tk = todayKey();
   const isLight = luminance(p.color) > 0.62;
-
   for(let i = 0; i < 42; i++){
     const d = i - startDow + 1;
     const cell = document.createElement('div');
     cell.className = 'cell';
     if(d < 1 || d > dim){ cell.classList.add('blank'); grid.appendChild(cell); continue; }
-
     const key = dateKey(y, m, d);
     const rec = getRecord(p, key);
     const isFuture = key > tk;
     cell.dataset.k = key;
     if(key === tk) cell.classList.add('today');
     if(isFuture) cell.classList.add('future');
-
     if(rec){
       cell.classList.add('on');
       if(isFuture){ cell.style.background = rgba(p.color, 0.28); cell.classList.add('dark'); }
@@ -1441,7 +1416,6 @@ function buildMonthGrid(p, y, m){
     const dEl = document.createElement('span');
     dEl.className = 'd'; dEl.textContent = d;
     cell.appendChild(dEl);
-
     let sub = null, isHol = false;
     if(state.settings.holiday){ const h = getHoliday(y, m, d); if(h){ sub = h; isHol = true; } }
     if(!sub && state.settings.lunar) sub = lunarLabel(y, m, d);
@@ -1605,7 +1579,6 @@ function closeProgressCard(){
 function renderProgressExpand(el, p){
   const inner = el._refs.inner;
   inner.innerHTML = '';
-
   const cm = { y: view.year, m: view.month };
   const ms = progressMonthStats(p, cm.y, cm.m);
   if(ms.count > 0){
@@ -1624,8 +1597,7 @@ function renderProgressExpand(el, p){
       const total = document.createElement('div');
       total.className = 'tag-row';
       total.style.borderTop = '.5px solid var(--sep)';
-      total.style.marginTop = '4px';
-      total.style.paddingTop = '8px';
+      total.style.marginTop = '4px'; total.style.paddingTop = '8px';
       total.style.fontWeight = '500';
       total.innerHTML = `<span>合计</span><span class="tag-val" style="color:var(--text)">${ms.sum > 0 ? '+' : ''}${fmtNum(ms.sum)} ${esc(p.unit)} · ${ms.count} 次</span>`;
       wrap.appendChild(total);
@@ -1637,7 +1609,6 @@ function renderProgressExpand(el, p){
     }
     inner.appendChild(wrap);
   }
-
   const recent = [...p.records].slice(-3).reverse();
   if(recent.length > 0){
     const wrap = document.createElement('div');
@@ -1661,21 +1632,18 @@ function renderProgressExpand(el, p){
     });
     inner.appendChild(wrap);
   }
-
   const allBtn = document.createElement('button');
   allBtn.className = 'btn ghost';
   allBtn.style.marginTop = '14px'; allBtn.style.width = '100%';
   allBtn.textContent = '查看全部记录';
   allBtn.onclick = (e) => { e.stopPropagation(); openProgressHistory(p.id); };
   inner.appendChild(allBtn);
-
   const recBtn = document.createElement('button');
   recBtn.className = 'btn primary';
   recBtn.style.marginTop = '10px'; recBtn.style.width = '100%';
   recBtn.textContent = '记一笔';
   recBtn.onclick = (e) => { e.stopPropagation(); openProgressRecordModal(p.id); };
   inner.appendChild(recBtn);
-
   requestAnimationFrame(() => { el._refs.expand.style.height = inner.scrollHeight + 'px'; });
 }
 
@@ -1759,8 +1727,7 @@ function openProgressHistory(id){
     });
     Object.entries(groups).forEach(([key, arr]) => {
       const h = document.createElement('div');
-      h.className = 'rec-month';
-      h.textContent = key;
+      h.className = 'rec-month'; h.textContent = key;
       body.appendChild(h);
       arr.forEach(r => {
         const d = new Date(r.t);
@@ -2151,7 +2118,6 @@ function openProgressRecordModal(id){
         <button class="btn primary" id="btnOk">记一笔</button>
       </div>
     `;
-
     const valIn = modal.querySelector('#valInput');
     const tagIn = modal.querySelector('#tagInput');
     const signBtn = modal.querySelector('#signBtn');
@@ -2202,7 +2168,6 @@ function openProgressRecordModal(id){
       dpPanel.style.display = open ? 'none' : 'block';
       if(!open){ calView = { y: view.year, m: view.month }; renderDpGrid(); }
     });
-
     modal.querySelector('#dpPrev').addEventListener('click', (e) => {
       e.stopPropagation();
       let ny = calView.y, nm = calView.m - 1;
@@ -2255,7 +2220,6 @@ function openProgressRecordModal(id){
   });
 }
 
-/* ========== 标签墙 ========== */
 function openTagWall(silent){
   pageHost.innerHTML = '';
   const page = document.createElement('div');
@@ -2283,7 +2247,6 @@ function openTagWall(silent){
     summary.style.cssText = 'text-align:center;padding:8px 0 20px;color:var(--text2);font-size:13px;letter-spacing:.2px';
     summary.textContent = `共 ${tags.length} 个标签 · 累计 ${totalCount} 笔`;
     body.appendChild(summary);
-
     tags.forEach(t => {
       const card = document.createElement('div');
       card.className = 'tag-wall-card';
@@ -2310,8 +2273,12 @@ function openTagWall(silent){
     page.classList.remove('show');
     setTimeout(() => { if(page.parentNode === pageHost) page.remove(); }, 420);
   });
-  if(silent){ page.classList.add('no-anim'); requestAnimationFrame(() => page.classList.add('show')); }
-  else { requestAnimationFrame(() => page.classList.add('show')); }
+  if(silent){
+    page.classList.add('no-anim');
+    requestAnimationFrame(() => page.classList.add('show'));
+  } else {
+    requestAnimationFrame(() => page.classList.add('show'));
+  }
 }
 
 function openTagDetail(tagName, silent){
@@ -2383,13 +2350,15 @@ function openTagDetail(tagName, silent){
     page.classList.remove('show');
     setTimeout(() => { if(page.parentNode === pageHost) page.remove(); openTagWall(); }, 420);
   });
-  if(silent){ page.classList.add('no-anim'); page.classList.add('show'); }
-  else { requestAnimationFrame(() => page.classList.add('show')); }
+  if(silent){
+    page.classList.add('no-anim');
+    requestAnimationFrame(() => page.classList.add('show'));
+  } else {
+    requestAnimationFrame(() => page.classList.add('show'));
+  }
 }
 
-/* ========== 引导流程 ========== */
 function showOnboardMask(opts){
-  // opts: { title, desc, buttons: [{label, primary, onClick}] }
   const mask = document.createElement('div');
   mask.className = 'onboard-mask';
   const box = document.createElement('div');
@@ -2416,7 +2385,7 @@ function showOnboardMask(opts){
   requestAnimationFrame(() => mask.classList.add('show'));
 }
 
-function openTemplatePage(){
+function openTemplatePage(onDone){
   pageHost.innerHTML = '';
   const page = document.createElement('div');
   page.className = 'page';
@@ -2459,8 +2428,6 @@ function openTemplatePage(){
   PRESETS.forEach(p => {
     const card = document.createElement('div');
     card.className = 'tpl-card';
-    const allTags = [];
-    p.modules.forEach(m => { (MODULES[m] || []).forEach(t => allTags.push(t)); });
     card.innerHTML = `
       <div class="tpl-name">${p.name}</div>
       <div class="tpl-desc">${p.desc}</div>
@@ -2468,8 +2435,7 @@ function openTemplatePage(){
     `;
     card.addEventListener('click', () => {
       generateFromModules(p.modules);
-      page.classList.remove('show');
-      setTimeout(() => { if(page.parentNode) page.remove(); renderMain(); }, 420);
+      closePageThenCallback(page, onDone);
     });
     presetList.appendChild(card);
   });
@@ -2498,33 +2464,33 @@ function openTemplatePage(){
       item.classList.toggle('on', selected[m]);
     });
     item.querySelectorAll('.ci-tag').forEach(tb => {
-      tb.addEventListener('click', (e) => {
-        e.stopPropagation();
-        tb.classList.toggle('on');
-      });
+      tb.addEventListener('click', (e) => { e.stopPropagation(); tb.classList.toggle('on'); });
     });
     customList.appendChild(item);
   });
 
   page.querySelector('#btnSkip').addEventListener('click', () => {
-    page.classList.remove('show');
-    setTimeout(() => { if(page.parentNode) page.remove(); }, 420);
+    closePageThenCallback(page, onDone);
   });
-
   page.querySelector('#btnConfirm').addEventListener('click', () => {
     const mods = Object.keys(selected).filter(m => selected[m]);
     if(!mods.length){ toast('请至少选择一个模块'); return; }
     generateFromModules(mods);
-    page.classList.remove('show');
-    setTimeout(() => { if(page.parentNode) page.remove(); renderMain(); }, 420);
+    closePageThenCallback(page, onDone);
   });
-
   page.querySelector('#backBtn').addEventListener('click', () => {
-    page.classList.remove('show');
-    setTimeout(() => { if(page.parentNode) page.remove(); }, 420);
+    closePageThenCallback(page, onDone);
   });
 
   requestAnimationFrame(() => page.classList.add('show'));
+}
+
+function closePageThenCallback(page, onDone){
+  page.classList.remove('show');
+  setTimeout(() => {
+    if(page.parentNode) page.remove();
+    if(onDone) onDone();
+  }, 420);
 }
 
 function generateFromModules(modules){
@@ -2672,7 +2638,9 @@ function openSettings(){
     saveState();
   });
 
-  page.querySelector('#rowTemplate').addEventListener('click', openTemplatePage);
+  page.querySelector('#rowTemplate').addEventListener('click', () => {
+    openTemplatePage(() => { openSettings(); });
+  });
   page.querySelector('#rowExport').addEventListener('click', exportData);
   page.querySelector('#rowImport').addEventListener('click', importData);
   page.querySelector('#rowArchived').addEventListener('click', () => {
@@ -2714,7 +2682,6 @@ function openArchived(onCount){
   `;
   pageHost.appendChild(page);
   const body = page.querySelector('#archivedBody');
-
   const render = () => {
     body.innerHTML = '';
     if(!state.archived.length){
@@ -2749,7 +2716,6 @@ function openArchived(onCount){
       g.appendChild(row);
     });
     body.appendChild(g);
-
     body.querySelectorAll('[data-r]').forEach(b => {
       b.addEventListener('click', () => {
         const i = +b.dataset.r;
@@ -2771,7 +2737,6 @@ function openArchived(onCount){
     });
   };
   render();
-
   page.querySelector('#backBtn').addEventListener('click', () => {
     page.classList.remove('show');
     setTimeout(() => { if(page.parentNode === pageHost) page.remove(); openSettings(); }, 420);
@@ -2818,7 +2783,6 @@ function openTianPage(){
     frag.appendChild(sp);
   }
   grid.appendChild(frag);
-
   page.querySelector('#shareBtn').addEventListener('click', () => { shareTian(stats); });
   page.querySelector('#backBtn').addEventListener('click', () => {
     page.classList.remove('show');
@@ -2836,7 +2800,6 @@ function shareTian(stats){
   const totalGlyphs = full + (part ? 1 : 0);
   const rows = Math.max(1, Math.ceil(totalGlyphs / perRow));
   const tianHeight = rows * gs;
-
   let cursor = TOP_PAD;
   cursor += 40 + 40; cursor += tianHeight; cursor += 60;
   cursor += 30 + 4 + 26 + 60; cursor += 90 + 60;
@@ -2976,7 +2939,6 @@ function openTrash(onCount){
     });
   };
   render();
-
   page.querySelector('#backBtn').addEventListener('click', () => {
     page.classList.remove('show');
     setTimeout(() => { if(page.parentNode === pageHost) page.remove(); openSettings(); }, 420);
@@ -3226,13 +3188,11 @@ function shareMonth(y, m, range){
     }
     label = '全部记录';
   }
-
   const inRange = (key) => {
     const [yy, mm] = key.split('-').map(Number);
     const ym = yy * 12 + mm;
     return ym >= fromY * 12 + (fromM+1) && ym <= toY * 12 + (toM+1);
   };
-
   const daySet = new Set();
   let totalCount = 0;
   for(const p of state.projects){
@@ -3247,7 +3207,6 @@ function shareMonth(y, m, range){
     for(const k in p.records) if(inRange(k)) c++;
     if(c > 0) projStats.push({ name: p.name, color: p.color, count: c });
   });
-
   const W = 760, TOP_PAD = 40;
   let cursor = TOP_PAD;
   cursor += 40 + 30; cursor += 28 + 4 + 26 + 40;
@@ -3414,20 +3373,18 @@ function shareMonth(y, m, range){
   });
 }
 
-/* ========== 拖拽排序 ========== */
 let dragState = null;
 function bindDragSort(container, kind){
   const cards = $$('.card', container);
   if(cards.length < 2) return;
 
   const onStart = (e) => {
+    if(dragState) return;
     const card = e.target.closest('.card');
     if(!card) return;
     if(e.target.closest('button')) return;
-    if(dragState && dragState.active) return;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    if(dragState) return;
     dragState = {
       card, container, kind,
       startY: clientY, startX: clientX,
@@ -3536,42 +3493,12 @@ function bindDragSort(container, kind){
       state.progress = ids.map(id => map[id]).filter(Boolean);
     }
     saveState();
+    const k = dragState.kind;
     dragState = null;
-    if(kind === 'project') renderProjectList();
+    if(k === 'project') renderProjectList();
     else renderProgressList();
   };
 }
-
-/* ========== 引导流程 ========== */
-function initOnboarding(){
-  if(state.settings.onboarded) return;
-  // 首次打开：先弹模板选择页
-  setTimeout(() => {
-    openTemplatePage();
-  }, 400);
-}
-
-function afterTemplateClose(){
-  // 模板页关闭后，如果还没 onboarded，标记它
-  if(!state.settings.onboarded){
-    state.settings.onboarded = true;
-    saveState();
-    // 如果首页有项目，提示记一笔；否则提示新建
-    setTimeout(() => {
-      const hasProjects = state.projects.length > 0;
-      showOnboardMask({
-        title: hasProjects ? '开始记录' : '建一个项目',
-        desc: hasProjects
-          ? '点击卡片上的「记一笔」，写下今天的第一笔。'
-          : '点击「＋ 新建坚持」，建一个项目开始。',
-        buttons: [{ label: '知道了', primary: true }]
-      });
-    }, 600);
-  }
-}
-
-// 覆盖 openTemplatePage 的退出，让它带上 afterTemplateClose
-const _origOpenTemplatePage = openTemplatePage;
 
 function init(){
   document.documentElement.setAttribute('data-theme', state.settings.theme || 'auto');
@@ -3599,32 +3526,25 @@ function init(){
   renderMain();
   renderProgressList();
 
-  // 首次引导
+  // 首次引导：先选模板，再弹操作指引
   if(!state.settings.onboarded){
     setTimeout(() => {
-      // 用模板页代替旧的 coach
-      openTemplatePage();
-      // 模板页关闭后弹操作引导
-      const checkClosed = setInterval(() => {
-        const pages = $$('.page', pageHost);
-        if(!pages.length){
-          clearInterval(checkClosed);
-          if(!state.settings.onboarded){
-            state.settings.onboarded = true;
-            saveState();
-            setTimeout(() => {
-              const hasProjects = state.projects.length > 0;
-              showOnboardMask({
-                title: hasProjects ? '开始记录' : '建一个项目',
-                desc: hasProjects
-                  ? '点击卡片上的「记一笔」，写下今天的第一笔。'
-                  : '点击「＋ 新建坚持」，建一个项目开始。',
-                buttons: [{ label: '知道了', primary: true }]
-              });
-            }, 600);
-          }
+      openTemplatePage(() => {
+        if(!state.settings.onboarded){
+          state.settings.onboarded = true;
+          saveState();
+          setTimeout(() => {
+            const hasProjects = state.projects.length > 0;
+            showOnboardMask({
+              title: hasProjects ? '开始记录' : '建一个项目',
+              desc: hasProjects
+                ? '点击卡片上的「记一笔」，写下今天的第一笔。'
+                : '点击「＋ 新建坚持」，建一个项目开始。',
+              buttons: [{ label: '知道了', primary: true }]
+            });
+          }, 600);
         }
-      }, 500);
+      });
     }, 400);
   }
 }
