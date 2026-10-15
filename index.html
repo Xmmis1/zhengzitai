@@ -3093,9 +3093,21 @@ function bindDragSort(container, kind){
     endDrag();
   };
 
+  const onCancelMove = (e) => {
+    if(!dragState || dragState.active) return;
+    const y = e.touches[0].clientY, x = e.touches[0].clientX;
+    if(Math.hypot(y - dragState.startY, x - dragState.startX) > 10){
+      clearTimeout(dragState.longPressTimer);
+      dragState = null;
+    }
+  };
+
   cards.forEach(card => {
     card.addEventListener('touchstart', onStart, { passive: true });
     card.addEventListener('mousedown', onStart);
+    card.addEventListener('touchmove', onCancelMove, { passive: true });
+    card.addEventListener('touchend', onEnd, { passive: true });
+    card.addEventListener('mouseup', onEnd);
   });
 
   const startDrag = (clientY, clientX) => {
