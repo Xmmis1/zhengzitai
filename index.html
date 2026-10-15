@@ -135,15 +135,19 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
   padding:14px 16px 16px;margin-bottom:11px;
   transition:box-shadow .3s,background .25s;
   box-shadow:0 1px 2px rgba(0,0,0,.03);
-  touch-action:pan-y;
 }
 .card.open{box-shadow:var(--shadow);}
 .card.done{background:color-mix(in srgb,var(--c) 8%,var(--card));}
+
+/* ===== 拖拽排序样式 ===== */
 .card.dragging{
   z-index:50;
-  box-shadow:0 8px 32px rgba(0,0,0,.18);
-  transform:scale(1.02);
-  opacity:.92;
+  box-shadow:0 12px 36px rgba(0,0,0,.18);
+  opacity:.96;
+  transition:none;
+}
+.card.drag-placeholder{
+  opacity:.3;
 }
 
 .card-head{display:flex;align-items:center;gap:10px;}
@@ -688,9 +692,7 @@ const DEFAULT_STATE = {
     lunar: true,
     holiday: true,
     calMode: 'stripe',
-    hintRecorded: false,
-    hintTags: false,
-    hintBackup: false
+    hintRecorded: false
   },
   projects: [],
   progress: [],
@@ -1028,6 +1030,7 @@ const view = {
   bigCalMonth: now.getMonth()
 };
 const listEl = $('#list');
+const progressListEl = $('#progressList');
 
 function renderDateBar(){
   const [y, m, d] = view.selDate.split('-').map(Number);
@@ -1052,6 +1055,7 @@ function renderMain(){
 }
 
 function renderProjectList(){
+  if(view.openProjectId) view.openProjectId = null;
   listEl.innerHTML = '';
   if(!state.projects.length){
     const e = document.createElement('div');
@@ -1066,8 +1070,7 @@ function renderProjectList(){
   add.textContent = '＋ 新建坚持';
   add.onclick = () => openProjectModal(null);
   listEl.appendChild(add);
-  applyOpenState();
-  bindDragSort();
+  bindDragSort(listEl, 'project');
 }
 
 function buildCard(p){
@@ -1125,10 +1128,18 @@ function buildCard(p){
       saveState();
       setTimeout(() => coach('已记 · 再点一下格子，可以写备注和标签'), 500);
     }
-    setTimeout(() => renderMain(), 380);
+    refreshCardButton(el, p);
+    refreshStreak(el, p);
+    fillCardGlyphs(el, p);
   });
-  head.querySelector('.names').addEventListener('click', () => { toggleCard(p.id); });
-  zrows.addEventListener('click', () => { toggleCard(p.id); });
+  head.querySelector('.names').addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleCard(p.id);
+  });
+  zrows.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleCard(p.id);
+  });
 
   refreshCardButton(el, p);
   refreshStreak(el, p);
@@ -1173,13 +1184,14 @@ function toggleCard(id){ if(view.openProjectId === id) closeCard(); else openCar
 function openCard(id){
   const p = findProject(id);
   if(!p) return;
+  if(view.openProjectId && view.openProjectId !== id) closeCard();
   view.openProjectId = id;
   if(!view.calMonth[id]) view.calMonth[id] = { y: view.year, m: view.month };
   const card = listEl.querySelector(`.card[data-id="${id}"]`);
   if(!card) return;
   renderCardExpand(card, p);
+  card.classList.add('open');
   requestAnimationFrame(() => {
-    card.classList.add('open');
     card._refs.expand.style.height = card._refs.inner.scrollHeight + 'px';
   });
   setTimeout(() => {
@@ -1193,16 +1205,12 @@ function openCard(id){
 function closeCard(){
   const id = view.openProjectId;
   view.openProjectId = null;
+  if(!id) return;
   const card = listEl.querySelector(`.card[data-id="${id}"]`);
-  if(card){ card.classList.remove('open'); card._refs.expand.style.height = '0px'; }
-}
-
-function applyOpenState(){
-  $$('.card', listEl).forEach(el => {
-    const isOpen = el.dataset.id === view.openProjectId;
-    el.classList.toggle('open', isOpen);
-    if(!isOpen) el._refs.expand.style.height = '0px';
-  });
+  if(card){
+    card.classList.remove('open');
+    card._refs.expand.style.height = '0px';
+  }
 }
 
 function renderCardExpand(card, p){
@@ -1390,15 +1398,15 @@ function onCellClick(p, key, cellEl){
     coach('已记 · 再点一下格子，可以写备注和标签');
   }
   const card = listEl.querySelector(`.card[data-id="${p.id}"]`);
-  if(card) fillCardGlyphs(card, p);
-  const wrap = cellEl.closest('.cal-wrap');
-  if(wrap){
-    const cm = view.calMonth[p.id] || { y: view.year, m: view.month };
-    updateCalStat(wrap, p, cm.y, cm.m);
-  }
   if(card){
+    fillCardGlyphs(card, p);
     refreshCardButton(card, p);
     refreshStreak(card, p);
+    const wrap = cellEl.closest('.cal-wrap');
+    if(wrap){
+      const cm = view.calMonth[p.id] || { y: view.year, m: view.month };
+      updateCalStat(wrap, p, cm.y, cm.m);
+    }
     if(view.openProjectId === p.id){
       requestAnimationFrame(() => { card._refs.expand.style.height = card._refs.inner.scrollHeight + 'px'; });
     }
@@ -1423,9 +1431,8 @@ function applyCellStyle(cell, p, key){
   else if(!hasNote && nd){ nd.remove(); }
 }
 
-const progressListEl = $('#progressList');
-
 function renderProgressList(){
+  if(openProgressId) openProgressId = null;
   progressListEl.innerHTML = '';
   if(!state.progress.length){
     const e = document.createElement('div');
@@ -1441,6 +1448,7 @@ function renderProgressList(){
   add.textContent = '＋ 新建进度';
   add.onclick = () => openProgressModal(null);
   progressListEl.appendChild(add);
+  bindDragSort(progressListEl, 'progress');
 }
 
 function buildProgressCard(p){
@@ -1497,8 +1505,14 @@ function buildProgressCard(p){
     e.stopPropagation();
     openProgressRecordModal(p.id);
   });
-  head.querySelector('.names').addEventListener('click', () => { toggleProgressCard(p.id); });
-  body.addEventListener('click', () => { toggleProgressCard(p.id); });
+  head.querySelector('.names').addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleProgressCard(p.id);
+  });
+  body.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleProgressCard(p.id);
+  });
 
   return el;
 }
@@ -1510,18 +1524,20 @@ function toggleProgressCard(id){
 }
 function openProgressCard(id){
   const p = findProgress(id); if(!p) return;
+  if(openProgressId && openProgressId !== id) closeProgressCard();
   openProgressId = id;
   const el = progressListEl.querySelector(`.card[data-pid="${id}"]`);
   if(!el) return;
   renderProgressExpand(el, p);
+  el.classList.add('open');
   requestAnimationFrame(() => {
-    el.classList.add('open');
     el._refs.expand.style.height = el._refs.inner.scrollHeight + 'px';
   });
 }
 function closeProgressCard(){
   const id = openProgressId;
   openProgressId = null;
+  if(!id) return;
   const el = progressListEl.querySelector(`.card[data-pid="${id}"]`);
   if(el){ el.classList.remove('open'); el._refs.expand.style.height = '0px'; }
 }
@@ -1685,14 +1701,7 @@ function openRecordActions(progressId, idx){
       setTimeout(() => {
         renderProgressList();
         const el = progressListEl.querySelector(`.card[data-pid="${p.id}"]`);
-        const fresh = findProgress(p.id);
-        if(el && fresh && openProgressId === p.id){
-          renderProgressExpand(el, fresh);
-          requestAnimationFrame(() => {
-            el.classList.add('open');
-            el._refs.expand.style.height = el._refs.inner.scrollHeight + 'px';
-          });
-        }
+        if(el) openProgressCard(p.id);
       }, 200);
     });
 
@@ -1703,14 +1712,7 @@ function openRecordActions(progressId, idx){
       setTimeout(() => {
         renderProgressList();
         const el = progressListEl.querySelector(`.card[data-pid="${p.id}"]`);
-        const fresh = findProgress(p.id);
-        if(el && fresh && openProgressId === p.id){
-          renderProgressExpand(el, fresh);
-          requestAnimationFrame(() => {
-            el.classList.add('open');
-            el._refs.expand.style.height = el._refs.inner.scrollHeight + 'px';
-          });
-        }
+        if(el) openProgressCard(p.id);
       }, 200);
     });
   });
@@ -1887,7 +1889,12 @@ function openRecordModal(projectId, dateKeyStr){
       }
       save();
       closeModal();
-      renderMain();
+      const card = listEl.querySelector(`.card[data-id="${p.id}"]`);
+      if(card){
+        fillCardGlyphs(card, p);
+        refreshCardButton(card, p);
+        refreshStreak(card, p);
+      }
       checkMilestones(p);
     });
 
@@ -1897,7 +1904,12 @@ function openRecordModal(projectId, dateKeyStr){
       }
       removeRecord(p, dateKeyStr);
       closeModal();
-      renderMain();
+      const card = listEl.querySelector(`.card[data-id="${p.id}"]`);
+      if(card){
+        fillCardGlyphs(card, p);
+        refreshCardButton(card, p);
+        refreshStreak(card, p);
+      }
     });
   });
 }
@@ -1942,13 +1954,6 @@ function openProjectModal(id){
       </div>
       <div class="form-label">颜色</div>
       <div class="swatches" id="sw"></div>
-      ${isNew ? '' : `
-        <div class="form-label">排序</div>
-        <div style="display:flex;gap:10px;margin-bottom:8px">
-          <button class="btn ghost" id="btnUp" ${isFirst ? 'disabled style="opacity:.4"' : ''}>↑ 上移</button>
-          <button class="btn ghost" id="btnDown" ${isLast ? 'disabled style="opacity:.4"' : ''}>↓ 下移</button>
-        </div>
-      `}
       <div class="modal-actions">
         ${isNew ? '' : '<button class="btn ghost" id="btnDel" style="color:var(--danger)">删除</button>'}
         <button class="btn ghost" id="btnCancel">取消</button>
@@ -1976,12 +1981,8 @@ function openProjectModal(id){
       else { updateProject(p.id, { name, color }); }
       closeModal();
       setTimeout(() => {
-        renderMain();
-        if(!isNew && view.openProjectId === p.id){
-          const card = listEl.querySelector(`.card[data-id="${p.id}"]`);
-          const fresh = findProject(p.id);
-          if(card && fresh) renderCardExpand(card, fresh);
-        }
+        if(currentTab === 'project') renderProjectList();
+        else renderProgressList();
       }, 200);
     });
 
@@ -1989,25 +1990,9 @@ function openProjectModal(id){
       modal.querySelector('#btnDel').addEventListener('click', () => {
         if(!confirm(`把「${p.name}」移到垃圾桶？\n数据会保留，可随时恢复。`)) return;
         removeProject(p.id);
-        if(view.openProjectId === p.id) view.openProjectId = null;
+        view.openProjectId = null;
         closeModal();
-        setTimeout(renderMain, 200);
-      });
-      const btnUp = modal.querySelector('#btnUp');
-      const btnDown = modal.querySelector('#btnDown');
-      if(btnUp) btnUp.addEventListener('click', () => {
-        const i = state.projects.findIndex(x => x.id === p.id);
-        if(i > 0){
-          [state.projects[i-1], state.projects[i]] = [state.projects[i], state.projects[i-1]];
-          saveState(); closeModal(); setTimeout(renderMain, 200);
-        }
-      });
-      if(btnDown) btnDown.addEventListener('click', () => {
-        const i = state.projects.findIndex(x => x.id === p.id);
-        if(i < state.projects.length - 1){
-          [state.projects[i+1], state.projects[i]] = [state.projects[i], state.projects[i+1]];
-          saveState(); closeModal(); setTimeout(renderMain, 200);
-        }
+        setTimeout(renderProjectList, 200);
       });
     }
     if(isNew){ setTimeout(() => modal.querySelector('#pName').focus(), 320); }
@@ -2087,21 +2072,14 @@ function openProgressModal(id){
       if(isNew){ addProgress({ name, color, unit, target, pinned }); }
       else { updateProgress(p.id, { name, color, unit, target, pinned }); }
       closeModal();
-      setTimeout(() => {
-        renderProgressList();
-        if(!isNew){
-          const el = progressListEl.querySelector(`.card[data-pid="${p.id}"]`);
-          const fresh = findProgress(p.id);
-          if(el && fresh && openProgressId === p.id) renderProgressExpand(el, fresh);
-        }
-      }, 200);
+      setTimeout(renderProgressList, 200);
     });
 
     if(!isNew){
       modal.querySelector('#btnDel').addEventListener('click', () => {
         if(!confirm(`把「${p.name}」移到垃圾桶？\n数据会保留，可随时恢复。`)) return;
         removeProgress(p.id);
-        if(openProgressId === p.id) openProgressId = null;
+        openProgressId = null;
         closeModal();
         setTimeout(renderProgressList, 200);
       });
@@ -2174,16 +2152,9 @@ function openProgressRecordModal(id){
       setTimeout(() => {
         renderProgressList();
         const el = progressListEl.querySelector(`.card[data-pid="${p.id}"]`);
+        if(el) openProgressCard(p.id);
         const fresh = findProgress(p.id);
-        if(el && fresh){
-          openProgressId = fresh.id;
-          renderProgressExpand(el, fresh);
-          requestAnimationFrame(() => {
-            el.classList.add('open');
-            el._refs.expand.style.height = el._refs.inner.scrollHeight + 'px';
-          });
-        }
-        if(isProgressDone(fresh)) coach(`「${fresh.name}」达成目标`);
+        if(fresh && isProgressDone(fresh)) coach(`「${fresh.name}」达成目标`);
       }, 200);
     });
 
@@ -2864,7 +2835,6 @@ function shareTian(stats){
 
   const bg = '#FAF8F3';
   const fg = '#2A2622';
-  const fg2 = '#8A857C';
   const fg3 = '#C4BFB5';
 
   ctx.fillStyle = bg;
@@ -3079,151 +3049,152 @@ function importData(){
   inp.click();
 }
 
-/* ====== 拖拽排序（仅长按激活，不干扰滑动） ====== */
+/* ================= 拖拽排序（坚持 + 进度通用） ================= */
 let dragState = null;
 
-function bindDragSort(){
-  const container = listEl;
+function bindDragSort(container, kind){
   const cards = $$('.card', container);
   if(cards.length < 2) return;
 
-  cards.forEach(card => {
-    card.addEventListener('touchstart', onDragTouchStart, { passive: true });
-    card.addEventListener('mousedown', onDragMouseDown);
-  });
-}
-
-function onDragTouchStart(e){
-  if(e.target.closest('button')) return;
-  const el = e.target.closest('.card');
-  if(!el) return;
-  const t = e.touches[0];
-  dragState = {
-    el,
-    startY: t.clientY,
-    startX: t.clientX,
-    active: false,
-    timer: setTimeout(() => startDrag(el, t.clientY, t.clientX), 280)
-  };
-}
-
-function onDragMouseDown(e){
-  if(e.target.closest('button')) return;
-  const el = e.target.closest('.card');
-  if(!el) return;
-  dragState = {
-    el,
-    startY: e.clientY,
-    startX: e.clientX,
-    active: false,
-    timer: setTimeout(() => startDrag(el, e.clientY, e.clientX), 280)
-  };
-}
-
-function startDrag(el, clientY, clientX){
-  if(!dragState || dragState.el !== el) return;
-  if(view.openProjectId) closeCard();
-  dragState.active = true;
-  el.classList.add('dragging');
-  document.body.style.cursor = 'grabbing';
-  document.addEventListener('touchmove', onDragMove, { passive: false });
-  document.addEventListener('touchend', onDragEnd);
-  document.addEventListener('mousemove', onDragMove);
-  document.addEventListener('mouseup', onDragEnd);
-  if(navigator.vibrate) navigator.vibrate(10);
-}
-
-function onDragMove(e){
-  if(!dragState || !dragState.active) return;
-  if(e.cancelable) e.preventDefault();
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  const delta = clientY - dragState.startY;
-  dragState.el.style.transform = `translateY(${delta}px)`;
-
-  const container = listEl;
-  const siblings = $$('.card', container).filter(x => x !== dragState.el);
-  const dragRect = dragState.el.getBoundingClientRect();
-  const dragMid = dragRect.top + dragRect.height / 2;
-  let target = null;
-  for(const sib of siblings){
-    const r = sib.getBoundingClientRect();
-    const mid = r.top + r.height / 2;
-    if(dragMid < mid){ target = sib; break; }
-  }
-  const addCard = container.querySelector('.add-card');
-  if(target){
-    container.insertBefore(dragState.el, target);
-  }else if(addCard){
-    container.insertBefore(dragState.el, addCard);
-  }
-}
-
-function onDragEnd(){
-  document.removeEventListener('touchmove', onDragMove);
-  document.removeEventListener('touchend', onDragEnd);
-  document.removeEventListener('mousemove', onDragMove);
-  document.removeEventListener('mouseup', onDragEnd);
-  document.body.style.cursor = '';
-  if(!dragState){ return; }
-  clearTimeout(dragState.timer);
-  if(!dragState.active){ dragState = null; return; }
-
-  const el = dragState.el;
-  el.classList.remove('dragging');
-  el.style.transform = '';
-
-  const order = $$('.card', listEl).map(x => x.dataset.id).filter(Boolean);
-  const map = {};
-  state.projects.forEach(p => { map[p.id] = p; });
-  state.projects = order.map(id => map[id]).filter(Boolean);
-  saveState();
-  dragState = null;
-  renderProjectList();
-}
-
-/* ====== 左右滑动手势切换日期（只绑定一次） ====== */
-let swipeBound = false;
-function bindSwipeDate(){
-  if(swipeBound) return;
-  swipeBound = true;
-  const main = $('#pageProject');
-  if(!main) return;
-  let startX = 0, startY = 0, startTime = 0;
-  let tracking = false;
-
-  main.addEventListener('touchstart', (e) => {
-    if(dragState && dragState.active) return;
-    if(view.openProjectId) return;
+  const onStart = (e) => {
+    const card = e.target.closest('.card');
+    if(!card) return;
     if(e.target.closest('button')) return;
-    const t = e.touches[0];
-    startX = t.clientX;
-    startY = t.clientY;
-    startTime = Date.now();
-    tracking = true;
-  }, { passive: true });
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    if(dragState) return;
 
-  main.addEventListener('touchmove', (e) => {
-    if(!tracking) return;
-    if(dragState && dragState.active){ tracking = false; return; }
-    const t = e.touches[0];
-    const dx = t.clientX - startX;
-    const dy = t.clientY - startY;
-    if(Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 12){
-      tracking = false;
-    }
-  }, { passive: true });
+    dragState = {
+      card,
+      container,
+      kind,
+      startY: clientY,
+      startX: clientX,
+      active: false,
+      longPressTimer: setTimeout(() => {
+        if(!dragState || dragState.card !== card) return;
+        startDrag(clientY, clientX);
+      }, 300)
+    };
+  };
 
-  main.addEventListener('touchend', (e) => {
-    if(!tracking){ return; }
-    if(dragState && dragState.active){ tracking = false; return; }
-    const t = e.changedTouches[0];
-    const dx = t.clientX - startX;
-    const dt = Date.now() - startTime;
-    tracking = false;
-    if(Math.abs(dx) > 40 && dt < 500){
-      changeDate(dx > 0 ? -1 : 1);
+  const onMove = (e) => {
+    if(!dragState || dragState.card === null) return;
+    if(!dragState.active) return;
+    e.preventDefault();
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    moveDrag(clientY);
+  };
+
+  const onEnd = () => {
+    if(!dragState) return;
+    clearTimeout(dragState.longPressTimer);
+    if(!dragState.active){ dragState = null; return; }
+    endDrag();
+  };
+
+  cards.forEach(card => {
+    card.addEventListener('touchstart', onStart, { passive: true });
+    card.addEventListener('mousedown', onStart);
+  });
+
+  const startDrag = (clientY, clientX) => {
+    if(!dragState) return;
+    const el = dragState.card;
+    if(kind === 'project' && view.openProjectId) closeCard();
+    if(kind === 'progress' && openProgressId) closeProgressCard();
+
+    dragState.active = true;
+    dragState.offsetY = clientY - el.getBoundingClientRect().top;
+    dragState.placeholder = document.createElement('div');
+    dragState.placeholder.className = 'drag-placeholder';
+    dragState.placeholder.style.height = el.offsetHeight + 'px';
+    dragState.placeholder.style.marginBottom = '11px';
+    el.parentNode.insertBefore(dragState.placeholder, el);
+    const rect = el.getBoundingClientRect();
+    el.style.width = rect.width + 'px';
+    el.style.position = 'fixed';
+    el.style.top = rect.top + 'px';
+    el.style.left = rect.left + 'px';
+    el.style.margin = '0';
+    el.classList.add('dragging');
+    document.body.appendChild(el);
+    if(navigator.vibrate) navigator.vibrate(10);
+
+    document.addEventListener('touchmove', onMove, { passive: false });
+    document.addEventListener('touchend', onEnd);
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onEnd);
+  };
+
+  const moveDrag = (clientY) => {
+    if(!dragState || !dragState.active) return;
+    const el = dragState.card;
+    const delta = clientY - dragState.startY;
+    el.style.transform = `translateY(${delta}px)`;
+
+    const ph = dragState.placeholder;
+    const siblings = $$('.card', dragState.container).filter(x => x !== el);
+    const dragRect = el.getBoundingClientRect();
+    const dragMid = dragRect.top + dragRect.height / 2;
+    let target = null;
+    for(const sib of siblings){
+      const r = sib.getBoundingClientRect();
+      const mid = r.top + r.height / 2;
+      if(dragMid < mid){ target = sib; break; }
     }
-  }, { passive: true });
+    const addCard = dragState.container.querySelector('.add-card');
+    if(target){
+      dragState.container.insertBefore(ph, target);
+    }else if(addCard){
+      dragState.container.insertBefore(ph, addCard);
+    }
+  };
+
+  const endDrag = () => {
+    document.removeEventListener('touchmove', onMove);
+    document.removeEventListener('touchend', onEnd);
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onEnd);
+    if(!dragState || !dragState.active) return;
+    const el = dragState.card;
+    const ph = dragState.placeholder;
+    const container = dragState.container;
+
+    el.style.position = '';
+    el.style.top = '';
+    el.style.left = '';
+    el.style.width = '';
+    el.style.transform = '';
+    el.style.margin = '';
+    el.classList.remove('dragging');
+
+    const order = [];
+    const allCards = [];
+    container.querySelectorAll('.card').forEach(c => allCards.push(c));
+    const phIndex = allCards.indexOf(ph);
+    allCards.splice(phIndex, 1);
+    allCards.splice(phIndex, 0, el);
+
+    if(ph.parentNode) ph.parentNode.insertBefore(el, ph);
+    if(ph.parentNode) ph.parentNode.removeChild(ph);
+
+    const ids = $$('.card', container).map(c => c.dataset.id || c.dataset.pid).filter(Boolean);
+    if(dragState.kind === 'project'){
+      const map = {};
+      state.projects.forEach(p => { map[p.id] = p; });
+      state.projects = ids.map(id => map[id]).filter(Boolean);
+    }else{
+      const map = {};
+      state.progress.forEach(p => { map[p.id] = p; });
+      state.progress = ids.map(id => map[id]).filter(Boolean);
+    }
+    saveState();
+    dragState = null;
+
+    if(kind === 'project') renderProjectList();
+    else renderProgressList();
+  };
 }
 
 function init(){
@@ -3251,7 +3222,6 @@ function init(){
 
   renderMain();
   renderProgressList();
-  bindSwipeDate();
 
   if(!state.settings.hintRecorded){
     setTimeout(() => coach('点击卡片上的「记一笔」，写下今天的第一笔'), 800);
