@@ -2389,12 +2389,16 @@ function openTemplatePage(onDone){
   pageHost.innerHTML = '';
   const page = document.createElement('div');
   page.className = 'page';
+  // 是否首次引导（决定是否显示返回按钮）
+  const isFirstTime = !state.settings.onboarded;
   page.innerHTML = `
     <div class="page-nav">
-      <button class="back-btn" id="backBtn">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
-        正字台
-      </button>
+      ${isFirstTime ? '<span style="width:64px"></span>' : `
+        <button class="back-btn" id="backBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+          返回
+        </button>
+      `}
       <span class="page-title">选择模板</span>
       <span style="width:64px"></span>
     </div>
@@ -2425,16 +2429,16 @@ function openTemplatePage(onDone){
   ];
 
   const presetList = page.querySelector('#presetList');
-  PRESETS.forEach(p => {
+  PRESETS.forEach(preset => {
     const card = document.createElement('div');
     card.className = 'tpl-card';
     card.innerHTML = `
-      <div class="tpl-name">${p.name}</div>
-      <div class="tpl-desc">${p.desc}</div>
-      <div class="tpl-tags">${p.modules.map(m => `<span class="tpl-tag">${m}</span>`).join('')}</div>
+      <div class="tpl-name">${preset.name}</div>
+      <div class="tpl-desc">${preset.desc}</div>
+      <div class="tpl-tags">${preset.modules.map(m => `<span class="tpl-tag">${m}</span>`).join('')}</div>
     `;
     card.addEventListener('click', () => {
-      generateFromModules(p.modules);
+      generateFromModules(preset.modules);
       closePageThenCallback(page, onDone);
     });
     presetList.appendChild(card);
@@ -2478,9 +2482,12 @@ function openTemplatePage(onDone){
     generateFromModules(mods);
     closePageThenCallback(page, onDone);
   });
-  page.querySelector('#backBtn').addEventListener('click', () => {
-    closePageThenCallback(page, onDone);
-  });
+  const backBtn = page.querySelector('#backBtn');
+  if(backBtn){
+    backBtn.addEventListener('click', () => {
+      closePageThenCallback(page, onDone);
+    });
+  }
 
   requestAnimationFrame(() => page.classList.add('show'));
 }
@@ -2586,11 +2593,17 @@ function openSettings(){
       </div>
       <div class="group-title">关于</div>
       <div class="group">
-        <div class="row" style="flex-direction:column;align-items:flex-start;gap:6px;padding:16px">
-          <span class="row-label">正字台</span>
-          <span class="row-sub" style="margin:0">一笔一画，把日子写端正。</span>
-          <span class="row-sub" style="margin:8px 0 0">小红书：517000762</span>
-          <span class="row-sub" style="margin:0">数据保存在本机浏览器，换设备前请先导出备份。</span>
+        <div class="row" style="flex-direction:column;align-items:flex-start;gap:16px;padding:20px 18px">
+          <div>
+            <div class="row-label" style="font-size:17px;font-weight:600;">正字台</div>
+            <div class="row-sub" style="margin-top:4px">一笔一画，把日子写端正。</div>
+          </div>
+          <div style="width:100%;height:.5px;background:var(--sep);"></div>
+          <div>
+            <div class="row-sub" style="margin:0">由 泡泡 &amp; 乖乖 监制</div>
+            <div class="row-sub" style="margin-top:6px">小红书：517000762</div>
+          </div>
+          <div class="row-sub" style="margin:0;line-height:1.6">数据保存在本机浏览器，换设备前请先导出备份。</div>
         </div>
       </div>
     </div>
