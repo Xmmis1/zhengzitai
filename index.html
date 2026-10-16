@@ -259,22 +259,22 @@ html[data-theme="dark"] .chip.recommend{background:rgba(147,169,188,.16);}
 
 .field{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(40px + env(safe-area-inset-bottom));}
 
-/* ========== 大月历 ========== */
+/* ========== 大月历（5 条横条，对应人生五维） ========== */
 .big-cal{padding:0;}
 .big-cal .cal-head{margin-bottom:16px;}
 .big-cal .cal-month{font-size:16px;font-weight:600;}
 .big-cal .weekdays{margin-bottom:10px;gap:7px;}
 .big-cal .weekdays span{font-size:11.5px;letter-spacing:.6px;}
 .big-cal .cal-grid{gap:7px;}
-.big-cal .cell{aspect-ratio:1/1.6;border-radius:14px;padding:6px 5px;justify-content:flex-start;align-items:stretch;}
-.big-cal .cell .d{font-size:16px;font-weight:600;color:var(--text2);text-align:center;padding-top:2px;line-height:1;letter-spacing:.2px;}
+.big-cal .cell{aspect-ratio:1/1.9;border-radius:14px;padding:5px 4px;justify-content:flex-start;align-items:stretch;}
+.big-cal .cell .d{font-size:14px;font-weight:600;color:var(--text2);text-align:center;padding-top:1px;line-height:1;letter-spacing:.2px;}
 .big-cal .cell.today .d{color:var(--c);font-weight:700;}
 .big-cal .cell.on .d{color:#fff;}
 .big-cal .cell.on.dark .d{color:#2A2A2E;}
-.big-cal .cell .stripes{display:flex;flex-direction:column;gap:2px;width:100%;padding:0 1px;margin-top:6px;overflow:hidden;}
-.big-cal .cell .stripe{height:13px;border-radius:4px;width:100%;position:relative;display:flex;align-items:center;}
-.big-cal .cell .stripe-txt{font-size:10px;line-height:13px;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0;position:absolute;inset:0;padding:0 3px;}
-.big-cal .cell .more-num{font-size:9.5px;color:var(--text3);text-align:right;line-height:1;margin-top:2px;}
+.big-cal .cell .stripes{display:flex;flex-direction:column;gap:2px;width:100%;padding:0 1px;margin-top:4px;overflow:hidden;}
+.big-cal .cell .stripe{height:11px;border-radius:3px;width:100%;position:relative;display:flex;align-items:center;}
+.big-cal .cell .stripe-txt{font-size:9px;line-height:11px;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0;position:absolute;inset:0;padding:0 2px;}
+.big-cal .cell .more-num{font-size:9px;color:var(--text3);text-align:right;line-height:1;margin-top:1px;}
 .big-cal .cell.today{box-shadow:inset 0 0 0 2px var(--c);}
 .big-cal .cell.future{border:1.5px dashed var(--cell2);}
 
@@ -2926,7 +2926,7 @@ function renderBigCalendar(wrap){
       if(onProjects.length > 0){
         const stripes = document.createElement('div');
         stripes.className = 'stripes';
-        const maxShow = 4;
+        const maxShow = 5;
         onProjects.slice(0, maxShow).forEach(p => {
           const s = document.createElement('div');
           s.className = 'stripe';
@@ -3003,7 +3003,6 @@ function drawQRCodeAsync(ctx, text, x, y, size, callback){
   };
   img.src = url;
 }
-
 function shareMonth(y, m, range){
   range = range || 'month';
   let fromY = y, fromM = m, toY = y, toM = m;
@@ -3024,10 +3023,12 @@ function shareMonth(y, m, range){
         if(!earliest || k < earliest) earliest = k;
       }
     }
-    if(earliest){
-      const [ey, em] = earliest.split('-').map(Number);
-      fromY = ey; fromM = em - 1;
+    if(!earliest){
+      toast('还没有任何记录');
+      return;
     }
+    const [ey, em] = earliest.split('-').map(Number);
+    fromY = ey; fromM = em - 1;
     label = '全部记录';
   }
   const inRange = (key) => {
@@ -3050,16 +3051,17 @@ function shareMonth(y, m, range){
     for(const k in p.records) if(inRange(k)) c++;
     if(c > 0) projStats.push({ name: p.name, color: p.color, count: c });
   });
+  projStats.sort((a, b) => b.count - a.count);
   const W = 760, TOP_PAD = 48;
   let cursor = TOP_PAD;
   cursor += 40 + 34; cursor += 28 + 6 + 26 + 48;
   cursor += 40 + 48; cursor += projStats.length * 32 + 48;
-  const calCols = 7, calGap = 10, calCell = 62;
+  const calCols = 7, calGap = 10, calCell = 62, calCellH = 92;
   const calW = calCols * calCell + (calCols - 1) * calGap;
   const calLeft = (W - calW) / 2;
   const calRows = 6;
   let calHeight = 0;
-  if(range === 'month') calHeight = 30 + calRows * calCell + (calRows - 1) * calGap;
+  if(range === 'month') calHeight = 30 + calRows * calCellH + (calRows - 1) * calGap;
   cursor += calHeight;
   if(calHeight) cursor += 64;
   cursor += 100 + 72;
@@ -3141,24 +3143,24 @@ function shareMonth(y, m, range){
       const d = i - startDow + 1;
       const col = i % 7, row = Math.floor(i / 7);
       const x = calLeft + col*(calCell+calGap);
-      const yy = gridY + row*(calCell+calGap);
+      const yy = gridY + row*(calCellH+calGap);
       if(d < 1 || d > dim) continue;
       const key = dateKey(y, m, d);
       const onProjects = projectsOnDate(key);
       ctx.fillStyle = '#F5F1E8';
       ctx.beginPath();
-      if(ctx.roundRect) ctx.roundRect(x, yy, calCell, calCell, 14);
-      else ctx.rect(x, yy, calCell, calCell);
+      if(ctx.roundRect) ctx.roundRect(x, yy, calCell, calCellH, 14);
+      else ctx.rect(x, yy, calCell, calCellH);
       ctx.fill();
       ctx.fillStyle = fg3;
       ctx.font = '400 14px -apple-system,"PingFang SC",sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText(d, x + calCell/2, yy + 8);
+      ctx.fillText(d, x + calCell/2, yy + 6);
       if(mode === 'tian' && onProjects.length > 0){
         const cnt = Math.min(onProjects.length, 5);
         const gs = calCell * 0.6;
         const gx2 = x + calCell/2 - gs/2;
-        const gy2 = yy + calCell*0.32;
+        const gy2 = yy + calCellH*0.4;
         ctx.save(); ctx.translate(gx2, gy2);
         ctx.strokeStyle = fg;
         ctx.lineWidth = gs / 100 * 7;
@@ -3173,11 +3175,11 @@ function shareMonth(y, m, range){
         ctx.restore();
       }
       if(mode === 'stripe' && onProjects.length > 0){
-        const maxShow = 3, sh = 10;
-        const sy = yy + calCell*0.38;
+        const maxShow = 5, sh = 10;
+        const sy = yy + 26;
         onProjects.slice(0, maxShow).forEach((p, idx) => {
-          const ry = sy + idx*(sh + 2);
-          if(ry + sh > yy + calCell - 4) return;
+          const ry = sy + idx*(sh + 3);
+          if(ry + sh > yy + calCellH - 6) return;
           ctx.fillStyle = p.color;
           ctx.beginPath();
           if(ctx.roundRect) ctx.roundRect(x + 5, ry, calCell - 10, sh, 3);
@@ -3188,7 +3190,7 @@ function shareMonth(y, m, range){
           ctx.fillStyle = fg2;
           ctx.font = '400 10px -apple-system,"PingFang SC",sans-serif';
           ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-          ctx.fillText('+' + (onProjects.length - maxShow), x + calCell - 6, yy + calCell - 5);
+          ctx.fillText('+' + (onProjects.length - maxShow), x + calCell - 6, yy + calCellH - 6);
         }
       }
     }
