@@ -91,7 +91,7 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 .today-btn.hide{display:none;}
 
 .list{padding:0 16px 16px;}
-.card{position:relative;background:var(--card);border-radius:20px;padding:14px 16px 16px;margin-bottom:11px;transition:box-shadow .3s,background .25s;box-shadow:0 1px 2px rgba(0,0,0,.03);}
+.card{position:relative;background:var(--card);border-radius:20px;padding:14px 16px 16px;margin-bottom:11px;transition:box-shadow .3s;box-shadow:0 1px 2px rgba(0,0,0,.03);}
 .card.open{box-shadow:var(--shadow);}
 .card.done{background:rgba(120,140,160,.06);}
 html[data-theme="dark"] .card.done{background:rgba(147,169,188,.08);}
@@ -259,26 +259,26 @@ html[data-theme="dark"] .chip.recommend{background:rgba(147,169,188,.16);}
 
 .field{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(40px + env(safe-area-inset-bottom));}
 
-/* ========== 大月历：竖长方形格子 ========== */
+/* ========== 大月历 ========== */
 .big-cal{padding:0;}
 .big-cal .cal-head{margin-bottom:16px;}
 .big-cal .cal-month{font-size:16px;font-weight:600;}
 .big-cal .weekdays{margin-bottom:10px;gap:7px;}
 .big-cal .weekdays span{font-size:11.5px;letter-spacing:.6px;}
 .big-cal .cal-grid{gap:7px;}
-.big-cal .cell{aspect-ratio:1/1.35;border-radius:14px;padding:6px 5px;justify-content:flex-start;align-items:stretch;}
+.big-cal .cell{aspect-ratio:1/1.6;border-radius:14px;padding:6px 5px;justify-content:flex-start;align-items:stretch;}
 .big-cal .cell .d{font-size:16px;font-weight:600;color:var(--text2);text-align:center;padding-top:2px;line-height:1;letter-spacing:.2px;}
 .big-cal .cell.today .d{color:var(--c);font-weight:700;}
 .big-cal .cell.on .d{color:#fff;}
 .big-cal .cell.on.dark .d{color:#2A2A2E;}
-.big-cal .cell .stripes{display:flex;flex-direction:column;gap:3px;width:100%;padding:0 1px;margin-top:7px;overflow:hidden;}
-.big-cal .cell .stripe{height:14px;border-radius:4px;width:100%;position:relative;display:flex;align-items:center;}
-.big-cal .cell .stripe-txt{font-size:10.5px;line-height:14px;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0;position:absolute;inset:0;padding:0 3px;}
-.big-cal .cell .more-num{font-size:9.5px;color:var(--text3);text-align:right;line-height:1;margin-top:3px;}
+.big-cal .cell .stripes{display:flex;flex-direction:column;gap:2px;width:100%;padding:0 1px;margin-top:6px;overflow:hidden;}
+.big-cal .cell .stripe{height:13px;border-radius:4px;width:100%;position:relative;display:flex;align-items:center;}
+.big-cal .cell .stripe-txt{font-size:10px;line-height:13px;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0;position:absolute;inset:0;padding:0 3px;}
+.big-cal .cell .more-num{font-size:9.5px;color:var(--text3);text-align:right;line-height:1;margin-top:2px;}
 .big-cal .cell.today{box-shadow:inset 0 0 0 2px var(--c);}
 .big-cal .cell.future{border:1.5px dashed var(--cell2);}
 
-/* ========== 标签墙：两列方块 ========== */
+/* ========== 标签墙 ========== */
 .tag-wall-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -312,31 +312,83 @@ html[data-theme="dark"] .chip.recommend{background:rgba(147,169,188,.16);}
   font-variant-numeric:tabular-nums;letter-spacing:.2px;
 }
 
-/* ========== 标签详情 ========== */
-.tag-detail-head{padding:16px 4px 20px;text-align:left;}
-.tag-detail-head .td-name{font-size:22px;font-weight:700;letter-spacing:.4px;margin-bottom:6px;}
-.tag-detail-head .td-sub{font-size:13px;color:var(--text2);letter-spacing:.2px;}
+/* ========== 标签详情头部（正字渲染 + 居中） ========== */
+.tag-detail-head{
+  padding:20px 4px 24px;
+  text-align:center;
+}
+.tag-detail-head .td-name{
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:.4px;
+  margin-bottom:8px;
+}
+.tag-detail-head .td-sub{
+  font-size:13px;
+  color:var(--text2);
+  letter-spacing:.2px;
+  margin-bottom:16px;
+}
+.tag-detail-head .td-zheng{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0;
+  justify-content:center;
+  max-width:100%;
+  padding:0 8px;
+}
+.tag-detail-head .td-zheng svg{
+  width:18px;height:18px;
+  display:block;
+  flex:none;
+}
+.tag-detail-head .td-zheng .zmore{
+  font-size:12px;
+  color:var(--text3);
+  margin-left:4px;
+  line-height:18px;
+}
 
+/* ========== 标签记录卡片（备注在上居中，日期在下居中） ========== */
 .tag-record{
   background:var(--card);
   border-radius:14px;
-  padding:13px 15px;
-  margin-bottom:9px;
+  padding:14px 16px;
+  margin-bottom:8px;
   cursor:pointer;
   transition:transform .14s;
+  text-align:center;
 }
 .tag-record:active{transform:scale(.985);}
-.tag-record .tr-top{
-  display:flex;justify-content:space-between;align-items:baseline;
-  margin-bottom:6px;gap:10px;
-}
-.tag-record .tr-date{font-size:13px;color:var(--text2);font-variant-numeric:tabular-nums;flex:none;}
-.tag-record .tr-proj{font-size:12px;color:var(--accent);letter-spacing:.2px;flex:none;}
+.tag-record.has-note{padding:18px 16px;}
+.tag-record.no-note{padding:10px 16px;}
+
 .tag-record .tr-note{
-  font-size:13.5px;color:var(--text);line-height:1.55;
-  word-break:break-word;white-space:pre-wrap;
+  font-size:14px;
+  color:var(--text);
+  line-height:1.7;
+  letter-spacing:.2px;
+  white-space:pre-wrap;
+  word-break:break-word;
+  margin-bottom:10px;
 }
-.tag-record .tr-note.empty{color:var(--text3);font-style:italic;}
+.tag-record .tr-meta{
+  font-size:12px;
+  color:var(--text2);
+  letter-spacing:.2px;
+  font-variant-numeric:tabular-nums;
+}
+.tag-record .tr-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  justify-content:center;
+  margin-top:8px;
+}
+.tag-record .tr-tags .tag-chip{
+  font-size:11px;
+  padding:2px 7px;
+}
 
 /* ========== 多标签输入 ========== */
 .tag-edit-row{
@@ -365,14 +417,13 @@ html[data-theme="dark"] .tag-edit-row .tag-pill{background:rgba(147,169,188,.16)
   font-family:inherit;
 }
 
-/* ========== 进度：数字 + 进度条 ========== */
+/* ========== 进度 ========== */
 .progress-bar{height:8px;border-radius:4px;background:var(--cell);overflow:hidden;margin-top:8px;}
 .progress-bar i{display:block;height:100%;border-radius:4px;background:var(--c);transition:width .5s cubic-bezier(.32,.72,0,1);}
 .progress-bar.done i{background:#C9A961;}
 .progress-num{font-size:22px;font-weight:700;letter-spacing:-.3px;font-variant-numeric:tabular-nums;}
 .progress-unit{font-size:14px;color:var(--text2);font-weight:400;margin-left:4px;}
 
-/* ========== 进度：最近记录 / 全部记录 ========== */
 .rec-list{margin-top:0;}
 .rec-month{font-size:12px;color:var(--text3);letter-spacing:.5px;margin:18px 0 6px;font-weight:500;}
 .rec-month:first-child{margin-top:0;}
@@ -385,7 +436,7 @@ html[data-theme="dark"] .tag-edit-row .tag-pill{background:rgba(147,169,188,.16)
 .rec-num.plus{color:var(--accent);}
 .rec-num.minus{color:var(--danger);}
 
-/* ========== 设置 / 归档 / 垃圾桶：分组卡片 ========== */
+/* ========== 设置 / 归档 / 垃圾桶 ========== */
 .group{background:var(--card);border-radius:16px;overflow:hidden;margin-bottom:18px;}
 .group-title{font-size:12.5px;color:var(--text2);letter-spacing:.8px;padding:0 4px 8px;font-weight:500;}
 .row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;min-height:48px;gap:12px;}
@@ -396,6 +447,21 @@ html[data-theme="dark"] .tag-edit-row .tag-pill{background:rgba(147,169,188,.16)
 .seg{display:flex;background:var(--cell);border-radius:9px;padding:2px;gap:2px;}
 .seg button{border:none;background:transparent;color:var(--text);font-size:13px;padding:6px 12px;border-radius:7px;font-family:inherit;cursor:pointer;transition:background .2s;letter-spacing:.2px;}
 .seg button.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:500;}
+
+/* ========== 五维文案（优雅） ========== */
+.five-tagline{
+  font-size:15px;
+  color:var(--text);
+  line-height:1.9;
+  letter-spacing:.4px;
+  font-weight:500;
+  text-align:center;
+}
+.five-tagline em{
+  font-style:normal;
+  color:var(--accent);
+  font-weight:600;
+}
 
 /* ========== 模板页 ========== */
 .tpl-section{margin-bottom:20px;}
@@ -417,11 +483,9 @@ html[data-theme="dark"] .tag-edit-row .tag-pill{background:rgba(147,169,188,.16)
 .tpl-custom-item .ci-tag{padding:4px 10px;border-radius:10px;background:var(--cell);font-size:12px;color:var(--text2);letter-spacing:.2px;cursor:pointer;border:1.5px solid transparent;transition:all .18s;font-family:inherit;}
 .tpl-custom-item .ci-tag.on{background:rgba(91,113,131,.14);color:var(--accent);border-color:var(--accent);}
 
-/* ========== 五笔五维文案 ========== */
 .tpl-intro{text-align:center;padding:8px 0 20px;}
 .tpl-intro .ti-main{font-size:15px;font-weight:600;color:var(--text);line-height:1.7;letter-spacing:.3px;}
 .tpl-intro .ti-sub{font-size:12.5px;color:var(--text2);margin-top:6px;letter-spacing:.3px;}
-.five-tagline{font-size:13.5px;color:var(--text);line-height:1.75;letter-spacing:.3px;font-weight:500;}
 
 /* ========== 引导浮层 ========== */
 .onboard-mask{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:800;opacity:0;transition:opacity .35s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;pointer-events:none;}
@@ -619,7 +683,7 @@ const DEFAULT_STATE = {
   settings: {
     theme: 'auto', skin: 'default',
     lunar: true, holiday: true, calMode: 'stripe',
-    hintRecorded: false, onboarded: false
+    hintRecorded: false, cellHintShown: false, onboarded: false
   },
   projects: [], progress: [], trash: [], archived: []
 };
@@ -1431,8 +1495,8 @@ function onCellClick(p, key, cellEl){
   if(hasRecord(p, key)){ openRecordModal(p.id, key); return; }
   setRecord(p, key);
   applyCellStyle(cellEl, p, key);
-  if(!state.settings.hintRecorded){
-    state.settings.hintRecorded = true;
+  if(!state.settings.cellHintShown){
+    state.settings.cellHintShown = true;
     saveState();
     coach('已记 · 再点一下格子，可以写备注和标签');
   }
@@ -1765,6 +1829,21 @@ function openRecordModal(projectId, dateKeyStr){
     };
     syncChipStates();
 
+    const updateAfterChange = () => {
+      const card = listEl.querySelector(`.card[data-id="${p.id}"]`);
+      if(card){
+        const cell = card.querySelector(`.cell[data-k="${dateKeyStr}"]`);
+        if(cell) applyCellStyle(cell, p, dateKeyStr);
+        fillCardGlyphs(card, p);
+        refreshCardButton(card, p);
+        refreshStreak(card, p);
+        if(view.openProjectId === p.id){
+          requestAnimationFrame(() => { card._refs.expand.style.height = card._refs.inner.scrollHeight + 'px'; });
+        }
+      }
+      refreshTagPagesIfOpen();
+    };
+
     modal.querySelector('#btnCheck').addEventListener('click', () => {
       if(!rec){
         setRecord(p, dateKeyStr);
@@ -1773,10 +1852,8 @@ function openRecordModal(projectId, dateKeyStr){
       if(tagIn.value.trim()){ addTag(tagIn.value); tagIn.value = ''; }
       save();
       closeModal();
-      const card = listEl.querySelector(`.card[data-id="${p.id}"]`);
-      if(card){ fillCardGlyphs(card, p); refreshCardButton(card, p); refreshStreak(card, p); }
+      updateAfterChange();
       checkMilestones(p);
-      refreshTagPagesIfOpen();
     });
 
     modal.querySelector('#btnRemove').addEventListener('click', async () => {
@@ -1791,9 +1868,7 @@ function openRecordModal(projectId, dateKeyStr){
       }
       removeRecord(p, dateKeyStr);
       closeModal();
-      const card = listEl.querySelector(`.card[data-id="${p.id}"]`);
-      if(card){ fillCardGlyphs(card, p); refreshCardButton(card, p); refreshStreak(card, p); }
-      refreshTagPagesIfOpen();
+      updateAfterChange();
     });
 
     setTimeout(() => ta.focus(), 320);
@@ -2362,6 +2437,10 @@ function renderTagDetailBody(body, tagName){
     <div class="td-name">${esc(tagName)}</div>
     <div class="td-sub">共 ${records.length} 笔${lastLabel ? ' · 最近 ' + lastLabel : ''}</div>
   `;
+  const zhengBox = document.createElement('div');
+  zhengBox.className = 'td-zheng';
+  renderGlyphs(zhengBox, records.length, 'tagd' + tagName, 12);
+  head.appendChild(zhengBox);
   body.appendChild(head);
 
   if(!records.length){
@@ -2373,15 +2452,13 @@ function renderTagDetailBody(body, tagName){
     records.forEach(r => {
       const [y, m, d] = r.dateKey.split('-').map(Number);
       const otherTags = r.tags.filter(t => t !== tagName);
+      const hasNote = r.note && r.note.trim();
       const el = document.createElement('div');
-      el.className = 'tag-record';
+      el.className = 'tag-record ' + (hasNote ? 'has-note' : 'no-note');
       el.innerHTML = `
-        <div class="tr-top">
-          <span class="tr-date">${y}年${m}月${d}日</span>
-          <span class="tr-proj">${esc(r.projectName)}</span>
-        </div>
-        <div class="tr-note ${r.note ? '' : 'empty'}">${r.note ? esc(r.note) : '（无备注）'}</div>
-        ${otherTags.length ? `<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px">${otherTags.map(t=>`<span class="tag-chip" style="font-size:11px;padding:2px 7px">${esc(t)}</span>`).join('')}</div>` : ''}
+        ${hasNote ? `<div class="tr-note">${esc(r.note)}</div>` : ''}
+        <div class="tr-meta">${m}月${d}日 · ${esc(r.projectName)}</div>
+        ${otherTags.length ? `<div class="tr-tags">${otherTags.map(t=>`<span class="tag-chip">${esc(t)}</span>`).join('')}</div>` : ''}
       `;
       el.addEventListener('click', () => { openRecordModal(r.projectId, r.dateKey); });
       body.appendChild(el);
@@ -2408,15 +2485,15 @@ function openSettings(){
     <div class="field">
       <div class="group-title">人生五维</div>
       <div class="group">
-        <div class="row" style="flex-direction:column;align-items:flex-start;gap:8px;padding:16px">
+        <div class="row" style="flex-direction:column;align-items:flex-start;gap:14px;padding:20px 16px">
           <div class="five-tagline">
             一个正字，五笔。<br>
-            五个维度，构成平衡的人生。
+            <em>五个维度</em>，构成平衡的人生。
           </div>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+          <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;width:100%">
             ${Object.keys(MODULES).map(m => `<span class="tpl-tag">${m}</span>`).join('')}
           </div>
-          <div class="row-sub" style="margin:8px 0 0;line-height:1.6">
+          <div class="row-sub" style="margin:8px 0 0;line-height:1.7;text-align:center;width:100%">
             纳新：吸收新的东西<br>
             成事：创造、表达、完成<br>
             健体：锻炼身体<br>
@@ -2875,7 +2952,7 @@ function renderBigCalendar(wrap){
 }
 
 /* ============================================================
-   分享（月度打卡图）
+   分享
    ============================================================ */
 function openShareOptions(defaultY, defaultM){
   openModal(modal => {
@@ -2941,7 +3018,8 @@ function shareMonth(y, m, range){
     label = `${y}年`;
   }else if(range === 'all'){
     let earliest = null;
-    for(const p of state.projects){
+    const allProjects = [...state.projects, ...state.archived.filter(a=>a.kind==='project').map(a=>a.data)];
+    for(const p of allProjects){
       for(const k in p.records){
         if(!earliest || k < earliest) earliest = k;
       }
@@ -2957,33 +3035,34 @@ function shareMonth(y, m, range){
     const ym = yy * 12 + mm;
     return ym >= fromY * 12 + (fromM+1) && ym <= toY * 12 + (toM+1);
   };
+  const allProjects = [...state.projects, ...state.archived.filter(a=>a.kind==='project').map(a=>a.data)];
   const daySet = new Set();
   let totalCount = 0;
-  for(const p of state.projects){
+  for(const p of allProjects){
     for(const k in p.records){
       if(inRange(k)){ daySet.add(k); totalCount++; }
     }
   }
   const days = daySet.size;
   const projStats = [];
-  state.projects.forEach(p => {
+  allProjects.forEach(p => {
     let c = 0;
     for(const k in p.records) if(inRange(k)) c++;
     if(c > 0) projStats.push({ name: p.name, color: p.color, count: c });
   });
-  const W = 760, TOP_PAD = 40;
+  const W = 760, TOP_PAD = 48;
   let cursor = TOP_PAD;
-  cursor += 40 + 30; cursor += 28 + 4 + 26 + 40;
-  cursor += 40 + 40; cursor += projStats.length * 32 + 40;
-  const calCols = 7, calGap = 6, calCell = 60;
+  cursor += 40 + 34; cursor += 28 + 6 + 26 + 48;
+  cursor += 40 + 48; cursor += projStats.length * 32 + 48;
+  const calCols = 7, calGap = 10, calCell = 62;
   const calW = calCols * calCell + (calCols - 1) * calGap;
   const calLeft = (W - calW) / 2;
   const calRows = 6;
   let calHeight = 0;
   if(range === 'month') calHeight = 30 + calRows * calCell + (calRows - 1) * calGap;
   cursor += calHeight;
-  if(calHeight) cursor += 60;
-  cursor += 90 + 60;
+  if(calHeight) cursor += 64;
+  cursor += 100 + 72;
   const H = cursor;
   const dpr = 2;
   const cv = document.createElement('canvas');
@@ -2997,13 +3076,13 @@ function shareMonth(y, m, range){
   ctx.font = '600 38px -apple-system,"PingFang SC",sans-serif';
   ctx.textBaseline = 'top'; ctx.textAlign = 'center';
   ctx.fillText(label, W/2, cy);
-  cy += 40 + 30;
+  cy += 40 + 34;
   ctx.font = '500 24px -apple-system,"PingFang SC",sans-serif';
   ctx.fillStyle = fg;
   ctx.fillText(`坚持 ${days} 天`, W/2, cy);
-  cy += 28 + 4;
+  cy += 28 + 6;
   ctx.fillText(`写下 ${totalCount} 笔`, W/2, cy);
-  cy += 26 + 40;
+  cy += 26 + 48;
   const full = Math.floor(totalCount / 5);
   const part = totalCount % 5;
   const size = 32, gap = 2;
@@ -3034,7 +3113,7 @@ function shareMonth(y, m, range){
     ctx.fillText('…', zx, cy + 4);
     ctx.textAlign = 'center';
   }
-  cy += 40 + 40;
+  cy += 40 + 48;
   ctx.font = '400 18px -apple-system,"PingFang SC",sans-serif';
   projStats.forEach(p => {
     ctx.fillStyle = p.color;
@@ -3045,7 +3124,7 @@ function shareMonth(y, m, range){
     ctx.fillText(p.count + ' 次', W - 100, cy);
     cy += 32;
   });
-  cy += 40;
+  cy += 48;
   if(range === 'month'){
     const mode = state.settings.calMode || 'stripe';
     const first = new Date(y, m, 1);
@@ -3066,15 +3145,15 @@ function shareMonth(y, m, range){
       if(d < 1 || d > dim) continue;
       const key = dateKey(y, m, d);
       const onProjects = projectsOnDate(key);
-      ctx.fillStyle = '#F0EBE1';
+      ctx.fillStyle = '#F5F1E8';
       ctx.beginPath();
-      if(ctx.roundRect) ctx.roundRect(x, yy, calCell, calCell, 12);
+      if(ctx.roundRect) ctx.roundRect(x, yy, calCell, calCell, 14);
       else ctx.rect(x, yy, calCell, calCell);
       ctx.fill();
       ctx.fillStyle = fg3;
       ctx.font = '400 14px -apple-system,"PingFang SC",sans-serif';
       ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText(d, x + calCell/2, yy + 6);
+      ctx.fillText(d, x + calCell/2, yy + 8);
       if(mode === 'tian' && onProjects.length > 0){
         const cnt = Math.min(onProjects.length, 5);
         const gs = calCell * 0.6;
@@ -3101,20 +3180,27 @@ function shareMonth(y, m, range){
           if(ry + sh > yy + calCell - 4) return;
           ctx.fillStyle = p.color;
           ctx.beginPath();
-          if(ctx.roundRect) ctx.roundRect(x + 4, ry, calCell - 8, sh, 3);
-          else ctx.rect(x + 4, ry, calCell - 8, sh);
+          if(ctx.roundRect) ctx.roundRect(x + 5, ry, calCell - 10, sh, 3);
+          else ctx.rect(x + 5, ry, calCell - 10, sh);
           ctx.fill();
         });
         if(onProjects.length > maxShow){
           ctx.fillStyle = fg2;
           ctx.font = '400 10px -apple-system,"PingFang SC",sans-serif';
           ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
-          ctx.fillText('+' + (onProjects.length - maxShow), x + calCell - 5, yy + calCell - 4);
+          ctx.fillText('+' + (onProjects.length - maxShow), x + calCell - 6, yy + calCell - 5);
         }
       }
     }
-    cy += calHeight + 60;
+    cy += calHeight + 64;
   }
+  ctx.strokeStyle = 'rgba(0,0,0,.06)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(60, cy - 24);
+  ctx.lineTo(W - 60, cy - 24);
+  ctx.stroke();
+  cy += 8;
   const qrSize = 90, qrX = 60, qrY = cy;
   ctx.fillStyle = fg3;
   ctx.font = '400 15px -apple-system,"PingFang SC",sans-serif';
