@@ -435,6 +435,11 @@ html[data-theme="dark"] .tag-edit-row .tag-pill{background:rgba(147,169,188,.16)
 .rec-num.plus{color:var(--accent);}
 .rec-num.minus{color:var(--danger);}
 
+/* ========== 进度展开的"本月"区块 ========== */
+.tag-row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;font-size:13.5px;color:var(--text2);}
+.tag-row .tag-val{font-variant-numeric:tabular-nums;font-weight:500;color:var(--text);}
+.tag-row+ .tag-row{border-top:.5px solid var(--sep);}
+
 /* ========== 设置 / 归档 / 垃圾桶 ========== */
 .group{background:var(--card);border-radius:16px;overflow:hidden;margin-bottom:18px;}
 .group-title{font-size:12.5px;color:var(--text2);letter-spacing:.8px;padding:0 4px 8px;font-weight:500;}
@@ -543,8 +548,11 @@ html[data-theme="dark"] .tag-edit-row .tag-pill{background:rgba(147,169,188,.16)
 /* ========== Toast / Coach ========== */
 .toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom));transform:translate(-50%,10px);opacity:0;pointer-events:none;background:rgba(30,30,32,.9);color:#fff;font-size:13px;padding:10px 20px;border-radius:20px;z-index:500;transition:opacity .3s,transform .3s;white-space:nowrap;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
 .toast.show{opacity:1;transform:translate(-50%,0);}
-.coach{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));transform:translate(-50%,10px);opacity:0;pointer-events:none;background:rgba(30,30,32,.9);color:#fff;font-size:13px;padding:10px 18px;border-radius:20px;z-index:400;transition:opacity .35s,transform .35s;white-space:nowrap;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
-.coach.show{opacity:1;transform:translate(-50%,0);}
+.coach{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));transform:translate(-50%,10px);opacity:0;pointer-events:none;background:rgba(30,30,32,.9);color:#fff;font-size:13px;padding:9px 8px 9px 16px;border-radius:20px;z-index:400;transition:opacity .35s,transform .35s;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:center;gap:8px;max-width:calc(100% - 32px);}
+.coach.show{opacity:1;transform:translate(-50%,0);pointer-events:auto;}
+.coach .coach-txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.coach .coach-x{border:none;background:rgba(255,255,255,.15);color:#fff;font-size:14px;line-height:1;width:22px;height:22px;border-radius:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;flex:none;font-family:inherit;}
+.coach .coach-x:active{background:rgba(255,255,255,.28);}
 
 /* ========== 日期选择器 ========== */
 .date-picker-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:12px;border:1.5px solid var(--cell2);background:var(--card2);cursor:pointer;transition:border-color .2s,background .2s;}
@@ -717,7 +725,8 @@ const DEFAULT_STATE = {
   settings: {
     theme: 'auto', skin: 'default',
     lunar: true, holiday: true, calMode: 'stripe',
-    hintRecorded: false, cellHintShown: false, onboarded: false
+    onboarded: false,
+    guide1Done: false, guide2Done: false, guide3Done: false, guide4Done: false
   },
   projects: [], progress: [], trash: [], archived: []
 };
@@ -1115,13 +1124,54 @@ function toast(msg){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 1800);
 }
-let coachTimer = null;
-function coach(msg){
+
+/* ---- 引导系统 ---- */
+let guideTimer = null;
+let currentGuideKey = null;
+
+function showGuide(key, text){
   const el = $('#coach');
-  el.textContent = msg;
+  const doneKey = key + 'Done';
+  if(state.settings[doneKey]) return;
+  if(currentGuideKey === key && el.classList.contains('show')) return;
+  currentGuideKey = key;
+  el.innerHTML = `<span class="coach-txt">${esc(text)}</span><button class="coach-x" aria-label="关闭">×</button>`;
+  el.querySelector('.coach-x').addEventListener('click', (e) => {
+    e.stopPropagation();
+    completeGuide(key, true);
+  });
   el.classList.add('show');
-  clearTimeout(coachTimer);
-  coachTimer = setTimeout(() => el.classList.remove('show'), 2600);
+  clearTimeout(guideTimer);
+  guideTimer = setTimeout(() => {
+    el.classList.remove('show');
+    if(currentGuideKey === key) currentGuideKey = null;
+  }, 30000);
+}
+
+function completeGuide(key, force){
+  const doneKey = key + 'Done';
+  const el = $('#coach');
+  if(currentGuideKey === key){
+    el.classList.remove('show');
+    clearTimeout(guideTimer);
+    currentGuideKey = null;
+  }
+  if(force || !state.settings[doneKey]){
+    state.settings[doneKey] = true;
+    saveState();
+  }
+}
+
+function checkGuides(){
+  if(!state.settings.guide1Done){
+    setTimeout(() => showGuide('guide1', '点卡片上的「写一笔」，写下今天的第一笔。'), 600);
+  }else if(!state.settings.guide2Done){
+    setTimeout(() => showGuide('guide2', '点一下卡片，看看这个月写了几笔。'), 600);
+  }else if(!state.settings.guide3Done){
+    setTimeout(() => showGuide('guide3', '点任意格子，能写备注、加标签。'), 600);
+  }else if(!state.settings.guide4Done){
+    setTimeout(() => showGuide('guide4', '标签会汇总到标签墙，顶部图标能看到。'), 600);
+  }
 }
 
 const maskHost = $('#maskHost');
@@ -1291,10 +1341,9 @@ function buildCard(p){
     setRecord(p, sel);
     btn.classList.add('pop');
     setTimeout(() => btn.classList.remove('pop'), 460);
-    if(!state.settings.hintRecorded){
-      state.settings.hintRecorded = true;
-      saveState();
-      setTimeout(() => coach('已记 · 再点一下格子，可以写备注和标签'), 500);
+    completeGuide('guide1', false);
+    if(!state.settings.guide2Done){
+      setTimeout(() => showGuide('guide2', '点一下卡片，看看这个月写了几笔。'), 500);
     }
     refreshCardButton(el, p);
     refreshStreak(el, p);
@@ -1353,6 +1402,10 @@ function openCard(id){
   renderCardExpand(card, p);
   card.classList.add('open');
   requestAnimationFrame(() => { card._refs.expand.style.height = card._refs.inner.scrollHeight + 'px'; });
+  completeGuide('guide2', false);
+  if(!state.settings.guide3Done){
+    setTimeout(() => showGuide('guide3', '点任意格子，能写备注、加标签。'), 500);
+  }
   setTimeout(() => {
     const r = card.getBoundingClientRect();
     if(r.top < 90 || r.bottom > window.innerHeight - 80){
@@ -1529,11 +1582,7 @@ function onCellClick(p, key, cellEl){
   if(hasRecord(p, key)){ openRecordModal(p.id, key); return; }
   setRecord(p, key);
   applyCellStyle(cellEl, p, key);
-  if(!state.settings.cellHintShown){
-    state.settings.cellHintShown = true;
-    saveState();
-    coach('已记 · 再点一下格子，可以写备注和标签');
-  }
+  completeGuide('guide3', false);
   const card = listEl.querySelector(`.card[data-id="${p.id}"]`);
   if(card){
     fillCardGlyphs(card, p);
@@ -1691,10 +1740,8 @@ function renderProgressExpand(el, p){
       });
       const total = document.createElement('div');
       total.className = 'tag-row';
-      total.style.borderTop = '.5px solid var(--sep)';
-      total.style.marginTop = '4px'; total.style.paddingTop = '8px';
       total.style.fontWeight = '500';
-      total.innerHTML = `<span>合计</span><span class="tag-val" style="color:var(--text)">${ms.sum > 0 ? '+' : ''}${fmtNum(ms.sum)} ${esc(p.unit)} · ${ms.count} 次</span>`;
+      total.innerHTML = `<span>合计</span><span class="tag-val">${ms.sum > 0 ? '+' : ''}${fmtNum(ms.sum)} ${esc(p.unit)} · ${ms.count} 次</span>`;
       wrap.appendChild(total);
     }else{
       const row = document.createElement('div');
@@ -1888,6 +1935,9 @@ function openRecordModal(projectId, dateKeyStr){
       closeModal();
       updateAfterChange();
       checkMilestones(p);
+      if(currentTags.length > 0 && !state.settings.guide4Done){
+        setTimeout(() => showGuide('guide4', '标签会汇总到标签墙，顶部图标能看到。'), 700);
+      }
     });
 
     modal.querySelector('#btnRemove').addEventListener('click', async () => {
@@ -1924,7 +1974,7 @@ function checkMilestones(p){
     { cond: st === 365, msg: `「${p.name}」连续一整年` }
   ];
   for(const m of milestones){
-    if(m.cond){ setTimeout(() => coach(m.msg), 400); return; }
+    if(m.cond){ setTimeout(() => toast(m.msg), 400); return; }
   }
 }
 
@@ -1976,6 +2026,9 @@ function openProjectModal(id){
       setTimeout(() => {
         if(currentTab === 'project') renderProjectList();
         else renderProgressList();
+        if(isNew && !state.settings.guide1Done){
+          setTimeout(() => showGuide('guide1', '点卡片上的「写一笔」，写下今天的第一笔。'), 500);
+        }
       }, 200);
     });
     if(!isNew){
@@ -2248,7 +2301,7 @@ function openProgressRecordModal(id){
         const el = progressListEl.querySelector(`.card[data-pid="${p.id}"]`);
         if(el) openProgressCard(p.id);
         const fresh = findProgress(p.id);
-        if(fresh && isProgressDone(fresh)) coach(`「${fresh.name}」达成目标`);
+        if(fresh && isProgressDone(fresh)) toast(`「${fresh.name}」达成目标`);
       }, 200);
     });
     setTimeout(() => valIn.focus(), 320);
@@ -3398,6 +3451,9 @@ function generateFromModules(modules){
   });
   if(count > 0) toast(`已生成 ${count} 个模块`);
   renderMain();
+  if(count > 0 && !state.settings.guide1Done){
+    setTimeout(() => showGuide('guide1', '点卡片上的「写一笔」，写下今天的第一笔。'), 700);
+  }
 }
 
 /* ============================================================
@@ -3548,7 +3604,10 @@ function init(){
   document.documentElement.setAttribute('data-theme', state.settings.theme || 'auto');
   document.documentElement.setAttribute('data-skin', state.settings.skin || 'default');
 
-  $('#btnTagWall').addEventListener('click', () => openTagWall());
+  $('#btnTagWall').addEventListener('click', () => {
+    completeGuide('guide4', false);
+    openTagWall();
+  });
   $('#btnCalendar').addEventListener('click', () => {
     view.bigCalYear = view.year; view.bigCalMonth = view.month;
     openBigCalendar();
@@ -3590,6 +3649,7 @@ function init(){
       });
     }, 400);
   }
+  checkGuides();
 }
 
 init();
