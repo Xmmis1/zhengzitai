@@ -7,8 +7,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#F2F2F7">
 <title>正字台</title>
-<script data-goatcounter="https://xmmis1.goatcounter.com/count"
-        async src="//gc.zgo.at/count.js"></script>
 <style>
 :root{
   --bg:#F2F2F7; --card:#FFFFFF; --card2:#F7F7FA; --card3:#EDEDF0;
@@ -18,8 +16,7 @@
   --sheet:#FFFFFF; --ink:#1B1B1D; --danger:#C9564B;
   --shadow:0 1px 3px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.05);
   --tabbar:rgba(242,242,247,.94);
-  --paper:#FAF8F3;
-  --ink-soft:#2A2622;
+  --paper:#FAF8F3; --ink-soft:#2A2622;
 }
 html[data-theme="dark"]{
   --bg:#000000; --card:#1C1C1E; --card2:#242427; --card3:#2A2A2E;
@@ -29,8 +26,7 @@ html[data-theme="dark"]{
   --sheet:#1C1C1E; --ink:#EDEAE4; --danger:#E06A5E;
   --shadow:0 1px 3px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.4);
   --tabbar:rgba(20,20,22,.94);
-  --paper:#1A1815;
-  --ink-soft:#E8E2D6;
+  --paper:#1A1815; --ink-soft:#E8E2D6;
 }
 @media (prefers-color-scheme:dark){
   html[data-theme="auto"]{
@@ -41,8 +37,7 @@ html[data-theme="dark"]{
     --sheet:#1C1C1E; --ink:#EDEAE4; --danger:#E06A5E;
     --shadow:0 1px 3px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.4);
     --tabbar:rgba(20,20,22,.94);
-    --paper:#1A1815;
-    --ink-soft:#E8E2D6;
+    --paper:#1A1815; --ink-soft:#E8E2D6;
   }
 }
 html[data-skin="green"]{
@@ -52,8 +47,7 @@ html[data-skin="green"]{
   --accent:#4E7A4E; --nav:rgba(232,240,228,.85);
   --sheet:#F3F8F1; --ink:#2A3B2A; --danger:#B85C4A;
   --tabbar:rgba(232,240,228,.94);
-  --paper:#F0F6ED;
-  --ink-soft:#2A3B2A;
+  --paper:#F0F6ED; --ink-soft:#2A3B2A;
 }
 html[data-skin="paper"]{
   --bg:#F5F0E6; --card:#FBF8F2; --card2:#F7F2E9; --card3:#EDE6D8;
@@ -62,8 +56,7 @@ html[data-skin="paper"]{
   --accent:#8A6D4B; --nav:rgba(245,240,230,.88);
   --sheet:#FBF8F2; --ink:#3D3630; --danger:#B85C4A;
   --tabbar:rgba(245,240,230,.94);
-  --paper:#FBF8F2;
-  --ink-soft:#3D3630;
+  --paper:#FBF8F2; --ink-soft:#3D3630;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html,body{margin:0;padding:0;height:100%;}
@@ -100,12 +93,14 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 .list{padding:0 16px 16px;}
 .card{position:relative;background:var(--card);border-radius:20px;padding:14px 16px 16px;margin-bottom:11px;transition:box-shadow .3s,background .25s;box-shadow:0 1px 2px rgba(0,0,0,.03);}
 .card.open{box-shadow:var(--shadow);}
-.card.done{background:color-mix(in srgb,var(--c) 8%,var(--card));}
+.card.done{background:rgba(120,140,160,.06);}
+html[data-theme="dark"] .card.done{background:rgba(147,169,188,.08);}
+@media (prefers-color-scheme:dark){html[data-theme="auto"] .card.done{background:rgba(147,169,188,.08);}}
 .card.dragging{z-index:50;box-shadow:0 12px 36px rgba(0,0,0,.18);opacity:.96;transition:none;}
 .card.drag-placeholder{opacity:.3;}
 
 .card-head{display:flex;align-items:center;gap:10px;}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 14%,transparent);}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--c);flex:none;box-shadow:0 0 0 3px rgba(120,140,160,.14);}
 .names{flex:1;min-width:0;cursor:pointer;display:flex;align-items:center;gap:6px;}
 .pname{font-size:17px;font-weight:600;letter-spacing:.2px;margin:0;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tri{width:10px;height:10px;color:var(--text3);flex:none;transition:transform .3s;}
@@ -157,7 +152,7 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 .weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:5px;}
 .weekdays span{text-align:center;font-size:10.5px;color:var(--text3);letter-spacing:.5px;}
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;width:100%;}
-.cell{aspect-ratio:1;border-radius:10px;background:var(--cell);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;transition:background .18s,transform .14s;cursor:pointer;overflow:hidden;}
+.cell{aspect-ratio:1;border-radius:10px;background:var(--cell);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;transition:transform .14s;cursor:pointer;overflow:hidden;}
 .cell:active{transform:scale(.92);}
 .cell.blank{background:transparent;pointer-events:none;}
 .cell .d{font-size:14.5px;line-height:1;color:var(--text2);font-weight:400;font-variant-numeric:tabular-nums;}
@@ -173,8 +168,9 @@ input,textarea{-webkit-user-select:text;user-select:text;font-family:inherit;}
 .cell.on.dark .l{color:rgba(42,42,46,.6);}
 .cell.on.dark .l.hol{color:rgba(42,42,46,.85);}
 .cell.today.on{box-shadow:none;}
-.cell.future{border:1.5px dashed var(--cell2);}
+.cell.future{border:1.5px dashed var(--cell2);cursor:default;}
 .cell.future.on{opacity:.35;border:none;}
+.cell.future:active{transform:none;}
 .cell .nd{position:absolute;top:4px;right:4px;width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.7;}
 .cell.on .nd{background:#fff;opacity:.85;}
 
@@ -222,7 +218,8 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 .chips{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 4px;}
 .chip{padding:7px 13px;border-radius:16px;background:var(--cell);color:var(--text2);font-size:13px;letter-spacing:.2px;cursor:pointer;border:none;font-family:inherit;transition:transform .16s,background .16s;}
 .chip:active{transform:scale(.94);background:var(--cell2);}
-.chip.recommend{background:color-mix(in srgb,var(--accent) 14%,var(--cell));color:var(--accent);}
+.chip.recommend{background:rgba(91,113,131,.14);color:var(--accent);}
+html[data-theme="dark"] .chip.recommend{background:rgba(147,169,188,.16);}
 .chip.on{background:var(--accent);color:#fff;}
 
 .modal-actions{display:flex;gap:10px;margin-top:18px;}
@@ -237,7 +234,6 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 #pageHost > .page{pointer-events:auto;touch-action:pan-y;}
 .page{position:absolute;inset:0;z-index:60;background:var(--bg);transform:translateX(100%);transition:transform .4s cubic-bezier(.32,.72,0,1);display:flex;flex-direction:column;overflow:hidden;}
 .page.show{transform:none;}
-.page.no-anim{transition:none;transform:none;}
 
 .page-nav{display:flex;align-items:center;justify-content:space-between;padding:calc(env(safe-area-inset-top) + 10px) 16px 10px;background:var(--nav);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep);flex:none;}
 .back-btn{border:none;background:none;color:var(--accent);font-size:16px;font-family:inherit;padding:4px 0;cursor:pointer;display:flex;align-items:center;gap:2px;letter-spacing:.2px;}
@@ -263,26 +259,26 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 
 .field{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px calc(40px + env(safe-area-inset-bottom));}
 
-/* ========== 大月历（格子放大、横条变粗）========== */
+/* ========== 大月历：竖长方形格子 ========== */
 .big-cal{padding:0;}
-.big-cal .cal-head{margin-bottom:14px;}
-.big-cal .cal-month{font-size:15px;font-weight:600;}
-.big-cal .weekdays{margin-bottom:8px;gap:6px;}
-.big-cal .weekdays span{font-size:11px;}
-.big-cal .cal-grid{gap:6px;}
-.big-cal .cell{aspect-ratio:1;border-radius:12px;padding:4px;justify-content:flex-start;align-items:stretch;}
-.big-cal .cell .d{font-size:14px;font-weight:500;color:var(--text2);text-align:center;padding-top:4px;line-height:1;}
+.big-cal .cal-head{margin-bottom:16px;}
+.big-cal .cal-month{font-size:16px;font-weight:600;}
+.big-cal .weekdays{margin-bottom:10px;gap:7px;}
+.big-cal .weekdays span{font-size:11.5px;letter-spacing:.6px;}
+.big-cal .cal-grid{gap:7px;}
+.big-cal .cell{aspect-ratio:1/1.35;border-radius:14px;padding:6px 5px;justify-content:flex-start;align-items:stretch;}
+.big-cal .cell .d{font-size:16px;font-weight:600;color:var(--text2);text-align:center;padding-top:2px;line-height:1;letter-spacing:.2px;}
 .big-cal .cell.today .d{color:var(--c);font-weight:700;}
 .big-cal .cell.on .d{color:#fff;}
 .big-cal .cell.on.dark .d{color:#2A2A2E;}
-.big-cal .cell .stripes{display:flex;flex-direction:column;gap:3px;width:100%;padding:0 2px;margin-top:6px;overflow:hidden;}
-.big-cal .cell .stripe{height:16px;border-radius:4px;width:100%;position:relative;display:flex;align-items:center;}
-.big-cal .cell .stripe-txt{font-size:9.5px;line-height:16px;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0;position:absolute;inset:0;padding:0 2px;}
-.big-cal .cell .more-num{font-size:9px;color:var(--text3);text-align:right;line-height:1;margin-top:2px;}
+.big-cal .cell .stripes{display:flex;flex-direction:column;gap:3px;width:100%;padding:0 1px;margin-top:7px;overflow:hidden;}
+.big-cal .cell .stripe{height:14px;border-radius:4px;width:100%;position:relative;display:flex;align-items:center;}
+.big-cal .cell .stripe-txt{font-size:10.5px;line-height:14px;color:#fff;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:0;position:absolute;inset:0;padding:0 3px;}
+.big-cal .cell .more-num{font-size:9.5px;color:var(--text3);text-align:right;line-height:1;margin-top:3px;}
 .big-cal .cell.today{box-shadow:inset 0 0 0 2px var(--c);}
 .big-cal .cell.future{border:1.5px dashed var(--cell2);}
 
-/* ========== 标签墙：并排方块（正字墙）========== */
+/* ========== 标签墙：两列方块 ========== */
 .tag-wall-grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
@@ -309,19 +305,40 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
   display:flex;flex-wrap:wrap;gap:0;flex:1;
   align-items:flex-start;
 }
-.tag-wall-block .twb-zheng svg{width:20px;height:22px;display:block;flex:none;}
-.tag-wall-block .twb-zheng .zmore{font-size:13px;color:var(--text3);margin-left:2px;line-height:22px;}
+.tag-wall-block .twb-zheng svg{width:20px;height:20px;display:block;flex:none;}
+.tag-wall-block .twb-zheng .zmore{font-size:13px;color:var(--text3);margin-left:2px;line-height:20px;}
 .tag-wall-block .twb-count{
   font-size:12px;color:var(--text2);
   font-variant-numeric:tabular-nums;letter-spacing:.2px;
 }
 
-/* ========== 标签详情：顶部统计 ========== */
+/* ========== 标签详情 ========== */
 .tag-detail-head{padding:16px 4px 20px;text-align:left;}
 .tag-detail-head .td-name{font-size:22px;font-weight:700;letter-spacing:.4px;margin-bottom:6px;}
 .tag-detail-head .td-sub{font-size:13px;color:var(--text2);letter-spacing:.2px;}
 
-/* ========== 多标签输入：标签气泡行 ========== */
+.tag-record{
+  background:var(--card);
+  border-radius:14px;
+  padding:13px 15px;
+  margin-bottom:9px;
+  cursor:pointer;
+  transition:transform .14s;
+}
+.tag-record:active{transform:scale(.985);}
+.tag-record .tr-top{
+  display:flex;justify-content:space-between;align-items:baseline;
+  margin-bottom:6px;gap:10px;
+}
+.tag-record .tr-date{font-size:13px;color:var(--text2);font-variant-numeric:tabular-nums;flex:none;}
+.tag-record .tr-proj{font-size:12px;color:var(--accent);letter-spacing:.2px;flex:none;}
+.tag-record .tr-note{
+  font-size:13.5px;color:var(--text);line-height:1.55;
+  word-break:break-word;white-space:pre-wrap;
+}
+.tag-record .tr-note.empty{color:var(--text3);font-style:italic;}
+
+/* ========== 多标签输入 ========== */
 .tag-edit-row{
   display:flex;flex-wrap:wrap;gap:6px;
   padding:8px;min-height:44px;
@@ -333,9 +350,10 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 .tag-edit-row .tag-pill{
   display:inline-flex;align-items:center;gap:4px;
   padding:4px 8px 4px 10px;border-radius:9px;
-  background:color-mix(in srgb,var(--accent) 14%,var(--cell));
-  color:var(--accent);font-size:12.5px;letter-spacing:.2px;
+  background:rgba(91,113,131,.14);color:var(--accent);
+  font-size:12.5px;letter-spacing:.2px;
 }
+html[data-theme="dark"] .tag-edit-row .tag-pill{background:rgba(147,169,188,.16);}
 .tag-edit-row .tag-pill .tp-x{
   border:none;background:transparent;color:inherit;font-size:14px;
   line-height:1;cursor:pointer;padding:0 2px;opacity:.7;
@@ -347,33 +365,105 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
   font-family:inherit;
 }
 
-/* ========== 五笔五维引导文案 ========== */
-.ob-tagline{
-  font-size:13.5px;color:var(--text2);line-height:1.7;
-  letter-spacing:.3px;margin:0 0 14px;
-}
-.tpl-intro{
-  text-align:center;padding:8px 0 20px;
-}
-.tpl-intro .ti-main{
-  font-size:15px;font-weight:600;color:var(--text);
-  line-height:1.7;letter-spacing:.3px;
-}
-.tpl-intro .ti-sub{
-  font-size:12.5px;color:var(--text2);
-  margin-top:6px;letter-spacing:.3px;
-}
+/* ========== 进度：数字 + 进度条 ========== */
+.progress-bar{height:8px;border-radius:4px;background:var(--cell);overflow:hidden;margin-top:8px;}
+.progress-bar i{display:block;height:100%;border-radius:4px;background:var(--c);transition:width .5s cubic-bezier(.32,.72,0,1);}
+.progress-bar.done i{background:#C9A961;}
+.progress-num{font-size:22px;font-weight:700;letter-spacing:-.3px;font-variant-numeric:tabular-nums;}
+.progress-unit{font-size:14px;color:var(--text2);font-weight:400;margin-left:4px;}
 
-/* ========== 设置里"人生五维"介绍里的 tagline ========== */
-.five-tagline{
-  font-size:13.5px;color:var(--text);
-  line-height:1.75;letter-spacing:.3px;
-  font-weight:500;
-}
+/* ========== 进度：最近记录 / 全部记录 ========== */
+.rec-list{margin-top:0;}
+.rec-month{font-size:12px;color:var(--text3);letter-spacing:.5px;margin:18px 0 6px;font-weight:500;}
+.rec-month:first-child{margin-top:0;}
+.rec-row{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-bottom:.5px solid var(--sep);font-size:13.5px;}
+.rec-row:last-child{border-bottom:none;}
+.rec-left{display:flex;gap:10px;align-items:baseline;}
+.rec-date{color:var(--text2);font-variant-numeric:tabular-nums;min-width:56px;}
+.rec-tag{color:var(--text);}
+.rec-num{font-variant-numeric:tabular-nums;font-weight:500;}
+.rec-num.plus{color:var(--accent);}
+.rec-num.minus{color:var(--danger);}
 
-/* 隐藏未来日历格子的点击态 */
-.cell.future{cursor:default;}
-.cell.future:active{transform:none;}
+/* ========== 设置 / 归档 / 垃圾桶：分组卡片 ========== */
+.group{background:var(--card);border-radius:16px;overflow:hidden;margin-bottom:18px;}
+.group-title{font-size:12.5px;color:var(--text2);letter-spacing:.8px;padding:0 4px 8px;font-weight:500;}
+.row{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;min-height:48px;gap:12px;}
+.row+.row{border-top:.5px solid var(--sep);}
+.row-label{font-size:15.5px;letter-spacing:.2px;}
+.row-sub{font-size:12px;color:var(--text2);margin-top:2px;letter-spacing:.2px;line-height:1.5;}
+.row-val{font-size:15px;color:var(--text2);display:flex;align-items:center;gap:6px;}
+.seg{display:flex;background:var(--cell);border-radius:9px;padding:2px;gap:2px;}
+.seg button{border:none;background:transparent;color:var(--text);font-size:13px;padding:6px 12px;border-radius:7px;font-family:inherit;cursor:pointer;transition:background .2s;letter-spacing:.2px;}
+.seg button.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.08);font-weight:500;}
+
+/* ========== 模板页 ========== */
+.tpl-section{margin-bottom:20px;}
+.tpl-section-title{font-size:13px;color:var(--text2);letter-spacing:.8px;margin-bottom:10px;font-weight:500;}
+.tpl-card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:11px;cursor:pointer;transition:transform .14s,box-shadow .2s;border:1.5px solid transparent;}
+.tpl-card:active{transform:scale(.985);}
+.tpl-card .tpl-name{font-size:16px;font-weight:600;letter-spacing:.2px;margin-bottom:6px;}
+.tpl-card .tpl-desc{font-size:12.5px;color:var(--text2);line-height:1.6;letter-spacing:.2px;}
+.tpl-card .tpl-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.tpl-card .tpl-tag{padding:3px 9px;border-radius:9px;background:var(--cell);font-size:11.5px;color:var(--text2);letter-spacing:.2px;}
+
+.tpl-custom-item{background:var(--card);border-radius:16px;padding:14px 16px;margin-bottom:11px;}
+.tpl-custom-item .ci-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;cursor:pointer;}
+.tpl-custom-item .ci-name{font-size:16px;font-weight:600;letter-spacing:.2px;}
+.tpl-custom-item .ci-meaning{font-size:11.5px;color:var(--text3);margin-top:2px;letter-spacing:.2px;}
+.tpl-custom-item .ci-check{width:24px;height:24px;border-radius:12px;border:1.5px solid var(--cell2);background:transparent;cursor:pointer;flex:none;display:flex;align-items:center;justify-content:center;color:transparent;font-size:14px;transition:all .2s;}
+.tpl-custom-item.on .ci-check{background:var(--accent);border-color:var(--accent);color:#fff;}
+.tpl-custom-item .ci-tags{display:flex;flex-wrap:wrap;gap:6px;}
+.tpl-custom-item .ci-tag{padding:4px 10px;border-radius:10px;background:var(--cell);font-size:12px;color:var(--text2);letter-spacing:.2px;cursor:pointer;border:1.5px solid transparent;transition:all .18s;font-family:inherit;}
+.tpl-custom-item .ci-tag.on{background:rgba(91,113,131,.14);color:var(--accent);border-color:var(--accent);}
+
+/* ========== 五笔五维文案 ========== */
+.tpl-intro{text-align:center;padding:8px 0 20px;}
+.tpl-intro .ti-main{font-size:15px;font-weight:600;color:var(--text);line-height:1.7;letter-spacing:.3px;}
+.tpl-intro .ti-sub{font-size:12.5px;color:var(--text2);margin-top:6px;letter-spacing:.3px;}
+.five-tagline{font-size:13.5px;color:var(--text);line-height:1.75;letter-spacing:.3px;font-weight:500;}
+
+/* ========== 引导浮层 ========== */
+.onboard-mask{position:fixed;inset:0;background:rgba(0,0,0,.42);z-index:800;opacity:0;transition:opacity .35s;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px;pointer-events:none;}
+.onboard-mask.show{opacity:1;pointer-events:auto;}
+.onboard-box{background:var(--sheet);border-radius:20px;padding:24px 22px;max-width:340px;width:100%;text-align:center;transform:scale(.96);transition:transform .35s cubic-bezier(.32,.72,0,1);}
+.onboard-mask.show .onboard-box{transform:scale(1);}
+.onboard-box .ob-title{font-size:19px;font-weight:700;letter-spacing:.3px;margin:0 0 10px;}
+.onboard-box .ob-desc{font-size:14px;color:var(--text2);line-height:1.7;margin:0 0 20px;letter-spacing:.2px;}
+.onboard-box .ob-actions{display:flex;gap:10px;}
+
+/* ========== 自绘确认框 ========== */
+.confirm-mask{position:fixed;inset:0;background:rgba(0,0,0,.32);z-index:900;opacity:0;transition:opacity .28s;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px;pointer-events:none;}
+.confirm-mask.show{opacity:1;pointer-events:auto;}
+.confirm-box{background:var(--sheet);border-radius:18px;padding:22px 20px 16px;max-width:300px;width:100%;text-align:center;transform:scale(.94);transition:transform .3s cubic-bezier(.32,.72,0,1);}
+.confirm-mask.show .confirm-box{transform:scale(1);}
+.confirm-box .cf-title{font-size:17px;font-weight:600;letter-spacing:.3px;margin:0 0 8px;}
+.confirm-box .cf-desc{font-size:13.5px;color:var(--text2);line-height:1.6;margin:0 0 18px;letter-spacing:.2px;white-space:pre-line;}
+.confirm-box .cf-actions{display:flex;gap:8px;}
+.confirm-box .cf-actions .btn{padding:11px;font-size:14.5px;}
+
+/* ========== Toast / Coach ========== */
+.toast{position:fixed;left:50%;bottom:calc(80px + env(safe-area-inset-bottom));transform:translate(-50%,10px);opacity:0;pointer-events:none;background:rgba(30,30,32,.9);color:#fff;font-size:13px;padding:10px 20px;border-radius:20px;z-index:500;transition:opacity .3s,transform .3s;white-space:nowrap;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+.coach{position:fixed;left:50%;bottom:calc(120px + env(safe-area-inset-bottom));transform:translate(-50%,10px);opacity:0;pointer-events:none;background:rgba(30,30,32,.9);color:#fff;font-size:13px;padding:10px 18px;border-radius:20px;z-index:400;transition:opacity .35s,transform .35s;white-space:nowrap;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+.coach.show{opacity:1;transform:translate(-50%,0);}
+
+/* ========== 日期选择器 ========== */
+.date-picker-row{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-radius:12px;border:1.5px solid var(--cell2);background:var(--card2);cursor:pointer;transition:border-color .2s,background .2s;}
+.date-picker-row:active{background:var(--cell);}
+.date-picker-row .dp-label{font-size:12px;color:var(--text2);letter-spacing:.4px;}
+.date-picker-row .dp-value{font-size:15px;color:var(--text);font-variant-numeric:tabular-nums;}
+.date-picker-row .dp-arrow{color:var(--accent);font-size:18px;line-height:1;}
+.dp-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px;}
+.dp-cell{aspect-ratio:1;border-radius:10px;background:var(--cell);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--text);cursor:pointer;font-variant-numeric:tabular-nums;transition:background .18s,transform .14s;}
+.dp-cell:active{transform:scale(.92);}
+.dp-cell.on{background:var(--accent);color:#fff;font-weight:600;}
+.dp-cell.today{box-shadow:inset 0 0 0 1.6px var(--accent);}
+.dp-cell.blank{background:transparent;pointer-events:none;}
+.dp-nav{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;}
+.dp-nav button{border:none;background:var(--cell);color:var(--accent);width:34px;height:34px;border-radius:17px;font-size:16px;cursor:pointer;font-family:inherit;}
+.dp-nav button:active{background:var(--cell2);}
+.dp-nav .dp-month{font-size:14px;font-weight:500;color:var(--text);min-width:110px;text-align:center;}
 </style>
 </head>
 <body>
@@ -441,8 +531,7 @@ textarea.form-input{min-height:100px;line-height:1.6;resize:none;font-family:inh
 <div class="toast" id="toast"></div>
 <div class="coach" id="coach"></div>
 
-<!-- 第二段 script 从这里开始 --><script>
-/* ============================================================
+<script>/* ============================================================
    常量与工具
    ============================================================ */
 const STORAGE_KEY = 'zhengzitai.v1';
@@ -488,9 +577,43 @@ function fmtNum(n){
 }
 
 /* ============================================================
-   数据层 —— 只做数据读写，不碰 DOM，未来可原样搬到小程序 store.js
+   自绘确认框
    ============================================================ */
+function showConfirm(opts){
+  return new Promise(resolve => {
+    const mask = document.createElement('div');
+    mask.className = 'confirm-mask';
+    const box = document.createElement('div');
+    box.className = 'confirm-box';
+    const title = opts.title || '确认';
+    const desc = opts.desc || '';
+    const okLabel = opts.okLabel || '确定';
+    const cancelLabel = opts.cancelLabel || '取消';
+    const danger = !!opts.danger;
+    box.innerHTML = `
+      <h3 class="cf-title">${esc(title)}</h3>
+      ${desc ? `<p class="cf-desc">${esc(desc)}</p>` : ''}
+      <div class="cf-actions">
+        <button class="btn ghost" data-act="cancel">${esc(cancelLabel)}</button>
+        <button class="btn ${danger ? 'danger' : 'primary'}" data-act="ok">${esc(okLabel)}</button>
+      </div>
+    `;
+    mask.appendChild(box);
+    document.body.appendChild(mask);
+    requestAnimationFrame(() => mask.classList.add('show'));
+    const close = (val) => {
+      mask.classList.remove('show');
+      setTimeout(() => { if(mask.parentNode) mask.remove(); resolve(val); }, 260);
+    };
+    box.querySelector('[data-act="cancel"]').addEventListener('click', () => close(false));
+    box.querySelector('[data-act="ok"]').addEventListener('click', () => close(true));
+    mask.addEventListener('click', (e) => { if(e.target === mask) close(false); });
+  });
+}
 
+/* ============================================================
+   数据层
+   ============================================================ */
 const DEFAULT_STATE = {
   name: '正字台',
   settings: {
@@ -521,7 +644,6 @@ function loadState(){
 }
 function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){} }
 
-/* ---- 多标签数据迁移：把 record.tag 转成 record.tags ---- */
 function migrateRecords(merged){
   const allProjects = [...(merged.projects||[]), ...(merged.archived||[]).filter(a=>a.kind==='project').map(a=>a.data)];
   allProjects.forEach(p => {
@@ -643,9 +765,8 @@ function updateProgressRecord(id, idx, value, tag){
 }
 
 /* ============================================================
-   计算层 —— 纯函数，输入数据输出结果，未来可原样搬到小程序 utils/stats.js
+   计算层
    ============================================================ */
-
 function countMonth(project, year, month){
   const pre = `${year}-${pad2(month+1)}-`;
   let n = 0;
@@ -682,8 +803,6 @@ function allTimeStats(){
   }
   return { days: daySet.size, count };
 }
-
-/* ---- 标签统计（多标签版本）---- */
 function collectTags(){
   const map = {};
   for(const p of state.projects){
@@ -699,7 +818,6 @@ function collectTags(){
   }
   return Object.values(map).sort((a,b) => b.count - a.count);
 }
-
 function progressPct(p){
   if(p.target <= 0) return 0;
   return Math.max(0, p.current / p.target * 100);
@@ -724,8 +842,6 @@ function progressMonthStats(p, year, month){
   });
   return { sum, count, tagMap };
 }
-
-/* ---- 推荐标签：模块预设 + 历史用过的标签 ---- */
 function recommendTags(project){
   const preset = MODULES[project.name] || [];
   const hist = new Set();
@@ -891,7 +1007,7 @@ function lunarLabel(y, m, d){
 }
 
 /* ============================================================
-   通用 UI：toast / coach / modal / pageHost
+   通用 UI
    ============================================================ */
 let toastTimer = null;
 function toast(msg){
@@ -968,8 +1084,6 @@ function closePageThenCallback(page, onDone){
     if(onDone) onDone();
   }, 420);
 }
-
-/* 标签页刷新：只重绘内容，不重建页面 */
 function refreshTagPagesIfOpen(){
   const tagWallBody = $('#tagWallBody');
   if(tagWallBody) renderTagWallBody(tagWallBody);
@@ -982,7 +1096,7 @@ function refreshTagPagesIfOpen(){
 }
 
 /* ============================================================
-   渲染层：首页 / 进度
+   首页 / 进度渲染
    ============================================================ */
 const view = {
   year: new Date().getFullYear(), month: new Date().getMonth(),
@@ -1102,8 +1216,6 @@ function refreshStreak(el, p){
   if(n > 0){ s.textContent = `连续 ${n} 天`; s.classList.remove('hide'); }
   else s.classList.add('hide');
 }
-
-/* 按钮文案：今天"写一笔" / 过去"补一笔" / 未来不显示 */
 function refreshCardButton(cardEl, p){
   const btn = cardEl.querySelector('[data-btn]');
   if(!btn) return;
@@ -1125,7 +1237,6 @@ function refreshCardButton(cardEl, p){
     btn.textContent = sel === tk ? '写一笔' : '补一笔';
   }
 }
-
 function fillCardGlyphs(cardEl, p){
   const R = cardEl._refs;
   const mCount = countMonth(p, view.year, view.month);
@@ -1133,7 +1244,6 @@ function fillCardGlyphs(cardEl, p){
   R.zrows.querySelector('[data-role="month-num"]').textContent = mCount;
 }
 function toggleCard(id){ if(view.openProjectId === id) closeCard(); else openCard(id); }
-
 function openCard(id){
   const p = findProject(id);
   if(!p) return;
@@ -1159,7 +1269,6 @@ function closeCard(){
   const card = listEl.querySelector(`.card[data-id="${id}"]`);
   if(card){ card.classList.remove('open'); card._refs.expand.style.height = '0px'; }
 }
-
 function renderCardExpand(card, p){
   const inner = card._refs.inner;
   inner.innerHTML = '';
@@ -1212,7 +1321,6 @@ function renderCardExpand(card, p){
   inner.appendChild(buildCalendar(p));
   requestAnimationFrame(() => { card._refs.expand.style.height = inner.scrollHeight + 'px'; });
 }
-
 function tagStatsOfMonth(p, y, m){
   const pre = `${y}-${pad2(m+1)}-`;
   const map = {};
@@ -1225,7 +1333,6 @@ function tagStatsOfMonth(p, y, m){
   }
   return map;
 }
-
 function buildCalendar(p){
   const wrap = document.createElement('div');
   wrap.className = 'cal-wrap';
@@ -1538,7 +1645,7 @@ function renderProgressExpand(el, p){
 }
 
 /* ============================================================
-   交互层：弹窗
+   记录弹窗
    ============================================================ */
 function openRecordModal(projectId, dateKeyStr){
   const p = findProject(projectId);
@@ -1548,7 +1655,6 @@ function openRecordModal(projectId, dateKeyStr){
   const [yy, mm, dd] = dateKeyStr.split('-').map(Number);
   const d = new Date(yy, mm-1, dd);
   const week = '日一二三四五六'[d.getDay()];
-  const isFuture = dateKeyStr > todayKey();
 
   openModal(modal => {
     let sub = '';
@@ -1579,12 +1685,9 @@ function openRecordModal(projectId, dateKeyStr){
     const tagRow = modal.querySelector('#tagEditRow');
     ta.value = rec ? (rec.note || '') : '';
 
-    // 当前标签数组
     let currentTags = rec ? (rec.tags ? rec.tags.slice() : []) : [];
 
-    // 渲染标签气泡
     const renderTagPills = () => {
-      // 移除旧的 pill
       tagRow.querySelectorAll('.tag-pill').forEach(x => x.remove());
       currentTags.forEach((t, idx) => {
         const pill = document.createElement('span');
@@ -1609,7 +1712,6 @@ function openRecordModal(projectId, dateKeyStr){
       renderTagPills();
       debounceSave();
     };
-
     tagIn.addEventListener('keydown', (e) => {
       if(e.key === 'Enter' || e.key === ','){
         e.preventDefault();
@@ -1637,7 +1739,6 @@ function openRecordModal(projectId, dateKeyStr){
     };
     ta.addEventListener('input', debounceSave);
 
-    // 推荐标签
     const chipRow = modal.querySelector('#chipRow');
     const tags = recommendTags(p);
     tags.slice(0, 12).forEach(item => {
@@ -1647,13 +1748,11 @@ function openRecordModal(projectId, dateKeyStr){
       chip.addEventListener('click', (e) => {
         e.preventDefault();
         if(currentTags.includes(item.tag)){
-          // 已选就取消
           currentTags = currentTags.filter(t => t !== item.tag);
           renderTagPills();
         }else{
           addTag(item.tag);
         }
-        // 更新 chip 状态
         syncChipStates();
         debounceSave();
       });
@@ -1664,6 +1763,7 @@ function openRecordModal(projectId, dateKeyStr){
         chip.classList.toggle('on', currentTags.includes(chip.textContent));
       });
     };
+    syncChipStates();
 
     modal.querySelector('#btnCheck').addEventListener('click', () => {
       if(!rec){
@@ -1679,9 +1779,15 @@ function openRecordModal(projectId, dateKeyStr){
       refreshTagPagesIfOpen();
     });
 
-    modal.querySelector('#btnRemove').addEventListener('click', () => {
+    modal.querySelector('#btnRemove').addEventListener('click', async () => {
       if(rec && ((rec.note && rec.note.trim()) || (currentTags.length))){
-        if(!confirm('这条记录有内容，取消会一起删掉。确定吗？')) return;
+        const ok = await showConfirm({
+          title: '取消记录？',
+          desc: '这条记录有内容，取消会一起删掉。',
+          okLabel: '删除',
+          danger: true
+        });
+        if(!ok) return;
       }
       removeRecord(p, dateKeyStr);
       closeModal();
@@ -1713,6 +1819,9 @@ function checkMilestones(p){
   }
 }
 
+/* ============================================================
+   项目 / 进度编辑弹窗
+   ============================================================ */
 function openProjectModal(id){
   const isNew = !id;
   const p = isNew
@@ -1761,15 +1870,26 @@ function openProjectModal(id){
       }, 200);
     });
     if(!isNew){
-      modal.querySelector('#btnDel').addEventListener('click', () => {
-        if(!confirm(`把「${p.name}」移到垃圾桶？\n数据会保留，可随时恢复。`)) return;
+      modal.querySelector('#btnDel').addEventListener('click', async () => {
+        const ok = await showConfirm({
+          title: `删除「${p.name}」？`,
+          desc: '会移到垃圾桶，可随时恢复。',
+          okLabel: '删除',
+          danger: true
+        });
+        if(!ok) return;
         removeProject(p.id);
         view.openProjectId = null;
         closeModal();
         setTimeout(renderProjectList, 200);
       });
-      modal.querySelector('#btnArchive').addEventListener('click', () => {
-        if(!confirm(`把「${p.name}」归档？\n归档后从首页隐藏，历史记录保留，可在设置里恢复。`)) return;
+      modal.querySelector('#btnArchive').addEventListener('click', async () => {
+        const ok = await showConfirm({
+          title: `归档「${p.name}」？`,
+          desc: '归档后从首页隐藏，历史记录保留，可在设置里恢复。',
+          okLabel: '归档'
+        });
+        if(!ok) return;
         archiveProject(p.id);
         view.openProjectId = null;
         closeModal();
@@ -1850,15 +1970,26 @@ function openProgressModal(id){
       setTimeout(renderProgressList, 200);
     });
     if(!isNew){
-      modal.querySelector('#btnDel').addEventListener('click', () => {
-        if(!confirm(`把「${p.name}」移到垃圾桶？\n数据会保留，可随时恢复。`)) return;
+      modal.querySelector('#btnDel').addEventListener('click', async () => {
+        const ok = await showConfirm({
+          title: `删除「${p.name}」？`,
+          desc: '会移到垃圾桶，可随时恢复。',
+          okLabel: '删除',
+          danger: true
+        });
+        if(!ok) return;
         removeProgress(p.id);
         openProgressId = null;
         closeModal();
         setTimeout(renderProgressList, 200);
       });
-      modal.querySelector('#btnArchive').addEventListener('click', () => {
-        if(!confirm(`把「${p.name}」归档？\n归档后从首页隐藏，历史记录保留，可在设置里恢复。`)) return;
+      modal.querySelector('#btnArchive').addEventListener('click', async () => {
+        const ok = await showConfirm({
+          title: `归档「${p.name}」？`,
+          desc: '归档后从首页隐藏，历史记录保留，可在设置里恢复。',
+          okLabel: '归档'
+        });
+        if(!ok) return;
         archiveProgress(p.id);
         openProgressId = null;
         closeModal();
@@ -1948,8 +2079,7 @@ function openProgressRecordModal(id){
         const key = dateKey(calView.y, calView.m, d);
         if(key === selectedDate) cell.classList.add('on');
         if(key === tk) cell.classList.add('today');
-        // 未来日期不可选、不可显示
-        if(key > tk){ cell.style.opacity = '.2'; cell.style.pointerEvents = 'none'; }
+        if(key > tk){ cell.style.opacity = '.25'; cell.style.pointerEvents = 'none'; }
         cell.textContent = d;
         if(key <= tk){
           cell.addEventListener('click', (e) => {
@@ -2017,6 +2147,117 @@ function openProgressRecordModal(id){
 }
 
 /* ============================================================
+   进度：记录编辑 / 全部记录页
+   ============================================================ */
+function openRecordActions(progressId, idx){
+  const p = findProgress(progressId); if(!p) return;
+  const rec = p.records[idx]; if(!rec) return;
+  const d = new Date(rec.t);
+  openModal(modal => {
+    modal.innerHTML = `
+      <h3 class="modal-title">${d.getMonth()+1}月${d.getDate()}日</h3>
+      <div class="modal-sub">${rec.tag ? '[' + esc(rec.tag) + '] ' : ''}${rec.value > 0 ? '+' : ''}${fmtNum(rec.value)}${p.unit ? ' ' + esc(p.unit) : ''}</div>
+      <div class="form-label">数量</div>
+      <div class="num-row">
+        <button class="sign-btn" id="signBtn">${rec.value >= 0 ? '+' : '−'}</button>
+        <input class="form-input" id="valInput" type="text" inputmode="decimal" value="${Math.abs(rec.value)}" autocomplete="off">
+        <span style="display:flex;align-items:center;padding:0 8px;color:var(--text2);font-size:14px">${esc(p.unit)}</span>
+      </div>
+      <div class="form-row" style="margin-top:14px">
+        <div class="form-label">标签（可选）</div>
+        <input class="form-input" id="tagInput" value="${esc(rec.tag || '')}" placeholder="如：工资、收租">
+      </div>
+      <div class="modal-actions" style="margin-top:18px">
+        <button class="btn ghost" id="btnDel" style="color:var(--danger)">删除</button>
+        <button class="btn ghost" id="btnCancel">取消</button>
+        <button class="btn primary" id="btnOk">保存</button>
+      </div>
+    `;
+    const valIn = modal.querySelector('#valInput');
+    const tagIn = modal.querySelector('#tagInput');
+    const signBtn = modal.querySelector('#signBtn');
+    let sign = rec.value >= 0 ? 1 : -1;
+    signBtn.addEventListener('click', () => {
+      sign = -sign;
+      signBtn.textContent = sign === 1 ? '+' : '−';
+      signBtn.classList.toggle('minus', sign === -1);
+    });
+    modal.querySelector('#btnCancel').addEventListener('click', closeModal);
+    modal.querySelector('#btnOk').addEventListener('click', () => {
+      const raw = parseFloat(valIn.value);
+      if(!raw || isNaN(raw)){ toast('请输入数量'); return; }
+      updateProgressRecord(p.id, idx, raw * sign, tagIn.value.trim());
+      closeModal();
+      setTimeout(() => { renderProgressList(); openProgressCard(p.id); }, 200);
+    });
+    modal.querySelector('#btnDel').addEventListener('click', async () => {
+      const ok = await showConfirm({
+        title: '删除这条记录？',
+        okLabel: '删除',
+        danger: true
+      });
+      if(!ok) return;
+      removeProgressRecord(p.id, idx);
+      closeModal();
+      setTimeout(() => { renderProgressList(); openProgressCard(p.id); }, 200);
+    });
+  });
+}
+
+function openProgressHistory(id){
+  const p = findProgress(id); if(!p) return;
+  const page = document.createElement('div');
+  page.className = 'page';
+  page.dataset.pageId = 'progressHistory';
+  page.innerHTML = `
+    <div class="page-nav">
+      <button class="back-btn" id="backBtn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        ${esc(p.name)}
+      </button>
+      <span class="page-title">全部记录</span>
+      <span style="width:64px"></span>
+    </div>
+    <div class="field" id="histBody"></div>
+  `;
+  openPageToStack(page);
+  const body = page.querySelector('#histBody');
+  if(!p.records.length){
+    body.innerHTML = '<div class="empty"><div class="big">空</div><p>还没有记录</p></div>';
+  }else{
+    const groups = {};
+    [...p.records].reverse().forEach((r, i) => {
+      const d = new Date(r.t);
+      const key = `${d.getFullYear()} 年 ${d.getMonth()+1} 月`;
+      if(!groups[key]) groups[key] = [];
+      groups[key].push({ ...r, _idx: p.records.length - 1 - i });
+    });
+    Object.entries(groups).forEach(([key, arr]) => {
+      const h = document.createElement('div');
+      h.className = 'rec-month'; h.textContent = key;
+      body.appendChild(h);
+      arr.forEach(r => {
+        const d = new Date(r.t);
+        const row = document.createElement('div');
+        row.className = 'rec-row';
+        row.style.cursor = 'pointer';
+        row.innerHTML = `
+          <div class="rec-left">
+            <span class="rec-date">${d.getMonth()+1}月${d.getDate()}日</span>
+            ${r.tag ? `<span class="rec-tag">${esc(r.tag)}</span>` : ''}
+          </div>
+          <span class="rec-num ${r.value >= 0 ? 'plus' : 'minus'}">${r.value > 0 ? '+' : ''}${fmtNum(r.value)}</span>
+        `;
+        row.addEventListener('click', () => { openRecordActions(p.id, r._idx); });
+        body.appendChild(row);
+      });
+    });
+  }
+  page.querySelector('#backBtn').addEventListener('click', () => { closePage(page); });
+  requestAnimationFrame(() => page.classList.add('show'));
+}
+
+/* ============================================================
    标签墙 / 标签详情
    ============================================================ */
 function openTagWall(){
@@ -2040,7 +2281,6 @@ function openTagWall(){
   requestAnimationFrame(() => page.classList.add('show'));
 }
 
-/* 标签墙：两列并排方块，每块最多 2 个正字 + 次数 */
 function renderTagWallBody(body){
   body.innerHTML = '';
   const tags = collectTags();
@@ -2059,9 +2299,7 @@ function renderTagWallBody(body){
   tags.forEach(t => {
     const block = document.createElement('div');
     block.className = 'tag-wall-block';
-    block.innerHTML = `
-      <div class="twb-name">${esc(t.tag)}</div>
-    `;
+    block.innerHTML = `<div class="twb-name">${esc(t.tag)}</div>`;
     const zhengBox = document.createElement('div');
     zhengBox.className = 'twb-zheng';
     renderGlyphs(zhengBox, t.count, 'tag'+t.tag, 4);
@@ -2098,7 +2336,6 @@ function openTagDetail(tagName){
   requestAnimationFrame(() => page.classList.add('show'));
 }
 
-/* 标签详情：顶部统计 + 记录流水 */
 function renderTagDetailBody(body, tagName){
   body.innerHTML = '';
   const records = [];
@@ -2289,9 +2526,7 @@ function openSettings(){
     saveState();
   });
 
-  page.querySelector('#rowTemplate').addEventListener('click', () => {
-    openTemplatePage(() => {});
-  });
+  page.querySelector('#rowTemplate').addEventListener('click', () => { openTemplatePage(() => {}); });
   page.querySelector('#rowExport').addEventListener('click', exportData);
   page.querySelector('#rowImport').addEventListener('click', importData);
   page.querySelector('#rowArchived').addEventListener('click', () => {
@@ -2332,7 +2567,7 @@ function openArchived(onCount){
     if(!state.archived.length){
       const e = document.createElement('div');
       e.className = 'empty';
-      e.innerHTML = '<div class="big">档</div><p>还没有归档的项目<br>在项目编辑里点“归档”就会出现在这里</p>';
+      e.innerHTML = '<div class="big">档</div><p>还没有归档的项目</p>';
       body.appendChild(e);
       if(onCount) onCount(0);
       return;
@@ -2373,8 +2608,9 @@ function openArchived(onCount){
       });
     });
     body.querySelectorAll('[data-d]').forEach(b => {
-      b.addEventListener('click', () => {
-        if(!confirm('彻底删除后无法恢复，确定吗？')) return;
+      b.addEventListener('click', async () => {
+        const ok = await showConfirm({ title: '彻底删除？', desc: '删除后无法恢复。', okLabel: '删除', danger: true });
+        if(!ok) return;
         state.archived.splice(+b.dataset.d, 1);
         saveState(); render();
         if(onCount) onCount(state.archived.length);
@@ -2447,8 +2683,9 @@ function openTrash(onCount){
       });
     });
     body.querySelectorAll('[data-d]').forEach(b => {
-      b.addEventListener('click', () => {
-        if(!confirm('彻底删除后无法恢复，确定吗？')) return;
+      b.addEventListener('click', async () => {
+        const ok = await showConfirm({ title: '彻底删除？', desc: '删除后无法恢复。', okLabel: '删除', danger: true });
+        if(!ok) return;
         state.trash.splice(+b.dataset.d, 1);
         saveState(); render();
         if(onCount) onCount(state.trash.length);
@@ -2461,7 +2698,7 @@ function openTrash(onCount){
 }
 
 /* ============================================================
-   备份导入导出
+   备份
    ============================================================ */
 function exportData(){
   const data = JSON.stringify(state, null, 2);
@@ -2484,11 +2721,17 @@ function importData(){
   inp.onchange = () => {
     const f = inp.files[0]; if(!f) return;
     const r = new FileReader();
-    r.onload = () => {
+    r.onload = async () => {
       try{
         const o = JSON.parse(r.result);
         if(!o.projects && !o.progress) throw 0;
-        if(!confirm('导入将覆盖当前所有数据，确定吗？')) return;
+        const ok = await showConfirm({
+          title: '导入备份？',
+          desc: '导入将覆盖当前所有数据。',
+          okLabel: '导入',
+          danger: true
+        });
+        if(!ok) return;
         state = Object.assign(clone(DEFAULT_STATE), o, {
           settings: Object.assign(clone(DEFAULT_STATE.settings), o.settings || {})
         });
@@ -2511,7 +2754,7 @@ function importData(){
 }
 
 /* ============================================================
-   大月历（整页，格子放大）
+   大月历
    ============================================================ */
 function openBigCalendar(){
   const page = document.createElement('div');
@@ -2524,7 +2767,7 @@ function openBigCalendar(){
         正字台
       </button>
       <span class="page-title">月历</span>
-      <span style="width:64px"></span>
+      <button class="back-btn" id="shareBtn" style="justify-content:flex-end">分享</button>
     </div>
     <div class="field">
       <div style="display:flex;justify-content:center;margin-bottom:14px">
@@ -2546,6 +2789,7 @@ function openBigCalendar(){
   };
   modeToggle.querySelectorAll('button').forEach(b => { b.addEventListener('click', () => setMode(b.dataset.mode)); });
   setMode(state.settings.calMode || 'stripe');
+  page.querySelector('#shareBtn').addEventListener('click', () => { openShareOptions(view.bigCalYear, view.bigCalMonth); });
   page.querySelector('#backBtn').addEventListener('click', () => { closePage(page); });
   requestAnimationFrame(() => page.classList.add('show'));
 }
@@ -2605,7 +2849,7 @@ function renderBigCalendar(wrap){
       if(onProjects.length > 0){
         const stripes = document.createElement('div');
         stripes.className = 'stripes';
-        const maxShow = 3;
+        const maxShow = 4;
         onProjects.slice(0, maxShow).forEach(p => {
           const s = document.createElement('div');
           s.className = 'stripe';
@@ -2628,6 +2872,269 @@ function renderBigCalendar(wrap){
     grid.appendChild(cell);
   }
   wrap.appendChild(grid);
+}
+
+/* ============================================================
+   分享（月度打卡图）
+   ============================================================ */
+function openShareOptions(defaultY, defaultM){
+  openModal(modal => {
+    modal.innerHTML = `
+      <h3 class="modal-title">分享</h3>
+      <div class="modal-sub">选择时间范围</div>
+      <div class="group" style="background:var(--card2);margin:0">
+        <div class="row" data-range="month" style="cursor:pointer"><span class="row-label">本月</span><span class="row-val">›</span></div>
+        <div class="row" data-range="3m" style="cursor:pointer"><span class="row-label">近 3 个月</span><span class="row-val">›</span></div>
+        <div class="row" data-range="year" style="cursor:pointer"><span class="row-label">今年以来</span><span class="row-val">›</span></div>
+        <div class="row" data-range="all" style="cursor:pointer"><span class="row-label">全部</span><span class="row-val">›</span></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn ghost" id="btnCancel">取消</button>
+      </div>
+    `;
+    modal.querySelector('#btnCancel').addEventListener('click', closeModal);
+    modal.querySelectorAll('[data-range]').forEach(row => {
+      row.addEventListener('click', () => {
+        const range = row.dataset.range;
+        closeModal();
+        setTimeout(() => shareMonth(defaultY, defaultM, range), 260);
+      });
+    });
+  });
+}
+
+function drawQRCodeAsync(ctx, text, x, y, size, callback){
+  const url = 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=' + encodeURIComponent(text);
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(x, y, size, size);
+    ctx.drawImage(img, x, y, size, size);
+    if(callback) callback();
+  };
+  img.onerror = () => {
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(x, y, size, size);
+    ctx.strokeStyle = '#C4BFB5';
+    ctx.lineWidth = 1; ctx.strokeRect(x, y, size, size);
+    ctx.fillStyle = '#8A857C';
+    ctx.font = '12px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('二维码', x + size/2, y + size/2);
+    if(callback) callback();
+  };
+  img.src = url;
+}
+
+function shareMonth(y, m, range){
+  range = range || 'month';
+  let fromY = y, fromM = m, toY = y, toM = m;
+  let label = `${y}年${m+1}月`;
+  if(range === '3m'){
+    const d = new Date(y, m - 2, 1);
+    fromY = d.getFullYear(); fromM = d.getMonth();
+    toY = y; toM = m;
+    label = `${fromY}.${fromM+1} — ${toY}.${toM+1}`;
+  }else if(range === 'year'){
+    fromY = y; fromM = 0; toY = y; toM = 11;
+    label = `${y}年`;
+  }else if(range === 'all'){
+    let earliest = null;
+    for(const p of state.projects){
+      for(const k in p.records){
+        if(!earliest || k < earliest) earliest = k;
+      }
+    }
+    if(earliest){
+      const [ey, em] = earliest.split('-').map(Number);
+      fromY = ey; fromM = em - 1;
+    }
+    label = '全部记录';
+  }
+  const inRange = (key) => {
+    const [yy, mm] = key.split('-').map(Number);
+    const ym = yy * 12 + mm;
+    return ym >= fromY * 12 + (fromM+1) && ym <= toY * 12 + (toM+1);
+  };
+  const daySet = new Set();
+  let totalCount = 0;
+  for(const p of state.projects){
+    for(const k in p.records){
+      if(inRange(k)){ daySet.add(k); totalCount++; }
+    }
+  }
+  const days = daySet.size;
+  const projStats = [];
+  state.projects.forEach(p => {
+    let c = 0;
+    for(const k in p.records) if(inRange(k)) c++;
+    if(c > 0) projStats.push({ name: p.name, color: p.color, count: c });
+  });
+  const W = 760, TOP_PAD = 40;
+  let cursor = TOP_PAD;
+  cursor += 40 + 30; cursor += 28 + 4 + 26 + 40;
+  cursor += 40 + 40; cursor += projStats.length * 32 + 40;
+  const calCols = 7, calGap = 6, calCell = 60;
+  const calW = calCols * calCell + (calCols - 1) * calGap;
+  const calLeft = (W - calW) / 2;
+  const calRows = 6;
+  let calHeight = 0;
+  if(range === 'month') calHeight = 30 + calRows * calCell + (calRows - 1) * calGap;
+  cursor += calHeight;
+  if(calHeight) cursor += 60;
+  cursor += 90 + 60;
+  const H = cursor;
+  const dpr = 2;
+  const cv = document.createElement('canvas');
+  cv.width = W * dpr; cv.height = H * dpr;
+  const ctx = cv.getContext('2d');
+  ctx.scale(dpr, dpr);
+  const bg = '#FAF8F3', fg = '#2A2622', fg2 = '#8A857C', fg3 = '#C4BFB5';
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+  let cy = TOP_PAD;
+  ctx.fillStyle = fg;
+  ctx.font = '600 38px -apple-system,"PingFang SC",sans-serif';
+  ctx.textBaseline = 'top'; ctx.textAlign = 'center';
+  ctx.fillText(label, W/2, cy);
+  cy += 40 + 30;
+  ctx.font = '500 24px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillStyle = fg;
+  ctx.fillText(`坚持 ${days} 天`, W/2, cy);
+  cy += 28 + 4;
+  ctx.fillText(`写下 ${totalCount} 笔`, W/2, cy);
+  cy += 26 + 40;
+  const full = Math.floor(totalCount / 5);
+  const part = totalCount % 5;
+  const size = 32, gap = 2;
+  const maxZ = Math.min(full, 12);
+  const numGlyphs = maxZ + (part && maxZ < 12 ? 1 : 0);
+  const totalWidth = numGlyphs * (size + gap) - gap;
+  let zx = W/2 - totalWidth / 2;
+  const drawGlyph2 = (cnt, color) => {
+    ctx.save(); ctx.translate(zx, cy);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = size / 100 * 7;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for(let s = 0; s < cnt; s++){
+      const [x1,y1,x2,y2] = STROKES[s];
+      ctx.beginPath();
+      ctx.moveTo(x1/100*size, y1/100*size);
+      ctx.quadraticCurveTo((x1+x2)/2/100*size, (y1+y2)/2/100*size, x2/100*size, y2/100*size);
+      ctx.stroke();
+    }
+    ctx.restore();
+  };
+  for(let i = 0; i < maxZ; i++){ drawGlyph2(5, fg); zx += size + gap; }
+  if(part && maxZ < 12){ drawGlyph2(part, fg); zx += size + gap; }
+  if(full > 12){
+    ctx.fillStyle = fg2;
+    ctx.font = '400 24px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('…', zx, cy + 4);
+    ctx.textAlign = 'center';
+  }
+  cy += 40 + 40;
+  ctx.font = '400 18px -apple-system,"PingFang SC",sans-serif';
+  projStats.forEach(p => {
+    ctx.fillStyle = p.color;
+    ctx.textAlign = 'left';
+    ctx.fillText(p.name, 100, cy);
+    ctx.textAlign = 'right';
+    ctx.fillStyle = fg2;
+    ctx.fillText(p.count + ' 次', W - 100, cy);
+    cy += 32;
+  });
+  cy += 40;
+  if(range === 'month'){
+    const mode = state.settings.calMode || 'stripe';
+    const first = new Date(y, m, 1);
+    const startDow = (first.getDay() + 6) % 7;
+    const dim = new Date(y, m+1, 0).getDate();
+    ctx.fillStyle = fg3;
+    ctx.font = '400 16px -apple-system,"PingFang SC",sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    WEEK.forEach((w, i) => {
+      ctx.fillText(w, calLeft + i*(calCell+calGap) + calCell/2, cy);
+    });
+    const gridY = cy + 30;
+    for(let i = 0; i < 42; i++){
+      const d = i - startDow + 1;
+      const col = i % 7, row = Math.floor(i / 7);
+      const x = calLeft + col*(calCell+calGap);
+      const yy = gridY + row*(calCell+calGap);
+      if(d < 1 || d > dim) continue;
+      const key = dateKey(y, m, d);
+      const onProjects = projectsOnDate(key);
+      ctx.fillStyle = '#F0EBE1';
+      ctx.beginPath();
+      if(ctx.roundRect) ctx.roundRect(x, yy, calCell, calCell, 12);
+      else ctx.rect(x, yy, calCell, calCell);
+      ctx.fill();
+      ctx.fillStyle = fg3;
+      ctx.font = '400 14px -apple-system,"PingFang SC",sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(d, x + calCell/2, yy + 6);
+      if(mode === 'tian' && onProjects.length > 0){
+        const cnt = Math.min(onProjects.length, 5);
+        const gs = calCell * 0.6;
+        const gx2 = x + calCell/2 - gs/2;
+        const gy2 = yy + calCell*0.32;
+        ctx.save(); ctx.translate(gx2, gy2);
+        ctx.strokeStyle = fg;
+        ctx.lineWidth = gs / 100 * 7;
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+        for(let s = 0; s < cnt; s++){
+          const [x1,y1,x2,y2] = STROKES[s];
+          ctx.beginPath();
+          ctx.moveTo(x1/100*gs, y1/100*gs);
+          ctx.quadraticCurveTo((x1+x2)/2/100*gs, (y1+y2)/2/100*gs, x2/100*gs, y2/100*gs);
+          ctx.stroke();
+        }
+        ctx.restore();
+      }
+      if(mode === 'stripe' && onProjects.length > 0){
+        const maxShow = 3, sh = 10;
+        const sy = yy + calCell*0.38;
+        onProjects.slice(0, maxShow).forEach((p, idx) => {
+          const ry = sy + idx*(sh + 2);
+          if(ry + sh > yy + calCell - 4) return;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          if(ctx.roundRect) ctx.roundRect(x + 4, ry, calCell - 8, sh, 3);
+          else ctx.rect(x + 4, ry, calCell - 8, sh);
+          ctx.fill();
+        });
+        if(onProjects.length > maxShow){
+          ctx.fillStyle = fg2;
+          ctx.font = '400 10px -apple-system,"PingFang SC",sans-serif';
+          ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+          ctx.fillText('+' + (onProjects.length - maxShow), x + calCell - 5, yy + calCell - 4);
+        }
+      }
+    }
+    cy += calHeight + 60;
+  }
+  const qrSize = 90, qrX = 60, qrY = cy;
+  ctx.fillStyle = fg3;
+  ctx.font = '400 15px -apple-system,"PingFang SC",sans-serif';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText('正字台', qrX + qrSize + 16, qrY + qrSize/2 - 12);
+  ctx.font = '400 13px -apple-system,"PingFang SC",sans-serif';
+  ctx.fillText('一笔一画，把日子写端正', qrX + qrSize + 16, qrY + qrSize/2 + 12);
+  drawQRCodeAsync(ctx, 'https://xmmis1.github.io/zhengzitai/', qrX, qrY, qrSize, () => {
+    cv.toBlob(async blob => {
+      if(!blob) return;
+      const file = new File([blob], `正字台-${y}${pad2(m+1)}.png`, { type: 'image/png' });
+      if(navigator.canShare && navigator.canShare({ files: [file] })){
+        try { await navigator.share({ files: [file], title: label }); return; } catch(e){}
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = file.name; a.click();
+      setTimeout(() => URL.revokeObjectURL(url), 3000);
+    }, 'image/png');
+  });
 }
 
 /* ============================================================
@@ -2748,9 +3255,7 @@ function openTemplatePage(onDone){
     customList.appendChild(item);
   });
 
-  page.querySelector('#btnSkip').addEventListener('click', () => {
-    closePageThenCallback(page, onDone);
-  });
+  page.querySelector('#btnSkip').addEventListener('click', () => { closePageThenCallback(page, onDone); });
   page.querySelector('#btnConfirm').addEventListener('click', () => {
     const mods = Object.keys(selected).filter(m => selected[m]);
     if(!mods.length){ toast('请至少选择一个模块'); return; }
